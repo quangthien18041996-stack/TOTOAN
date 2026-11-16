@@ -159,7 +159,7 @@
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">Mật khẩu (Mặc định: 123):</label>
-          <input type="password" id="login-password" value="123" class="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none">
+          <input type="password" id="login-password" placeholder="Nhập mật khẩu..." class="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none">
         </div>
         <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl text-xs shadow-md transition flex items-center justify-center gap-1.5">
           <i data-lucide="log-in" class="w-4 h-4"></i>
@@ -818,24 +818,38 @@
       if (e) e.preventDefault();
       const u = (document.getElementById('login-username').value || '').trim();
       const p = (document.getElementById('login-password').value || '').trim();
+      
       if (!u) {
-        alert("Vui lòng nhập tên đăng nhập hoặc họ tên!");
+        alert("Vui lòng nhập tên đăng nhập!");
+        document.getElementById('login-username').focus();
         return;
       }
-      const key = u.toLowerCase();
-      if (USERS_DB[key]) {
-        currentUser = USERS_DB[key];
-      } else if (key.includes('totruong') || key.includes('to_truong') || key.includes('admin')) {
-        currentUser = USERS_DB['totruong'];
-      } else {
-        currentUser = {
-          username: key,
-          fullName: (u.startsWith('Thầy') || u.startsWith('Cô')) ? u : ('Thầy/Cô ' + u),
-          role: 'TEACHER',
-          roleLabel: 'Giáo Viên',
-          password: p
-        };
+      if (!p) {
+        alert("Vui lòng nhập mật khẩu!");
+        document.getElementById('login-password').focus();
+        return;
       }
+
+      const key = u.toLowerCase();
+      let matchedUser = USERS_DB[key];
+      if (!matchedUser && (key.includes('totruong') || key.includes('to_truong') || key === 'admin')) {
+        matchedUser = USERS_DB['totruong'];
+      }
+
+      if (!matchedUser) {
+        alert(`Tài khoản "${u}" không tồn tại!\nVui lòng sử dụng các tài khoản: totruong, gv_huong, gv_tuan, gv_lan, gv_mai (hoặc bấm nút chọn nhanh ở trên).`);
+        return;
+      }
+
+      // XÁC MINH MẬT KHẨU BẮT BUỘC
+      if (matchedUser.password !== p) {
+        alert("❌ MẬT KHẨU KHÔNG CHÍNH XÁC!\nVui lòng kiểm tra lại mật khẩu (Mật khẩu mặc định là: 123).");
+        document.getElementById('login-password').value = '';
+        document.getElementById('login-password').focus();
+        return;
+      }
+
+      currentUser = matchedUser;
       localStorage.setItem('pvt_logged_user', JSON.stringify(currentUser));
       applyUserPermissions(currentUser);
 
