@@ -1,0 +1,96 @@
+{
+  "session": {
+    "id": "TOAN8-T56-2025",
+    "teacherName": "Nguyễn Thị Lan",
+    "subject": "Toán",
+    "className": "8A1",
+    "period": "Tiết 56 (Tuần 28)",
+    "teachingTime": "27/03/2025 - 08:00",
+    "lessonTitle": "Bài 1. Phép thử nghiệm – Sự kiện (Chương 9)",
+    "school": "THCS Phan Văn Trị",
+    "district": "Phòng Giáo Dục Và Đào Tạo Gò Vấp",
+    "activities": [
+      {
+        "id": "act-1",
+        "title": "Hoạt động 1: Khởi động (Trò chơi xúc xắc & bốc thăm)",
+        "time": "5 phút",
+        "content": "Giáo viên tổ chức trò chơi dự đoán số chấm xúc xắc nhằm kích thích sự tò mò của học sinh về kết quả không thể đoán trước."
+      },
+      {
+        "id": "act-2",
+        "title": "Hoạt động 2: Hình thành kiến thức (Thực nghiệm 4 nhóm)",
+        "time": "20 phút",
+        "content": "Chia 4 nhóm: Nhóm 1 (Gieo xúc xắc), Nhóm 2 (Tung đồng xu), Nhóm 3 (Bốc thăm 1..3), Nhóm 4 (Rút bi màu). Rút ra khái niệm phép thử nghiệm và tập hợp kết quả X."
+      },
+      {
+        "id": "act-3",
+        "title": "Hoạt động 3: Luyện tập (Bài 1, Bài 2 SGK trang 107)",
+        "time": "12 phút",
+        "content": "Học sinh làm việc cá nhân xác định không gian kết quả của bút bi/bút chì, chọn ngày học bơi, và vòng quay số 0-9."
+      },
+      {
+        "id": "act-4",
+        "title": "Hoạt động 4: Vận dụng & Hướng dẫn tự học về nhà",
+        "time": "5 phút",
+        "content": "Hệ thống lại lý thuyết, dặn dò bài tập 3 trang 102 và chuẩn bị Tiết 2."
+      }
+    ],
+    "isRegistered": true
+  },
+  "observations": [
+    {
+      "id": "sub-1",
+      "observerName": "Trần Minh Tuấn",
+      "timestamp": "22:30",
+      "records": [
+        {
+          "activityId": "act-1",
+          "activityTitle": "Hoạt động 1: Khởi động",
+          "behavior": "Học sinh hào hứng, theo dõi chăm chú video khởi động, nhiều em giơ tay dự đoán.",
+          "solution": "Vì tình huống thực tế và vui vẻ. Phát huy việc dùng trò chơi mở đầu."
+        },
+        {
+          "activityId": "act-2",
+          "activityTitle": "Hoạt động 2: Hình thành kiến thức",
+          "behavior": "Nhóm 1 và Nhóm 2 thực hành rất nhanh nhẹn, ghi chép đúng X={1..6}. Nhóm 4 rút bi còn lúng túng khi viết kí hiệu tập hợp.",
+          "solution": "Vì các em quên cách dùng dấu ngoặc nhọn {}. Giáo viên nên nhắc lại cách viết tập hợp trên bảng trước."
+        },
+        {
+          "activityId": "act-3",
+          "activityTitle": "Hoạt động 3: Luyện tập",
+          "behavior": "Đa số hoàn thành tốt bài 1. Ở bài 2 vòng quay, 3 em bỏ sót số 0.",
+          "solution": "Vì thói quen đếm từ 1. Giáo viên cần nhấn mạnh chữ số 0 khi chữa bài."
+        }
+      ]
+    },
+    {
+      "id": "sub-2",
+      "observerName": "Lê Thị Mai",
+      "timestamp": "22:35",
+      "records": [
+        {
+          "activityId": "act-1",
+          "activityTitle": "Hoạt động 1: Khởi động",
+          "behavior": "Cả lớp sôi nổi, không khí học tập tích cực ngay từ phút đầu.",
+          "solution": "Cách vào bài tự nhiên, tạo tâm lý thoải mái cho học sinh."
+        },
+        {
+          "activityId": "act-2",
+          "activityTitle": "Hoạt động 2: Hình thành kiến thức",
+          "behavior": "Đại diện Nhóm 3 (bốc thăm) tự tin đứng lên báo cáo kết quả, nói to, rõ ràng.",
+          "solution": "Học sinh được tự tay bốc thăm nên rất hào hứng và nhớ lâu."
+        },
+        {
+          "activityId": "act-3",
+          "activityTitle": "Hoạt động 3: Luyện tập",
+          "behavior": "Học sinh tự giác làm bài tập cá nhân, một vài em bàn cuối còn nhìn bài bạn.",
+          "solution": "Giáo viên nên bao quát và di chuyển xuống cuối lớp nhiều hơn."
+        }
+      ]
+    }
+  ],
+  "meetingMinutes": {
+    "conclusion": "Tiết dạy thành công, giáo viên chuẩn bị bài chu đáo, học sinh được thực hành trải nghiệm trực quan. Các nhóm hoạt động sôi nổi. Cần lưu ý nhắc học sinh quy cách viết tập hợp đầy đủ các phần tử gồm cả số 0.",
+    "evaluatedBy": "Tổ Trưởng Chuyên Môn - Tổ Toán THCS Phan Văn Trị"
+  }
+}

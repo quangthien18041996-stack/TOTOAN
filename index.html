@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hệ Thống Dự Giờ Nghiên Cứu Bài Học - THCS Phan Văn Trị</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- QRCode.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Times+New+Roman&display=swap');
+    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    .font-times { font-family: 'Times New Roman', serif; }
+    
+    .paper-sheet {
+      background: #ffffff;
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+    }
+
+    @media print {
+      body * { visibility: hidden; }
+      #printable-area, #printable-area * { visibility: visible; }
+      #printable-area {
+        position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 1cm;
+        box-shadow: none !important; border: none !important;
+      }
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col">
+
+  <!-- TOP APP BAR -->
+  <header class="bg-indigo-700 text-white shadow-md sticky top-0 z-50 no-print">
+    <div class="max-w-6xl mx-auto px-4 py-2.5 flex flex-wrap justify-between items-center gap-3">
+      <div class="flex items-center space-x-2.5">
+        <div class="bg-white/20 p-1.5 rounded-lg">
+          <i data-lucide="graduation-cap" class="w-5 h-5 text-white"></i>
+        </div>
+        <div>
+          <div class="text-[10px] font-semibold text-indigo-200 uppercase tracking-wider">THCS Phan Văn Trị • Quận Gò Vấp</div>
+          <h1 class="text-sm md:text-base font-bold">Hệ Thống Dự Giờ Nghiên Cứu Bài Học</h1>
+        </div>
+      </div>
+      
+      <!-- Session Badge & Reset -->
+      <div class="flex items-center gap-2">
+        <span class="bg-indigo-600 border border-indigo-400 text-white text-[11px] px-2.5 py-1 rounded-full font-medium flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span id="badge-session-title">Toán 8 • Tiết 56</span>
+        </span>
+        <button onclick="resetDefaultDemo()" class="text-[11px] bg-indigo-800 hover:bg-indigo-900 text-indigo-200 hover:text-white px-2 py-1 rounded-md transition" title="Khôi phục dữ liệu mẫu">
+          <i data-lucide="rotate-ccw" class="w-3 h-3 inline"></i> Nạp lại
+        </button>
+      </div>
+    </div>
+
+    <!-- 3 MAIN ROLE TABS -->
+    <div class="max-w-6xl mx-auto px-4 flex border-t border-indigo-600/60 overflow-x-auto text-xs md:text-sm">
+      <button onclick="switchRole('part1')" id="nav-btn-part1" class="role-nav-btn py-2.5 px-4 font-semibold border-b-2 border-white text-white flex items-center gap-1.5 whitespace-nowrap transition">
+        <span class="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center text-[10px]">1</span>
+        <span>GV Giảng Dạy (Đăng Ký & QR)</span>
+      </button>
+      <button onclick="switchRole('part2')" id="nav-btn-part2" class="role-nav-btn py-2.5 px-4 font-medium border-b-2 border-transparent text-indigo-200 hover:text-white flex items-center gap-1.5 whitespace-nowrap transition">
+        <span class="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center text-[10px]">2</span>
+        <span>GV Dự Giờ (Điền Phiếu Cá Nhân)</span>
+      </button>
+      <button onclick="switchRole('part3')" id="nav-btn-part3" class="role-nav-btn py-2.5 px-4 font-medium border-b-2 border-transparent text-indigo-200 hover:text-white flex items-center gap-1.5 whitespace-nowrap transition">
+        <span class="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center text-[10px]">3</span>
+        <span>Tổ Trưởng (Tổng Hợp & Họp SHCM)</span>
+        <span id="nav-obs-count" class="bg-amber-400 text-slate-900 text-[10px] font-bold px-1.5 py-0.2 rounded-full ml-1">2</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN BODY CONTAINER -->
+  <main class="max-w-6xl mx-auto px-4 py-5 flex-1 w-full">
+
+    <!-- ============================================================== -->
+    <!-- PHẦN 1: DÀNH CHO GIÁO VIÊN GIẢNG DẠY (TEACHER SESSION SETUP)    -->
+    <!-- ============================================================== -->
+    <div id="section-part1" class="role-section space-y-5">
+      
+      <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <span class="bg-indigo-50 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded-md uppercase">Phần 1: Cổng Giáo Viên Giảng Dạy</span>
+          <h2 class="text-base md:text-lg font-bold text-slate-800 mt-0.5">Khai Báo Tiết Dạy & Kế Hoạch Bài Dạy (KHBD)</h2>
+          <p class="text-xs text-slate-500">Giáo viên hoàn tất đăng ký để hệ thống tự động sinh Mã QR cho 5 giáo viên (hoặc nhiều hơn) quét vào dự giờ</p>
+        </div>
+        <button onclick="completeRegistration()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-lg shadow-sm transition flex items-center gap-1.5">
+          <i data-lucide="check-circle" class="w-4 h-4"></i>
+          <span>HOÀN TẤT & SINH MÃ QR</span>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        
+        <!-- Form Details -->
+        <div class="lg:col-span-7 bg-white rounded-xl p-5 border border-slate-200 shadow-sm space-y-4">
+          <h3 class="font-bold text-xs uppercase text-slate-700 flex items-center gap-1.5 border-b pb-2">
+            <i data-lucide="edit-3" class="w-3.5 h-3.5 text-indigo-600"></i>
+            Thông tin tiết dạy
+          </h3>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <div>
+              <label class="block text-slate-600 font-medium mb-1">Họ và tên giáo viên dạy *</label>
+              <input type="text" id="p1-teacher" value="Nguyễn Thị Lan" class="w-full p-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none">
+            </div>
+            <div>
+              <label class="block text-slate-600 font-medium mb-1">Môn học *</label>
+              <input type="text" id="p1-subject" value="Toán" class="w-full p-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none">
+            </div>
+            <div>
+              <label class="block text-slate-600 font-medium mb-1">Lớp dạy *</label>
+              <input type="text" id="p1-class" value="8A1" class="w-full p-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none">
+            </div>
+            <div>
+              <label class="block text-slate-600 font-medium mb-1">Tiết dạy & Tuần *</label>
+              <input type="text" id="p1-period" value="Tiết 56 (Tuần 28)" class="w-full p-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none">
+            </div>
+            <div class="sm:col-span-2">
+              <label class="block text-slate-600 font-medium mb-1">Tên bài dạy *</label>
+              <input type="text" id="p1-lesson" value="Bài 1. Phép thử nghiệm – Sự kiện (Chương 9)" class="w-full p-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none font-semibold text-slate-800">
+            </div>
+            <div>
+              <label class="block text-slate-600 font-medium mb-1">Thời gian giảng dạy *</label>
+              <input type="text" id="p1-time" value="27/03/2025 - 08:00" class="w-full p-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none">
+            </div>
+            <div>
+              <label class="block text-slate-600 font-medium mb-1">Trường học</label>
+              <input type="text" id="p1-school" value="THCS Phan Văn Trị" class="w-full p-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none">
+            </div>
+          </div>
+
+          <!-- Lesson plan activities -->
+          <div class="pt-2 border-t border-slate-100 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <label class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                <i data-lucide="layers" class="w-3.5 h-3.5 text-indigo-600"></i>
+                Tiến trình hoạt động bài học (Sẽ tự động nạp vào Cột 1 của Phiếu dự giờ từng giáo viên)
+              </label>
+            </div>
+            
+            <div id="p1-activity-preview" class="space-y-2 text-xs">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- QR Code display -->
+        <div class="lg:col-span-5 space-y-4">
+          <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm text-center flex flex-col items-center">
+            <span class="bg-emerald-50 text-emerald-700 text-xs font-bold px-3 py-1 rounded-full mb-2">
+              MÃ QR DÀNH CHO GV DỰ GIỜ
+            </span>
+            <h4 class="font-bold text-slate-800 text-sm" id="qr-session-title">Toán 8 • Bài 1: Phép thử nghiệm</h4>
+            <p class="text-[11px] text-slate-500 mt-0.5 mb-3">Mỗi giáo viên quét mã này bằng điện thoại để mở 1 tờ phiếu riêng của mình</p>
+            
+            <div class="p-3 bg-white rounded-xl shadow-inner border border-slate-200 inline-block">
+              <div id="qrcode-container" class="flex justify-center"></div>
+            </div>
+
+            <div class="mt-3 bg-slate-50 p-2.5 rounded-lg border border-slate-100 w-full text-[11px] text-slate-600 text-left">
+              <strong>Đường dẫn trực tiếp:</strong>
+              <div class="font-mono text-indigo-600 select-all break-all mt-0.5" id="qr-direct-link">http://localhost:8080/index.html?role=part2</div>
+            </div>
+
+            <button onclick="switchRole('part2')" class="w-full mt-3 bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition">
+              <i data-lucide="arrow-right-circle" class="w-4 h-4"></i>
+              Mở Thử Phiếu Dự Giờ (Phần 2)
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- PHẦN 2: DÀNH CHO GIÁO VIÊN DỰ GIỜ (MỖI NGƯỜI 1 MẪU RIÊNG BIỆT) -->
+    <!-- ============================================================== -->
+    <div id="section-part2" class="role-section hidden space-y-4">
+      
+      <!-- Observer Device Status Bar -->
+      <div class="no-print bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm">
+            <i data-lucide="user" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-slate-500">Phiếu của:</span>
+              <span id="p2-device-observer-label" class="font-bold text-indigo-900 text-sm">Cô Nguyễn Thị Lan</span>
+              <button onclick="openNameModal()" class="text-[11px] text-indigo-600 hover:underline flex items-center gap-0.5">
+                <i data-lucide="edit-2" class="w-3 h-3"></i> Đổi tên
+              </button>
+            </div>
+            <span class="text-[10px] text-emerald-600 flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Tờ phiếu riêng biệt trên thiết bị này (Tự động lưu)
+            </span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button onclick="p2SubmitObservation()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-lg shadow-sm flex items-center gap-1.5 transition active:scale-95">
+            <i data-lucide="send" class="w-3.5 h-3.5"></i>
+            <span>HOÀN THÀNH DỰ GIỜ</span>
+          </button>
+          <button onclick="p2ExportIndividualDoc()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3 py-2 rounded-lg shadow-sm flex items-center gap-1.5 transition">
+            <i data-lucide="file-down" class="w-3.5 h-3.5"></i>
+            <span>Xuất Word / PDF Ký Số</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Toolbar (Voice / Quick tags) -->
+      <div class="no-print bg-gradient-to-r from-indigo-50 to-blue-50 border border-indigo-200 p-2.5 rounded-xl flex flex-wrap items-center justify-between gap-2 text-xs">
+        <div class="flex flex-wrap items-center gap-1.5">
+          <span class="font-bold text-indigo-900 text-[11px] flex items-center gap-1">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-indigo-600"></i> Gợi ý nhanh:
+          </span>
+          <button type="button" onclick="p2QuickTag('Học sinh hào hứng, tích cực tham gia thao tác')" class="bg-white border border-slate-200 text-emerald-700 hover:bg-emerald-50 px-2 py-0.5 rounded text-[11px]">✨ Hào hứng</button>
+          <button type="button" onclick="p2QuickTag('Nhóm phân công nhiệm vụ rõ ràng, phối hợp nhịp nhàng')" class="bg-white border border-slate-200 text-emerald-700 hover:bg-emerald-50 px-2 py-0.5 rounded text-[11px]">🤝 Hợp tác tốt</button>
+          <button type="button" onclick="p2QuickTag('Học sinh hiểu lệnh nhanh và tự giác làm bài')" class="bg-white border border-slate-200 text-emerald-700 hover:bg-emerald-50 px-2 py-0.5 rounded text-[11px]">⚡ Hiểu lệnh nhanh</button>
+          <button type="button" onclick="p2QuickTag('Một vài học sinh còn lúng túng khi thực hiện')" class="bg-white border border-slate-200 text-amber-700 hover:bg-amber-50 px-2 py-0.5 rounded text-[11px]">❓ Lúng túng</button>
+          <button type="button" onclick="p2QuickTag('Chỉ có 1-2 em làm, các thành viên khác thụ động')" class="bg-white border border-slate-200 text-amber-700 hover:bg-amber-50 px-2 py-0.5 rounded text-[11px]">👥 1-2 em làm</button>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="p2VoiceRecordActive()" id="p2-voice-btn" class="bg-white border border-indigo-300 text-indigo-700 hover:bg-indigo-50 px-2.5 py-1 rounded flex items-center gap-1 text-[11px] font-semibold">
+            <i data-lucide="mic" class="w-3.5 h-3.5 text-indigo-600"></i>
+            <span id="p2-voice-label">Nói để nhập</span>
+          </button>
+          <button type="button" onclick="p2AddRow()" class="bg-indigo-600 text-white hover:bg-indigo-700 px-2.5 py-1 rounded flex items-center gap-1 text-[11px] font-medium">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i> Thêm dòng
+          </button>
+        </div>
+      </div>
+
+      <!-- ============================================================== -->
+      <!-- THE EXACT OFFICIAL OBSERVATION SHEET (PHIEU DU GIO.DOC)       -->
+      <!-- ============================================================== -->
+      <div class="paper-sheet p-6 md:p-10 font-times text-slate-900 mx-auto max-w-4xl" id="p2-sheet-container">
+        
+        <!-- Header -->
+        <div class="grid grid-cols-2 text-center text-sm md:text-base mb-6">
+          <div>
+            <div class="font-normal uppercase text-xs md:text-sm">PHÒNG GIÁO DỤC VÀ ĐÀO TẠO GÒ VẤP</div>
+            <div class="font-bold uppercase text-xs md:text-sm">TRƯỜNG THCS PHAN VĂN TRỊ</div>
+            <div class="w-24 h-[1px] bg-slate-400 mx-auto mt-1"></div>
+          </div>
+          <div>
+            <div class="font-bold uppercase text-xs md:text-sm">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</div>
+            <div class="font-bold text-xs md:text-sm">Độc lập – Tự do – Hạnh phúc</div>
+            <div class="w-32 h-[1px] bg-slate-400 mx-auto mt-1"></div>
+          </div>
+        </div>
+
+        <!-- Title -->
+        <div class="text-center my-6">
+          <h2 class="text-lg md:text-xl font-bold uppercase tracking-wide">
+            PHIẾU QUAN SÁT HỌC SINH THEO NGHIÊN CỨU BÀI HỌC
+          </h2>
+        </div>
+
+        <!-- Meta info lines -->
+        <div class="space-y-2 text-sm md:text-base mb-6">
+          <div class="flex items-center gap-2">
+            <span class="font-bold whitespace-nowrap">Họ và tên:</span>
+            <span id="p2-display-observer-name" class="font-semibold text-indigo-900 border-b border-dotted border-slate-600 flex-1 px-1">Cô Nguyễn Thị Lan</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="font-bold whitespace-nowrap">Tên bài dạy:</span>
+            <span id="p2-sheet-lesson" class="font-semibold border-b border-dotted border-slate-600 flex-1 px-1">Bài 1. Phép thử nghiệm – Sự kiện (Chương 9)</span>
+          </div>
+          <div class="flex flex-wrap items-center gap-x-6 gap-y-1">
+            <p><strong>Môn:</strong> <span id="p2-sheet-subject">Toán</span></p>
+            <p>– <strong>Lớp:</strong> <span id="p2-sheet-class" class="font-semibold">8A1</span></p>
+            <p>– <strong>Trường:</strong> THCS Phan Văn Trị</p>
+            <p>– <strong>Tiết:</strong> <span id="p2-sheet-period">Tiết 56</span></p>
+          </div>
+        </div>
+
+        <!-- The Observation Table (3 Columns) -->
+        <table class="w-full border-collapse border border-slate-800 text-xs md:text-sm mb-6" id="p2-observation-table">
+          <thead>
+            <tr class="bg-slate-100 text-center font-bold">
+              <th class="border border-slate-800 p-2.5 w-1/4">Nội dung hoạt động</th>
+              <th class="border border-slate-800 p-2.5 w-5/12">Biểu hiện của học sinh</th>
+              <th class="border border-slate-800 p-2.5 w-1/3">Nguyên nhân, biện pháp</th>
+            </tr>
+          </thead>
+          <tbody id="p2-sheet-tbody">
+            <!-- Dynamic rows editable directly by the observer -->
+          </tbody>
+        </table>
+
+        <!-- Exact Guidelines from the School Template -->
+        <div class="text-xs md:text-sm italic space-y-1 border-t border-slate-300 pt-4 text-slate-800">
+          <p class="font-bold not-italic">Ghi chú :</p>
+          <p>• <strong>ND hoạt động:</strong> Tên hoạt động; nội dung của hoạt động, nhiệm vụ, câu hỏi, bài tập,...</p>
+          <p>• <strong>Biểu hiện của HS:</strong> Cảm xúc, thái độ, hành vi, trả lời câu hỏi; bài tập, sản phẩm....</p>
+          <p>• <strong>Nguyên nhân, biện pháp:</strong> Vì ...Nên ...Có thể ...</p>
+          <p class="text-slate-900 font-semibold">• <em>Tránh chỉ chú ý đến tiến trình tiết học, nội dung kiến thức lời nói,...của giáo viên.</em></p>
+          <p class="mt-2 font-bold not-italic text-slate-900">- Người dự giờ tập trung vào việc học của HS là chủ yếu và trả lời được các câu hỏi gợi ý sau:</p>
+          <p>+ Thái độ của HS khi tham gia học thể hiện qua nét mặt, hành vi như thế nào? ( thích thú, tích cực, chán nản, uể oải…)</p>
+          <p>+ Khả năng thực hiện các hoạt động học tập có vừa sức với HS không? HS có hiểu lời hướng dẫn của GV không?</p>
+          <p>+ Sự tương tác giữa các HS trong giờ học như thế nào?</p>
+          <p>+ Hoạt động nào HS hứng thú hay không hứng thú? Vì sao?</p>
+          <p>+ Hoạt động nào thu hút được tất cả HS tham gia? Vì sao?</p>
+        </div>
+
+        <!-- Signature area -->
+        <div class="mt-8 grid grid-cols-2 text-center text-xs md:text-sm">
+          <div></div>
+          <div>
+            <p class="italic text-xs">TP. Hồ Chí Minh, ngày ...... tháng ...... năm 202...</p>
+            <p class="font-bold uppercase mt-1">Người dự giờ</p>
+            <p class="text-[11px] italic text-slate-500">(Ký số / Ký và ghi rõ họ tên)</p>
+            <div class="h-16"></div>
+            <p class="font-semibold" id="p2-signature-name">Cô Nguyễn Thị Lan</p>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- PHẦN 3: DÀNH CHO TỔ TRƯỞNG CHUYÊN MÔN (SYNTHESIS & MINUTES)     -->
+    <!-- ============================================================== -->
+    <div id="section-part3" class="role-section hidden space-y-5">
+      
+      <!-- Top Action Bar -->
+      <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <span class="bg-indigo-50 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded-md uppercase">Phần 3: Cổng Tổ Trưởng / Thư Ký</span>
+          <h2 class="text-base md:text-lg font-bold text-slate-800 mt-0.5">Tổng Hợp Kết Quả Dự Giờ & Biên Bản Sinh Hoạt Chuyên Môn</h2>
+          <p class="text-xs text-slate-500">Gom toàn bộ kết quả từ các phiếu dự giờ của 5 giáo viên về 1 phiếu tổng hợp của Tổ chuyên môn</p>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button onclick="p3SynthesizeResults()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-lg shadow-sm transition flex items-center gap-1.5">
+            <i data-lucide="merge" class="w-4 h-4"></i>
+            <span>TỔNG HỢP KẾT QUẢ DỰ GIỜ</span>
+          </button>
+          <button onclick="p3ExportMasterDoc()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3 py-2 rounded-lg shadow-sm transition flex items-center gap-1.5">
+            <i data-lucide="file-text" class="w-4 h-4"></i>
+            <span>Tải File Word Tổ (.doc)</span>
+          </button>
+          <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold px-3 py-2 rounded-lg shadow-sm transition flex items-center gap-1.5">
+            <i data-lucide="printer" class="w-4 h-4"></i>
+            <span>In / Lưu PDF Để Ký Số</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Submitted Teachers Status -->
+      <div class="bg-white rounded-xl p-3.5 border border-slate-200 shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-xs font-bold text-slate-700 uppercase flex items-center gap-1.5">
+            <i data-lucide="users" class="w-3.5 h-3.5 text-indigo-600"></i>
+            Danh sách giáo viên đã nộp phiếu dự giờ (<span id="p3-sub-count">0</span> thầy/cô)
+          </h3>
+          <span class="text-[11px] text-slate-400">Tự động cập nhật khi các giáo viên nộp bài từ điện thoại</span>
+        </div>
+        <div id="p3-teachers-tags" class="flex flex-wrap gap-2 text-xs">
+          <!-- Rendered teachers tags -->
+        </div>
+      </div>
+
+      <!-- Official Synthesized Document -->
+      <div class="paper-sheet p-6 md:p-10 font-times text-slate-900 mx-auto max-w-4xl" id="printable-area">
+        
+        <!-- Document Header -->
+        <div class="grid grid-cols-2 text-center text-sm md:text-base mb-6">
+          <div>
+            <div class="uppercase text-xs md:text-sm">PHÒNG GIÁO DỤC VÀ ĐÀO TẠO GÒ VẤP</div>
+            <div class="font-bold uppercase text-xs md:text-sm">TRƯỜNG THCS PHAN VĂN TRỊ - TỔ TOÁN</div>
+            <div class="w-24 h-[1px] bg-slate-400 mx-auto mt-1"></div>
+          </div>
+          <div>
+            <div class="font-bold uppercase text-xs md:text-sm">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</div>
+            <div class="font-bold text-xs md:text-sm">Độc lập – Tự do – Hạnh phúc</div>
+            <div class="w-32 h-[1px] bg-slate-400 mx-auto mt-1"></div>
+          </div>
+        </div>
+
+        <div class="text-center my-6">
+          <h2 class="text-base md:text-lg font-bold uppercase tracking-wide">
+            PHIẾU TỔNG HỢP KẾT QUẢ DỰ GIỜ THEO NGHIÊN CỨU BÀI HỌC
+          </h2>
+          <p class="text-xs italic text-slate-600">(Biên bản sinh hoạt chuyên môn của Tổ Toán)</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 text-xs md:text-sm mb-4">
+          <p><strong>Tên bài dạy:</strong> <span id="p3-doc-lesson">Bài 1. Phép thử nghiệm – Sự kiện (Toán 8)</span></p>
+          <p><strong>Giáo viên giảng dạy:</strong> <span id="p3-doc-teacher">Cô Nguyễn Thị Lan</span></p>
+          <p><strong>Lớp - Tiết:</strong> <span id="p3-doc-class">Lớp 8A1 • Tiết 56</span></p>
+          <p><strong>Ngày thực hiện:</strong> <span id="p3-doc-time">27/03/2025</span></p>
+          <p class="col-span-2"><strong>Các giáo viên dự giờ:</strong> <span id="p3-doc-observers" class="font-semibold text-indigo-900">...</span></p>
+        </div>
+
+        <!-- Synthesized Table -->
+        <table class="w-full border-collapse border border-slate-800 text-xs md:text-sm mb-6">
+          <thead>
+            <tr class="bg-slate-100 text-center font-bold">
+              <th class="border border-slate-800 p-2.5 w-1/4">Nội dung hoạt động (Tiến trình bài dạy)</th>
+              <th class="border border-slate-800 p-2.5 w-5/12">Tổng hợp biểu hiện của học sinh (Từ các GV dự)</th>
+              <th class="border border-slate-800 p-2.5 w-1/3">Tổng hợp nguyên nhân & Biện pháp của tổ</th>
+            </tr>
+          </thead>
+          <tbody id="p3-master-tbody">
+            <!-- Rendered synthesized activities and observations -->
+          </tbody>
+        </table>
+
+        <!-- Meeting Conclusion Textarea -->
+        <div class="space-y-1.5 pt-2">
+          <label class="block font-bold text-xs md:text-sm text-slate-900 uppercase">
+            Ý KIẾN KẾT LUẬN & THỐNG NHẤT CỦA TỔ CHUYÊN MÔN (Sau khi họp góp ý):
+          </label>
+          <textarea id="p3-conclusion-text" rows="3" onchange="p3SaveConclusion()" class="w-full text-xs md:text-sm p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none leading-relaxed" placeholder="Ghi nhận kết luận thống nhất của tổ sau khi thảo luận góp ý cho tiết dạy..."></textarea>
+        </div>
+
+        <!-- Signatures -->
+        <div class="mt-8 grid grid-cols-2 text-center text-xs md:text-sm">
+          <div>
+            <p class="font-bold uppercase">Giáo viên giảng dạy</p>
+            <p class="text-[11px] italic text-slate-500">(Ký số / Ký tên)</p>
+            <div class="h-16"></div>
+            <p class="font-semibold" id="p3-sig-teacher">Cô Nguyễn Thị Lan</p>
+          </div>
+          <div>
+            <p class="italic text-xs">TP. Hồ Chí Minh, ngày ...... tháng ...... năm 202...</p>
+            <p class="font-bold uppercase mt-1">Tổ trưởng chuyên môn</p>
+            <p class="text-[11px] italic text-slate-500">(Ký số / Ký tên)</p>
+            <div class="h-16"></div>
+            <p class="font-semibold">(Ký và ghi rõ họ tên)</p>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- MODAL: ĐỊNH DANH GIÁO VIÊN KHI MỞ TRÊN ĐIỆN THOẠI (WELCOME DIALOG) -->
+  <div id="modal-name-identify" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="text-center space-y-1">
+        <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-2">
+          <i data-lucide="user-check" class="w-6 h-6"></i>
+        </div>
+        <h3 class="font-bold text-base text-slate-800">Chào Mừng Thầy/Cô Đến Dự Giờ!</h3>
+        <p class="text-xs text-slate-500">Vui lòng chọn hoặc nhập Họ và tên để mở <strong>Phiếu dự giờ riêng</strong> trên thiết bị này:</p>
+      </div>
+
+      <!-- Quick Preset Teachers in Math Dept -->
+      <div>
+        <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Chọn nhanh tên giáo viên trong tổ:</label>
+        <div class="grid grid-cols-2 gap-1.5 text-xs" id="modal-quick-names">
+          <button type="button" onclick="modalPickName('Cô Nguyễn Thị Lan')" class="p-2 rounded-lg border border-slate-200 hover:border-indigo-500 hover:bg-indigo-50 text-slate-700 font-medium text-left transition">👤 Cô Nguyễn Thị Lan</button>
+          <button type="button" onclick="modalPickName('Thầy Trần Minh Tuấn')" class="p-2 rounded-lg border border-slate-200 hover:border-indigo-500 hover:bg-indigo-50 text-slate-700 font-medium text-left transition">👤 Thầy Trần Minh Tuấn</button>
+          <button type="button" onclick="modalPickName('Cô Lê Thị Mai')" class="p-2 rounded-lg border border-slate-200 hover:border-indigo-500 hover:bg-indigo-50 text-slate-700 font-medium text-left transition">👤 Cô Lê Thị Mai</button>
+          <button type="button" onclick="modalPickName('Thầy Phạm Văn Minh')" class="p-2 rounded-lg border border-slate-200 hover:border-indigo-500 hover:bg-indigo-50 text-slate-700 font-medium text-left transition">👤 Thầy Phạm Văn Minh</button>
+          <button type="button" onclick="modalPickName('Cô Hoàng Thị Hương')" class="p-2 rounded-lg border border-slate-200 hover:border-indigo-500 hover:bg-indigo-50 text-slate-700 font-medium text-left transition">👤 Cô Hoàng Thị Hương</button>
+          <button type="button" onclick="modalPickName('Thầy Vũ Đình Trọng')" class="p-2 rounded-lg border border-slate-200 hover:border-indigo-500 hover:bg-indigo-50 text-slate-700 font-medium text-left transition">👤 Thầy Vũ Đình Trọng</button>
+        </div>
+      </div>
+
+      <!-- Or Type Custom Name -->
+      <div>
+        <label class="block text-xs font-semibold text-slate-700 mb-1">Hoặc nhập họ tên của thầy/cô:</label>
+        <input type="text" id="modal-custom-name" placeholder="Ví dụ: Thầy Nguyễn Văn A..." class="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none">
+      </div>
+
+      <div class="pt-2 flex gap-2">
+        <button onclick="confirmIdentifyName()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl text-xs shadow-md transition flex items-center justify-center gap-1.5">
+          <span>BẮT ĐẦU ĐIỀN PHIẾU CỦA TÔI</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="bg-white border-t border-slate-200 py-3 text-center text-xs text-slate-500 no-print">
+    Hệ Thống Dự Giờ Nghiên Cứu Bài Học Số Hóa • Tổ Toán Trường THCS Phan Văn Trị, Gò Vấp
+  </footer>
+
+  <!-- SCRIPT LOGIC -->
+  <script>
+    // State & Fallback Data for Static Web Hosting (GitHub Pages)
+    const DEFAULT_INIT_DATA = {
+      session: {
+        id: "TOAN8-T56-2025",
+        teacherName: "Nguyễn Thị Lan",
+        subject: "Toán",
+        className: "8A1",
+        period: "Tiết 56 (Tuần 28)",
+        teachingTime: "27/03/2025 - 08:00",
+        lessonTitle: "Bài 1. Phép thử nghiệm – Sự kiện (Chương 9)",
+        school: "THCS Phan Văn Trị",
+        activities: [
+          {
+            id: "act-1",
+            title: "Hoạt động 1: Khởi động (Trò chơi xúc xắc & bốc thăm)",
+            time: "5 phút",
+            content: "Giáo viên tổ chức trò chơi dự đoán số chấm xúc xắc nhằm kích thích sự tò mò của học sinh về kết quả không thể đoán trước."
+          },
+          {
+            id: "act-2",
+            title: "Hoạt động 2: Hình thành kiến thức (Thực nghiệm 4 nhóm)",
+            time: "20 phút",
+            content: "Chia 4 nhóm: Nhóm 1 (Gieo xúc xắc), Nhóm 2 (Tung đồng xu), Nhóm 3 (Bốc thăm 1..3), Nhóm 4 (Rút bi màu). Rút ra khái niệm phép thử nghiệm và tập hợp kết quả X."
+          },
+          {
+            id: "act-3",
+            title: "Hoạt động 3: Luyện tập (Bài 1, Bài 2 SGK trang 107)",
+            time: "12 phút",
+            content: "Học sinh làm việc cá nhân xác định không gian kết quả của bút bi/bút chì, chọn ngày học bơi, và vòng quay số 0-9."
+          },
+          {
+            id: "act-4",
+            title: "Hoạt động 4: Vận dụng & Hướng dẫn tự học về nhà",
+            time: "5 phút",
+            content: "Hệ thống lại lý thuyết, dặn dò bài tập 3 trang 102 và chuẩn bị Tiết 2."
+          }
+        ]
+      },
+      observations: [
+        {
+          id: "sub-1",
+          observerName: "Trần Minh Tuấn",
+          timestamp: "22:30",
+          records: [
+            {
+              activityId: "act-1",
+              activityTitle: "Hoạt động 1: Khởi động (Trò chơi xúc xắc & bốc thăm)",
+              behavior: "Học sinh hào hứng, theo dõi chăm chú video khởi động, nhiều em giơ tay dự đoán.",
+              solution: "Vì tình huống thực tế và vui vẻ. Phát huy việc dùng trò chơi mở đầu."
+            },
+            {
+              activityId: "act-2",
+              activityTitle: "Hoạt động 2: Hình thành kiến thức (Thực nghiệm 4 nhóm)",
+              behavior: "Nhóm 1 và Nhóm 2 thực hành rất nhanh nhẹn, ghi chép đúng X={1..6}. Nhóm 4 rút bi còn lúng túng khi viết kí hiệu tập hợp.",
+              solution: "Vì các em quên cách dùng dấu ngoặc nhọn {}. Giáo viên nên nhắc lại cách viết tập hợp trên bảng trước."
+            },
+            {
+              activityId: "act-3",
+              activityTitle: "Hoạt động 3: Luyện tập (Bài 1, Bài 2 SGK trang 107)",
+              behavior: "Đa số hoàn thành tốt bài 1. Ở bài 2 vòng quay, 3 em bỏ sót số 0.",
+              solution: "Vì thói quen đếm từ 1. Giáo viên cần nhấn mạnh chữ số 0 khi chữa bài."
+            }
+          ]
+        },
+        {
+          id: "sub-2",
+          observerName: "Lê Thị Mai",
+          timestamp: "22:35",
+          records: [
+            {
+              activityId: "act-1",
+              activityTitle: "Hoạt động 1: Khởi động (Trò chơi xúc xắc & bốc thăm)",
+              behavior: "Cả lớp sôi nổi, không khí học tập tích cực ngay từ phút đầu.",
+              solution: "Cách vào bài tự nhiên, tạo tâm lý thoải mái cho học sinh."
+            },
+            {
+              activityId: "act-2",
+              activityTitle: "Hoạt động 2: Hình thành kiến thức (Thực nghiệm 4 nhóm)",
+              behavior: "Đại diện Nhóm 3 (bốc thăm) tự tin đứng lên báo cáo kết quả, nói to, rõ ràng.",
+              solution: "Học sinh được tự tay bốc thăm nên rất hào hứng và nhớ lâu."
+            },
+            {
+              activityId: "act-3",
+              activityTitle: "Hoạt động 3: Luyện tập (Bài 1, Bài 2 SGK trang 107)",
+              behavior: "Học sinh tự giác làm bài tập cá nhân, một vài em bàn cuối còn nhìn bài bạn.",
+              solution: "Giáo viên nên bao quát và di chuyển xuống cuối lớp nhiều hơn."
+            }
+          ]
+        }
+      ],
+      meetingMinutes: {
+        conclusion: "Tiết dạy thành công, giáo viên chuẩn bị bài chu đáo, học sinh được thực hành trải nghiệm trực quan. Các nhóm hoạt động sôi nổi. Cần lưu ý nhắc học sinh quy cách viết tập hợp đầy đủ các phần tử gồm cả số 0."
+      }
+    };
+
+    let appData = JSON.parse(localStorage.getItem('pvt_master_data')) || DEFAULT_INIT_DATA;
+
+    // Current Observer on this specific device
+    let myObserverName = localStorage.getItem('pvt_my_observer_name') || "Cô Nguyễn Thị Lan";
+    let p2Rows = [];
+    let p2ActiveTextarea = null;
+
+    // Initialization
+    window.addEventListener('DOMContentLoaded', async () => {
+      lucide.createIcons();
+      await fetchServerData();
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const roleParam = urlParams.get('role');
+      if (roleParam === 'part2') {
+        switchRole('part2');
+        if (!localStorage.getItem('pvt_my_observer_name')) {
+          openNameModal();
+        }
+      } else if (roleParam === 'part3') {
+        switchRole('part3');
+      } else {
+        switchRole('part1');
+      }
+    });
+
+    async function fetchServerData() {
+      try {
+        const res = await fetch('/api/data');
+        if (res.ok) {
+          appData = await res.json();
+          localStorage.setItem('pvt_master_data', JSON.stringify(appData));
+        }
+      } catch (e) {
+        console.log("Running in static GitHub Pages mode with localStorage");
+      }
+      renderPart1UI();
+      renderPart2UI();
+      renderPart3UI();
+      lucide.createIcons();
+    }
+
+    function switchRole(roleId) {
+      document.querySelectorAll('.role-section').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.role-nav-btn').forEach(btn => {
+        btn.classList.remove('border-white', 'text-white');
+        btn.classList.add('border-transparent', 'text-indigo-200');
+      });
+
+      const sec = document.getElementById(`section-${roleId}`);
+      const btn = document.getElementById(`nav-btn-${roleId}`);
+      if (sec) sec.classList.remove('hidden');
+      if (btn) {
+        btn.classList.add('border-white', 'text-white');
+        btn.classList.remove('border-transparent', 'text-indigo-200');
+      }
+
+      if (roleId === 'part1') generateQRCode();
+      if (roleId === 'part2') renderPart2UI();
+      if (roleId === 'part3') renderPart3UI();
+
+      lucide.createIcons();
+    }
+
+    // Modal Name Picking for Option 1
+    function openNameModal() {
+      document.getElementById('modal-custom-name').value = myObserverName || '';
+      document.getElementById('modal-name-identify').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function modalPickName(name) {
+      document.getElementById('modal-custom-name').value = name;
+      confirmIdentifyName();
+    }
+
+    function confirmIdentifyName() {
+      const name = document.getElementById('modal-custom-name').value.trim();
+      if (!name) {
+        alert("Vui lòng nhập hoặc chọn họ và tên của thầy/cô!");
+        return;
+      }
+      myObserverName = name;
+      localStorage.setItem('pvt_my_observer_name', myObserverName);
+      document.getElementById('modal-name-identify').classList.add('hidden');
+      renderPart2UI();
+    }
+
+    // ==========================================
+    // PHẦN 1 LOGIC
+    // ==========================================
+    function renderPart1UI() {
+      const s = appData.session;
+      if (!s) return;
+
+      document.getElementById('p1-teacher').value = s.teacherName || '';
+      document.getElementById('p1-subject').value = s.subject || 'Toán';
+      document.getElementById('p1-class').value = s.className || '';
+      document.getElementById('p1-period').value = s.period || '';
+      document.getElementById('p1-lesson').value = s.lessonTitle || '';
+      document.getElementById('p1-time').value = s.teachingTime || '';
+      document.getElementById('p1-school').value = s.school || 'THCS Phan Văn Trị';
+
+      document.getElementById('badge-session-title').innerText = `${s.subject || 'Toán'} ${s.className || ''} • ${s.period || ''}`;
+      document.getElementById('qr-session-title').innerText = `${s.subject || 'Toán'} ${s.className || ''} • ${s.lessonTitle || ''}`;
+
+      const previewContainer = document.getElementById('p1-activity-preview');
+      if (s.activities) {
+        previewContainer.innerHTML = s.activities.map((a, i) => `
+          <div class="p-2 rounded-lg border border-slate-200 bg-slate-50 flex items-start gap-2">
+            <span class="font-bold text-indigo-700 w-14">HĐ ${i+1}:</span>
+            <div class="flex-1">
+              <span class="font-semibold text-slate-800">${a.title}</span> <span class="text-slate-400">(${a.time})</span>
+              <div class="text-[11px] text-slate-500">${a.content}</div>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      generateQRCode();
+    }
+
+    async function completeRegistration() {
+      const updatedSession = {
+        id: "SESSION-" + Date.now(),
+        teacherName: document.getElementById('p1-teacher').value.trim(),
+        subject: document.getElementById('p1-subject').value.trim(),
+        className: document.getElementById('p1-class').value.trim(),
+        period: document.getElementById('p1-period').value.trim(),
+        lessonTitle: document.getElementById('p1-lesson').value.trim(),
+        teachingTime: document.getElementById('p1-time').value.trim(),
+        school: document.getElementById('p1-school').value.trim(),
+        activities: appData.session.activities || []
+      };
+
+      try {
+        await fetch('/api/register-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updatedSession)
+        });
+      } catch (e) {
+        // Fallback for static hosting
+        appData.session = updatedSession;
+        localStorage.setItem('pvt_master_data', JSON.stringify(appData));
+      }
+      appData.session = updatedSession;
+      alert("✓ HOÀN TẤT ĐĂNG KÝ TIẾT DẠY!\nMã QR đã sẵn sàng để 5 giáo viên dự giờ quét mã vào Phần 2.");
+      generateQRCode();
+      renderPart1UI();
+    }
+
+    async function generateQRCode() {
+      let targetUrl = window.location.href.split('?')[0].split('#')[0] + '?role=part2';
+      try {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+          const res = await fetch('/api/network-info');
+          if (res.ok) {
+            const info = await res.json();
+            const port = window.location.port ? `:${window.location.port}` : '';
+            targetUrl = `http://${info.ip}${port}/index.html?role=part2`;
+          }
+        }
+      } catch (e) {}
+
+      document.getElementById('qr-direct-link').innerText = targetUrl;
+
+      const qrContainer = document.getElementById('qrcode-container');
+      qrContainer.innerHTML = '';
+      if (typeof QRCode !== 'undefined') {
+        new QRCode(qrContainer, {
+          text: targetUrl,
+          width: 160,
+          height: 160,
+          colorDark: "#1e1b4b",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.M
+        });
+      }
+    }
+
+    // ==========================================
+    // PHẦN 2 LOGIC: PHIẾU CÁ NHÂN CỦA TỪNG NGƯỜI
+    // ==========================================
+    function renderPart2UI() {
+      const s = appData.session;
+      if (!s) return;
+
+      document.getElementById('p2-device-observer-label').innerText = myObserverName;
+      document.getElementById('p2-display-observer-name').innerText = myObserverName;
+      document.getElementById('p2-signature-name').innerText = myObserverName;
+
+      document.getElementById('p2-sheet-lesson').innerText = s.lessonTitle || '';
+      document.getElementById('p2-sheet-subject').innerText = s.subject || 'Toán';
+      document.getElementById('p2-sheet-class').innerText = s.className || '';
+      document.getElementById('p2-sheet-period').innerText = s.period || '';
+
+      // Check if local storage has draft for this observer
+      const localDraftKey = `pvt_draft_${myObserverName.replace(/\s+/g, '_')}`;
+      const savedDraft = localStorage.getItem(localDraftKey);
+
+      if (savedDraft) {
+        p2Rows = JSON.parse(savedDraft);
+      } else {
+        // Look up in server observations
+        const existing = (appData.observations || []).find(o => o.observerName === myObserverName);
+        if (existing && existing.records && existing.records.length > 0) {
+          p2Rows = JSON.parse(JSON.stringify(existing.records));
+        } else if (s.activities) {
+          p2Rows = s.activities.map(a => ({
+            activityId: a.id,
+            activityTitle: a.title,
+            behavior: '',
+            solution: ''
+          }));
+        }
+      }
+
+      p2RenderTableRows();
+    }
+
+    function p2RenderTableRows() {
+      const tbody = document.getElementById('p2-sheet-tbody');
+      if (p2Rows.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" class="border border-slate-800 p-4 text-center italic text-slate-400">Chưa có hoạt động nào. Bấm nút "Thêm dòng" để thêm.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = p2Rows.map((row, idx) => `
+        <tr class="align-top">
+          <td class="border border-slate-800 p-2 font-bold text-slate-900 bg-slate-50/40 w-1/4">
+            <textarea onchange="p2UpdateRow(${idx}, 'activityTitle', this.value)" rows="3" class="w-full bg-transparent font-bold text-xs md:text-sm p-1 rounded outline-none resize-none focus:bg-white focus:ring-1 focus:ring-indigo-400">${row.activityTitle || ''}</textarea>
+            <div class="no-print mt-1 text-right">
+              <button onclick="p2DeleteRow(${idx})" class="text-[10px] text-slate-400 hover:text-red-500">Xóa dòng</button>
+            </div>
+          </td>
+          <td class="border border-slate-800 p-2 w-5/12">
+            <textarea onfocus="p2SetActiveInput(this)" oninput="p2UpdateRow(${idx}, 'behavior', this.value)" rows="4" placeholder="Nhập cảm xúc, thái độ, hành vi, trả lời câu hỏi, thao tác của học sinh..." class="w-full text-xs md:text-sm p-1.5 rounded outline-none border-0 focus:ring-1 focus:ring-indigo-400 resize-y leading-relaxed">${row.behavior || ''}</textarea>
+          </td>
+          <td class="border border-slate-800 p-2 w-1/3">
+            <textarea onfocus="p2SetActiveInput(this)" oninput="p2UpdateRow(${idx}, 'solution', this.value)" rows="4" placeholder="Vì ... Nên ... Có thể ..." class="w-full text-xs md:text-sm p-1.5 rounded outline-none border-0 focus:ring-1 focus:ring-indigo-400 resize-y leading-relaxed">${row.solution || ''}</textarea>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function p2UpdateRow(idx, field, value) {
+      if (p2Rows[idx]) {
+        p2Rows[idx][field] = value;
+        // Auto-save draft on this device
+        const localDraftKey = `pvt_draft_${myObserverName.replace(/\s+/g, '_')}`;
+        localStorage.setItem(localDraftKey, JSON.stringify(p2Rows));
+      }
+    }
+
+    function p2AddRow() {
+      p2Rows.push({
+        activityTitle: `Hoạt động ${p2Rows.length + 1}: `,
+        behavior: '',
+        solution: ''
+      });
+      p2RenderTableRows();
+    }
+
+    function p2DeleteRow(idx) {
+      if (confirm("Xóa dòng hoạt động này?")) {
+        p2Rows.splice(idx, 1);
+        p2RenderTableRows();
+      }
+    }
+
+    function p2SetActiveInput(el) {
+      p2ActiveTextarea = el;
+    }
+
+    function p2QuickTag(text) {
+      if (!p2ActiveTextarea) {
+        const first = document.querySelector('#p2-sheet-tbody textarea');
+        if (first) p2ActiveTextarea = first;
+      }
+
+      if (p2ActiveTextarea) {
+        if (p2ActiveTextarea.value.trim()) {
+          p2ActiveTextarea.value += "; " + text;
+        } else {
+          p2ActiveTextarea.value = text;
+        }
+        p2ActiveTextarea.dispatchEvent(new Event('input'));
+        p2ActiveTextarea.focus();
+      } else {
+        alert("Thầy/cô vui lòng nhấp chuột vào ô cần điền trước!");
+      }
+    }
+
+    // Voice to text
+    let p2SpeechRec = null;
+    let p2IsRecording = false;
+
+    function p2VoiceRecordActive() {
+      if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        alert("Trình duyệt chưa hỗ trợ Web Speech API. Thầy/cô hãy sử dụng Google Chrome trên điện thoại hoặc máy tính để dùng tính năng này!");
+        return;
+      }
+
+      if (p2IsRecording) {
+        if (p2SpeechRec) p2SpeechRec.stop();
+        p2IsRecording = false;
+        document.getElementById('p2-voice-label').innerText = "Nói để nhập";
+        return;
+      }
+
+      if (!p2ActiveTextarea) {
+        const textareas = document.querySelectorAll('#p2-sheet-tbody textarea');
+        if (textareas.length > 1) p2ActiveTextarea = textareas[1];
+      }
+
+      const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
+      p2SpeechRec = new Speech();
+      p2SpeechRec.lang = 'vi-VN';
+      p2SpeechRec.onstart = () => {
+        p2IsRecording = true;
+        document.getElementById('p2-voice-label').innerText = "Đang lắng nghe...";
+      };
+      p2SpeechRec.onresult = (e) => {
+        const text = e.results[0][0].transcript;
+        if (p2ActiveTextarea) {
+          p2ActiveTextarea.value += (p2ActiveTextarea.value.trim() ? " " : "") + text;
+          p2ActiveTextarea.dispatchEvent(new Event('input'));
+        }
+      };
+      p2SpeechRec.onend = () => {
+        p2IsRecording = false;
+        document.getElementById('p2-voice-label').innerText = "Nói để nhập";
+      };
+      p2SpeechRec.start();
+    }
+
+    // Submit Observation to Part 3
+    async function p2SubmitObservation() {
+      if (!myObserverName) {
+        alert("Vui lòng xác định họ và tên người dự giờ!");
+        openNameModal();
+        return;
+      }
+
+      const hasContent = p2Rows.some(r => (r.behavior && r.behavior.trim()) || (r.solution && r.solution.trim()));
+      if (!hasContent) {
+        alert("Thầy/cô vui lòng ghi nhận ít nhất một nội dung biểu hiện của học sinh trước khi nộp!");
+        return;
+      }
+
+      const payload = {
+        id: "SUB-" + Date.now(),
+        observerName: myObserverName,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        records: p2Rows
+      };
+
+      try {
+        await fetch('/api/submit-observation', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      } catch (e) {
+        // Fallback for static GitHub Pages
+        let found = false;
+        appData.observations = appData.observations || [];
+        for (let i = 0; i < appData.observations.length; i++) {
+          if (appData.observations[i].observerName === myObserverName) {
+            appData.observations[i] = payload;
+            found = true;
+            break;
+          }
+        }
+        if (!found) appData.observations.push(payload);
+        localStorage.setItem('pvt_master_data', JSON.stringify(appData));
+      }
+
+      alert(`✓ ĐÃ HOÀN THÀNH DỰ GIỜ THÀNH CÔNG!\nPhiếu dự giờ cá nhân của thầy/cô (${myObserverName}) đã được chuyển về Phần 3 cho Tổ trưởng tổng hợp.`);
+      await fetchServerData();
+      switchRole('part3');
+    }
+
+    // Export individual doc
+    function p2ExportIndividualDoc() {
+      const s = appData.session;
+
+      const rowsHtml = p2Rows.map(r => `
+        <tr style="vertical-align: top;">
+          <td style="border: 1px solid black; padding: 6px; font-weight: bold;">${r.activityTitle}</td>
+          <td style="border: 1px solid black; padding: 6px;">${r.behavior || ''}</td>
+          <td style="border: 1px solid black; padding: 6px;">${r.solution || ''}</td>
+        </tr>
+      `).join('');
+
+      const docHtml = `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+        <head><meta charset="utf-8"><title>Phiếu Quan Sát Học Sinh Theo Nghiên Cứu Bài Học</title>
+        <style>body { font-family: 'Times New Roman', serif; font-size: 13pt; line-height: 1.4; margin: 1in; } table { border-collapse: collapse; width: 100%; font-size: 12pt; } th, td { border: 1px solid black; padding: 6px; } th { background-color: #f2f2f2; text-align: center; font-weight: bold; }</style>
+        </head>
+        <body>
+          <table style="border: none; width: 100%; margin-bottom: 20px;">
+            <tr>
+              <td style="border: none; text-align: center; width: 50%;">PHÒNG GIÁO DỤC VÀ ĐÀO TẠO GÒ VẤP<br><b>TRƯỜNG THCS PHAN VĂN TRỊ</b></td>
+              <td style="border: none; text-align: center; width: 50%;"><b>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</b><br><b>Độc lập – Tự do – Hạnh phúc</b></td>
+            </tr>
+          </table>
+          <h2 style="text-align: center; text-transform: uppercase;">PHIẾU QUAN SÁT HỌC SINH THEO NGHIÊN CỨU BÀI HỌC</h2>
+          <p><b>Họ và tên:</b> ${myObserverName}</p>
+          <p><b>Tên bài dạy:</b> ${s.lessonTitle}</p>
+          <p><b>Môn:</b> ${s.subject || 'Toán'} &nbsp;–&nbsp; <b>Lớp:</b> ${s.className} &nbsp;–&nbsp; <b>Trường:</b> THCS Phan Văn Trị</p>
+          <table>
+            <thead><tr><th style="width: 25%;">Nội dung hoạt động</th><th style="width: 45%;">Biểu hiện của học sinh</th><th style="width: 30%;">Nguyên nhân, biện pháp</th></tr></thead>
+            <tbody>${rowsHtml}</tbody>
+          </table>
+          <div style="font-size: 11pt; font-style: italic; margin-top: 15px;">
+            <p><b>Ghi chú :</b></p>
+            <p>• <b>ND hoạt động:</b> Tên hoạt động; nội dung của hoạt động, nhiệm vụ, câu hỏi, bài tập,...</p>
+            <p>• <b>Biểu hiện của HS:</b> Cảm xúc, thái độ, hành vi, trả lời câu hỏi; bài tập, sản phẩm....</p>
+            <p>• <b>Nguyên nhân, biện pháp:</b> Vì ...Nên ...Có thể ...</p>
+            <p><b>Tránh chỉ chú ý đến tiến trình tiết học, nội dung kiến thức lời nói,...của giáo viên.</b></p>
+            <p><b>- Người dự giờ tập trung vào việc học của HS là chủ yếu và trả lời được các câu hỏi gợi ý sau:</b></p>
+            <p>+ Thái độ của HS khi tham gia học thể hiện qua nét mặt, hành vi như thế nào? ( thích thú, tích cực, chán nản, uể oải…)</p>
+            <p>+ Khả năng thực hiện các hoạt động học tập có vừa sức với HS không? HS có hiểu lời hướng dẫn của GV không?</p>
+            <p>+ Sự tương tác giữa các HS trong giờ học như thế nào?</p>
+            <p>+ Hoạt động nào HS hứng thú hay không hứng thú? Vì sao?</p>
+            <p>+ Hoạt động nào thu hút được tất cả HS tham gia? Vì sao?</p>
+          </div>
+          <table style="border: none; width: 100%; margin-top: 30px;">
+            <tr>
+              <td style="border: none; width: 50%;"></td>
+              <td style="border: none; width: 50%; text-align: center;">
+                <i>TP. Hồ Chí Minh, ngày ...... tháng ...... năm 202...</i><br>
+                <b>Người dự giờ (Ký số / Ký tên)</b><br><br><br><br>
+                <b>${myObserverName}</b>
+              </td>
+            </tr>
+          </table>
+        </body></html>
+      `;
+
+      const blob = new Blob(['\ufeff', docHtml], { type: 'application/msword' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Phieu_Du_Gio_${myObserverName.replace(/\s+/g, '_')}.doc`;
+      a.click();
+    }
+
+    // ==========================================
+    // PHẦN 3 LOGIC: TỔ TRƯỞNG CHUYÊN MÔN
+    // ==========================================
+    function renderPart3UI() {
+      const s = appData.session;
+      const obsList = appData.observations || [];
+
+      document.getElementById('nav-obs-count').innerText = obsList.length;
+      document.getElementById('p3-sub-count').innerText = obsList.length;
+
+      document.getElementById('p3-doc-lesson').innerText = s.lessonTitle || '';
+      document.getElementById('p3-doc-teacher').innerText = s.teacherName || '';
+      document.getElementById('p3-doc-class').innerText = `${s.className || ''} • ${s.period || ''}`;
+      document.getElementById('p3-doc-time').innerText = s.teachingTime || '';
+      document.getElementById('p3-sig-teacher').innerText = s.teacherName || '';
+
+      const observersNames = obsList.map(o => o.observerName).filter(Boolean);
+      document.getElementById('p3-doc-observers').innerText = observersNames.join(', ') || 'Chưa có giáo viên nào nộp';
+
+      const teachersContainer = document.getElementById('p3-teachers-tags');
+      if (obsList.length === 0) {
+        teachersContainer.innerHTML = `<span class="text-slate-400 italic">Chưa có giáo viên nào nộp phiếu.</span>`;
+      } else {
+        teachersContainer.innerHTML = obsList.map(o => `
+          <span class="bg-indigo-50 border border-indigo-200 text-indigo-700 font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1.5">
+            <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600"></i>
+            ${o.observerName} (${o.records ? o.records.length : 0} hoạt động - ${o.timestamp})
+          </span>
+        `).join('');
+      }
+
+      if (appData.meetingMinutes && appData.meetingMinutes.conclusion) {
+        document.getElementById('p3-conclusion-text').value = appData.meetingMinutes.conclusion;
+      }
+
+      p3SynthesizeResults();
+      lucide.createIcons();
+    }
+
+    function p3SynthesizeResults() {
+      const s = appData.session;
+      const obsList = appData.observations || [];
+      const tbody = document.getElementById('p3-master-tbody');
+
+      if (!s.activities || s.activities.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" class="border p-4 text-center text-slate-400 italic">Chưa có hoạt động nào trong KHBD</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = s.activities.map((act) => {
+        let behaviorsHtml = [];
+        let solutionsHtml = [];
+
+        obsList.forEach(obs => {
+          const recs = (obs.records || []).filter(r => r.activityId === act.id || (r.activityTitle && r.activityTitle.includes(act.title.substring(0, 15))));
+          recs.forEach(r => {
+            if (r.behavior && r.behavior.trim()) {
+              behaviorsHtml.push(`<div class="mb-2"><span class="font-bold text-indigo-900">[${obs.observerName}]:</span> ${r.behavior}</div>`);
+            }
+            if (r.solution && r.solution.trim()) {
+              solutionsHtml.push(`<div class="mb-2"><span class="font-bold text-indigo-900">[${obs.observerName}]:</span> ${r.solution}</div>`);
+            }
+          });
+        });
+
+        const bContent = behaviorsHtml.length > 0 ? behaviorsHtml.join('') : '<span class="text-slate-400 italic">Chưa có ghi nhận</span>';
+        const sContent = solutionsHtml.length > 0 ? solutionsHtml.join('') : '<span class="text-slate-400 italic">Chưa có đề xuất</span>';
+
+        return `
+          <tr class="align-top">
+            <td class="border border-slate-800 p-2.5 font-bold text-slate-900 bg-slate-50/50">
+              ${act.title}<br>
+              <span class="text-[11px] font-normal text-slate-500">${act.time} - ${act.content}</span>
+            </td>
+            <td class="border border-slate-800 p-2.5 text-slate-800 leading-relaxed">${bContent}</td>
+            <td class="border border-slate-800 p-2.5 text-slate-800 leading-relaxed">${sContent}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function p3SaveConclusion() {
+      const conclusion = document.getElementById('p3-conclusion-text').value.trim();
+      try {
+        await fetch('/api/save-conclusion', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ conclusion: conclusion, evaluatedBy: "Tổ Trưởng Chuyên Môn - Tổ Toán" })
+        });
+      } catch (e) {}
+    }
+
+    function p3ExportMasterDoc() {
+      p3SaveConclusion();
+      const s = appData.session;
+      const obsList = appData.observations || [];
+      const observersNames = obsList.map(o => o.observerName).filter(Boolean).join(', ');
+      const conclusion = document.getElementById('p3-conclusion-text').value;
+
+      const rowsHtml = s.activities.map(act => {
+        let bList = [];
+        let sList = [];
+        obsList.forEach(obs => {
+          (obs.records || []).filter(r => r.activityId === act.id || (r.activityTitle && r.activityTitle.includes(act.title.substring(0, 15)))).forEach(r => {
+            if (r.behavior) bList.push(`<b>[${obs.observerName}]:</b> ${r.behavior}`);
+            if (r.solution) sList.push(`<b>[${obs.observerName}]:</b> ${r.solution}`);
+          });
+        });
+        return `
+          <tr style="vertical-align: top;">
+            <td style="border: 1px solid black; padding: 6px; font-weight: bold;">${act.title}<br><span style="font-size: 10pt; font-weight: normal;">${act.content}</span></td>
+            <td style="border: 1px solid black; padding: 6px;">${bList.join('<br>') || 'Chưa có ghi nhận'}</td>
+            <td style="border: 1px solid black; padding: 6px;">${sList.join('<br>') || 'Chưa có đề xuất'}</td>
+          </tr>
+        `;
+      }).join('');
+
+      const docHtml = `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+        <head><meta charset="utf-8"><title>Bien_Ban_Tong_Hop_To_Toan</title>
+        <style>body { font-family: 'Times New Roman', serif; font-size: 13pt; line-height: 1.4; margin: 1in; } table { border-collapse: collapse; width: 100%; font-size: 12pt; } th, td { border: 1px solid black; padding: 6px; } th { background-color: #f2f2f2; text-align: center; font-weight: bold; }</style>
+        </head>
+        <body>
+          <table style="border: none; width: 100%; margin-bottom: 20px;">
+            <tr>
+              <td style="border: none; text-align: center; width: 50%;">PHÒNG GD&ĐT GÒ VẤP<br><b>TRƯỜNG THCS PHAN VĂN TRỊ - TỔ TOÁN</b></td>
+              <td style="border: none; text-align: center; width: 50%;"><b>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</b><br><b>Độc lập – Tự do – Hạnh phúc</b></td>
+            </tr>
+          </table>
+          <h2 style="text-align: center; text-transform: uppercase;">PHIẾU TỔNG HỢP KẾT QUẢ DỰ GIỜ THEO NGHIÊN CỨU BÀI HỌC</h2>
+          <p style="text-align: center; font-style: italic;">(Biên bản sinh hoạt chuyên môn của Tổ Toán)</p>
+          <p><b>Tên bài dạy:</b> ${s.lessonTitle} &nbsp;&nbsp;|&nbsp;&nbsp; <b>Lớp:</b> ${s.className} &nbsp;&nbsp;|&nbsp;&nbsp; <b>Tiết:</b> ${s.period}</p>
+          <p><b>Giáo viên giảng dạy:</b> ${s.teacherName} &nbsp;&nbsp;|&nbsp;&nbsp; <b>Thời gian:</b> ${s.teachingTime}</p>
+          <p><b>Các giáo viên tham gia dự giờ:</b> ${observersNames}</p>
+          <table>
+            <thead><tr><th style="width: 25%;">Nội dung hoạt động (KHBD)</th><th style="width: 45%;">Tổng hợp biểu hiện của học sinh (Từ các GV)</th><th style="width: 30%;">Tổng hợp nguyên nhân, giải pháp</th></tr></thead>
+            <tbody>${rowsHtml}</tbody>
+          </table>
+          <div style="margin-top: 15px;">
+            <p><b>Ý KIẾN KẾT LUẬN & THỐNG NHẤT CỦA TỔ CHUYÊN MÔN:</b></p>
+            <p style="font-style: italic; background-color: #f9f9f9; padding: 10px; border: 1px solid #ccc;">${conclusion || 'Chưa ghi nhận'}</p>
+          </div>
+          <table style="border: none; width: 100%; margin-top: 30px;">
+            <tr>
+              <td style="border: none; width: 50%; text-align: center;">
+                <b>Giáo viên giảng dạy (Ký số)</b><br><br><br><br>
+                <b>${s.teacherName}</b>
+              </td>
+              <td style="border: none; width: 50%; text-align: center;">
+                <i>TP. Hồ Chí Minh, ngày ...... tháng ...... năm 202...</i><br>
+                <b>Tổ trưởng chuyên môn (Ký số)</b><br><br><br><br>
+                <b>(Ký và ghi rõ họ tên)</b>
+              </td>
+            </tr>
+          </table>
+        </body></html>
+      `;
+
+      const blob = new Blob(['\ufeff', docHtml], { type: 'application/msword' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Bien_Ban_Tong_Hop_To_Toan_${s.className}.doc`;
+      a.click();
+    }
+
+    async function resetDefaultDemo() {
+      if (confirm("Khôi phục lại toàn bộ dữ liệu mẫu ban đầu?")) {
+        localStorage.removeItem('pvt_my_observer_name');
+        await fetch('/api/reset-data', { method: 'POST' });
+        await fetchServerData();
+        switchRole('part1');
+      }
+    }
+  </script>
+</body>
+</html>
