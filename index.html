@@ -606,6 +606,27 @@
 
     let appData = JSON.parse(localStorage.getItem('pvt_master_data')) || DEFAULT_INIT_DATA;
 
+    // Cloud topic for cross-device real-time sync (between phone & laptop)
+    const CLOUD_SYNC_TOPIC = "totoan_phanvantri_toan8_t56";
+
+    // Helper to merge observation into state safely
+    function mergeObservationIntoState(obsItem) {
+      if (!obsItem || !obsItem.observerName) return;
+      appData.observations = appData.observations || [];
+      let found = false;
+      for (let i = 0; i < appData.observations.length; i++) {
+        if (appData.observations[i].observerName === obsItem.observerName) {
+          appData.observations[i] = obsItem;
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        appData.observations.push(obsItem);
+      }
+      localStorage.setItem('pvt_master_data', JSON.stringify(appData));
+    }
+
     // Current Observer on this specific device
     let myObserverName = localStorage.getItem('pvt_my_observer_name') || "Cô Nguyễn Thị Lan";
     let p2Rows = [];
@@ -615,6 +636,7 @@
     window.addEventListener('DOMContentLoaded', async () => {
       lucide.createIcons();
       await fetchServerData();
+      initCloudSync();
 
       const urlParams = new URLSearchParams(window.location.search);
       const roleParam = urlParams.get('role');
@@ -631,6 +653,7 @@
     });
 
     async function fetchServerData() {
+      // 1. Check local python server if available
       try {
         const res = await fetch('/api/data');
         if (res.ok) {
@@ -638,12 +661,63 @@
           localStorage.setItem('pvt_master_data', JSON.stringify(appData));
         }
       } catch (e) {
-        console.log("Running in static GitHub Pages mode with localStorage");
+        console.log("Running in static GitHub Pages mode");
       }
+
+      // Always reload from localStorage
+      const stored = localStorage.getItem('pvt_master_data');
+      if (stored) {
+        try { appData = JSON.parse(stored); } catch (e) {}
+      }
+
       renderPart1UI();
       renderPart2UI();
       renderPart3UI();
       lucide.createIcons();
+    }
+
+    // Realtime Cloud Sync via ntfy.sh (No config needed, works between phone & PC)
+    function initCloudSync() {
+      // 1. Fetch recent submissions from cloud cache
+      fetch(`https://ntfy.sh/${CLOUD_SYNC_TOPIC}/json?poll=1`)
+        .then(res => res.text())
+        .then(text => {
+          const lines = text.trim().split('\n');
+          let updated = false;
+          lines.forEach(line => {
+            try {
+              const msg = JSON.parse(line);
+              if (msg.message) {
+                const data = JSON.parse(msg.message);
+                if (data.type === 'SUBMIT_OBSERVATION' && data.payload) {
+                  mergeObservationIntoState(data.payload);
+                  updated = true;
+                }
+              }
+            } catch (e) {}
+          });
+          if (updated) {
+            renderPart3UI();
+          }
+        })
+        .catch(err => console.log("Cloud sync poll notice:", err));
+
+      // 2. Listen live for incoming submissions
+      try {
+        const sse = new EventSource(`https://ntfy.sh/${CLOUD_SYNC_TOPIC}/sse`);
+        sse.onmessage = (event) => {
+          try {
+            const msg = JSON.parse(event.data);
+            if (msg.message) {
+              const data = JSON.parse(msg.message);
+              if (data.type === 'SUBMIT_OBSERVATION' && data.payload) {
+                mergeObservationIntoState(data.payload);
+                renderPart3UI();
+              }
+            }
+          } catch (e) {}
+        };
+      } catch (e) {}
     }
 
     function switchRole(roleId) {
@@ -1057,32 +1131,32 @@
         id: "SUB-" + Date.now(),
         observerName: myObserverName,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        records: p2Rows
+        records: JSON.parse(JSON.stringify(p2Rows))
       };
 
+      // 1. Luôn lưu ngay vào bộ nhớ trình duyệt thiết bị này
+      mergeObservationIntoState(payload);
+
+      // 2. Đồng bộ lên đám mây (ntfy.sh) để máy tính Tổ trưởng nhận được tức thì dù ở mạng khác
       try {
-        await fetch('/api/submit-observation', {
+        fetch(`https://ntfy.sh/${CLOUD_SYNC_TOPIC}`, {
+          method: 'POST',
+          body: JSON.stringify({ type: 'SUBMIT_OBSERVATION', payload: payload }),
+          headers: { 'Title': `Nop phieu: ${myObserverName}` }
+        }).catch(() => {});
+      } catch (e) {}
+
+      // 3. Gửi lên máy chủ local nếu có
+      try {
+        fetch('/api/submit-observation', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
-        });
-      } catch (e) {
-        // Fallback for static GitHub Pages
-        let found = false;
-        appData.observations = appData.observations || [];
-        for (let i = 0; i < appData.observations.length; i++) {
-          if (appData.observations[i].observerName === myObserverName) {
-            appData.observations[i] = payload;
-            found = true;
-            break;
-          }
-        }
-        if (!found) appData.observations.push(payload);
-        localStorage.setItem('pvt_master_data', JSON.stringify(appData));
-      }
+        }).catch(() => {});
+      } catch (e) {}
 
-      alert(`✓ ĐÃ HOÀN THÀNH DỰ GIỜ THÀNH CÔNG!\nPhiếu dự giờ cá nhân của thầy/cô (${myObserverName}) đã được chuyển về Phần 3 cho Tổ trưởng tổng hợp.`);
-      await fetchServerData();
+      alert(`✓ ĐÃ HOÀN THÀNH DỰ GIỜ THÀNH CÔNG!\nPhiếu dự giờ của ${myObserverName} đã được chuyển về Phần 3 cho Tổ trưởng tổng hợp.`);
+      renderPart3UI();
       switchRole('part3');
     }
 
@@ -1218,20 +1292,23 @@
         return;
       }
 
-      tbody.innerHTML = s.activities.map((act) => {
+      tbody.innerHTML = s.activities.map((act, actIdx) => {
         let behaviorsHtml = [];
         let solutionsHtml = [];
 
         obsList.forEach(obs => {
-          const recs = (obs.records || []).filter(r => r.activityId === act.id || (r.activityTitle && r.activityTitle.includes(act.title.substring(0, 15))));
-          recs.forEach(r => {
-            if (r.behavior && r.behavior.trim()) {
-              behaviorsHtml.push(`<div class="mb-2"><span class="font-bold text-indigo-900">[${obs.observerName}]:</span> ${r.behavior}</div>`);
+          let rec = (obs.records || []).find(r => r.activityId === act.id || (r.activityTitle && r.activityTitle.includes(act.title.substring(0, 10))));
+          if (!rec && obs.records && obs.records[actIdx]) {
+            rec = obs.records[actIdx];
+          }
+          if (rec) {
+            if (rec.behavior && rec.behavior.trim()) {
+              behaviorsHtml.push(`<div class="mb-2"><span class="font-bold text-indigo-900">[${obs.observerName}]:</span> ${rec.behavior}</div>`);
             }
-            if (r.solution && r.solution.trim()) {
-              solutionsHtml.push(`<div class="mb-2"><span class="font-bold text-indigo-900">[${obs.observerName}]:</span> ${r.solution}</div>`);
+            if (rec.solution && rec.solution.trim()) {
+              solutionsHtml.push(`<div class="mb-2"><span class="font-bold text-indigo-900">[${obs.observerName}]:</span> ${rec.solution}</div>`);
             }
-          });
+          }
         });
 
         const bContent = behaviorsHtml.length > 0 ? behaviorsHtml.join('') : '<span class="text-slate-400 italic">Chưa có ghi nhận</span>';
@@ -1285,14 +1362,18 @@
       const observersNames = obsList.map(o => o.observerName).filter(Boolean).join(', ');
       const conclusion = document.getElementById('p3-conclusion-text').value;
 
-      const rowsHtml = s.activities.map(act => {
+      const rowsHtml = s.activities.map((act, actIdx) => {
         let bList = [];
         let sList = [];
         obsList.forEach(obs => {
-          (obs.records || []).filter(r => r.activityId === act.id || (r.activityTitle && r.activityTitle.includes(act.title.substring(0, 15)))).forEach(r => {
-            if (r.behavior) bList.push(`<b>[${obs.observerName}]:</b> ${r.behavior}`);
-            if (r.solution) sList.push(`<b>[${obs.observerName}]:</b> ${r.solution}`);
-          });
+          let rec = (obs.records || []).find(r => r.activityId === act.id || (r.activityTitle && r.activityTitle.includes(act.title.substring(0, 10))));
+          if (!rec && obs.records && obs.records[actIdx]) {
+            rec = obs.records[actIdx];
+          }
+          if (rec) {
+            if (rec.behavior && rec.behavior.trim()) bList.push(`<b>[${obs.observerName}]:</b> ${rec.behavior}`);
+            if (rec.solution && rec.solution.trim()) sList.push(`<b>[${obs.observerName}]:</b> ${rec.solution}`);
+          }
         });
         return `
           <tr style="vertical-align: top;">
