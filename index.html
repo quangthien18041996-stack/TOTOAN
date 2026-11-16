@@ -24,9 +24,9 @@
 
     @media print {
       body * { visibility: hidden; }
-      #printable-area, #printable-area * { visibility: visible; }
-      #printable-area {
-        position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 1cm;
+      .print-target, .print-target * { visibility: visible; }
+      .print-target {
+        position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 1.2cm !important;
         box-shadow: none !important; border: none !important;
       }
       .no-print { display: none !important; }
@@ -207,14 +207,22 @@
           </div>
         </div>
 
-        <div class="flex items-center gap-2">
-          <button onclick="p2SubmitObservation()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-lg shadow-sm flex items-center gap-1.5 transition active:scale-95">
+        <div class="flex flex-wrap items-center gap-2">
+          <button onclick="p2SubmitObservation()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3.5 py-2 rounded-lg shadow-sm flex items-center gap-1.5 transition active:scale-95">
             <i data-lucide="send" class="w-3.5 h-3.5"></i>
             <span>HOÀN THÀNH DỰ GIỜ</span>
           </button>
-          <button onclick="p2ExportIndividualDoc()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3 py-2 rounded-lg shadow-sm flex items-center gap-1.5 transition">
-            <i data-lucide="file-down" class="w-3.5 h-3.5"></i>
-            <span>Xuất Word / PDF Ký Số</span>
+          
+          <!-- Mục 1: Xuất Word để chỉnh sửa thêm -->
+          <button onclick="p2ExportWord()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3 py-2 rounded-lg shadow-sm flex items-center gap-1.5 transition active:scale-95" title="Tải file Word về máy để mở chỉnh sửa thêm">
+            <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+            <span>Xuất Word (Chỉnh sửa thêm)</span>
+          </button>
+
+          <!-- Mục 2: Xuất PDF luôn để ký số -->
+          <button onclick="p2ExportPDF()" class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow-sm flex items-center gap-1.5 transition active:scale-95" title="Lưu/in file PDF chuẩn để ký số ngay">
+            <i data-lucide="file-check-2" class="w-3.5 h-3.5"></i>
+            <span>Xuất PDF (Ký số ngay)</span>
           </button>
         </div>
       </div>
@@ -344,18 +352,22 @@
           <p class="text-xs text-slate-500">Gom toàn bộ kết quả từ các phiếu dự giờ của 5 giáo viên về 1 phiếu tổng hợp của Tổ chuyên môn</p>
         </div>
 
-        <div class="flex items-center gap-2">
-          <button onclick="p3SynthesizeResults()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-lg shadow-sm transition flex items-center gap-1.5">
+        <div class="flex flex-wrap items-center gap-2">
+          <button onclick="p3SynthesizeResults()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3.5 py-2 rounded-lg shadow-sm transition flex items-center gap-1.5">
             <i data-lucide="merge" class="w-4 h-4"></i>
             <span>TỔNG HỢP KẾT QUẢ DỰ GIỜ</span>
           </button>
-          <button onclick="p3ExportMasterDoc()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3 py-2 rounded-lg shadow-sm transition flex items-center gap-1.5">
-            <i data-lucide="file-text" class="w-4 h-4"></i>
-            <span>Tải File Word Tổ (.doc)</span>
+          
+          <!-- Mục 1: Xuất Word Tổ để chỉnh sửa thêm -->
+          <button onclick="p3ExportMasterDoc()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3 py-2 rounded-lg shadow-sm transition flex items-center gap-1.5" title="Tải file Word biên bản tổ để chỉnh sửa thêm">
+            <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+            <span>Xuất Word Tổ (Chỉnh sửa thêm)</span>
           </button>
-          <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold px-3 py-2 rounded-lg shadow-sm transition flex items-center gap-1.5">
-            <i data-lucide="printer" class="w-4 h-4"></i>
-            <span>In / Lưu PDF Để Ký Số</span>
+
+          <!-- Mục 2: Xuất PDF luôn để ký số -->
+          <button onclick="p3PrintMaster()" class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow-sm transition flex items-center gap-1.5" title="Lưu/in file PDF biên bản tổ để ký số">
+            <i data-lucide="file-check-2" class="w-3.5 h-3.5"></i>
+            <span>Xuất PDF Tổ (Ký số ngay)</span>
           </button>
         </div>
       </div>
@@ -1074,6 +1086,23 @@
       switchRole('part3');
     }
 
+    // 1. Xuất Word để chỉnh sửa thêm (Phần 2)
+    function p2ExportWord() {
+      p2ExportIndividualDoc();
+    }
+
+    // 2. Xuất PDF luôn để ký số (Phần 2)
+    function p2ExportPDF() {
+      const p3Sheet = document.getElementById('printable-area');
+      const p2Sheet = document.getElementById('p2-sheet-container');
+      if (p3Sheet) p3Sheet.classList.remove('print-target');
+      if (p2Sheet) p2Sheet.classList.add('print-target');
+      window.print();
+      setTimeout(() => {
+        if (p2Sheet) p2Sheet.classList.remove('print-target');
+      }, 1000);
+    }
+
     // Export individual doc
     function p2ExportIndividualDoc() {
       const s = appData.session;
@@ -1229,7 +1258,24 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ conclusion: conclusion, evaluatedBy: "Tổ Trưởng Chuyên Môn - Tổ Toán" })
         });
-      } catch (e) {}
+      } catch (e) {
+        appData.meetingMinutes = appData.meetingMinutes || {};
+        appData.meetingMinutes.conclusion = conclusion;
+        localStorage.setItem('pvt_master_data', JSON.stringify(appData));
+      }
+    }
+
+    // 2. Xuất PDF Tổ để ký số (Phần 3)
+    function p3PrintMaster() {
+      p3SaveConclusion();
+      const p2Sheet = document.getElementById('p2-sheet-container');
+      const p3Sheet = document.getElementById('printable-area');
+      if (p2Sheet) p2Sheet.classList.remove('print-target');
+      if (p3Sheet) p3Sheet.classList.add('print-target');
+      window.print();
+      setTimeout(() => {
+        if (p3Sheet) p3Sheet.classList.remove('print-target');
+      }, 1000);
     }
 
     function p3ExportMasterDoc() {
