@@ -40,13 +40,13 @@
       to { transform: rotate(360deg); }
     }
     .rotating-drum {
-      width: min(880px, 160vw);
-      height: min(880px, 160vw);
+      width: min(920px, 150vw);
+      height: min(920px, 150vw);
       max-width: none;
       max-height: none;
-      animation: spin-drum 75s linear infinite;
-      opacity: 0.28;
-      filter: drop-shadow(0 0 50px rgba(245, 158, 11, 0.55));
+      animation: spin-drum 100s linear infinite;
+      opacity: 0.35;
+      filter: drop-shadow(0 0 50px rgba(245, 158, 11, 0.45));
       pointer-events: none;
       user-select: none;
     }
@@ -108,9 +108,25 @@
   <!-- ============================================================== -->
   <!-- MÀN HÌNH ĐĂNG NHẬP PHÂN QUYỀN (LOGIN PORTAL)                   -->
   <!-- ============================================================== -->
-  <div id="view-login" class="flex-1 flex items-center justify-center p-4 relative overflow-hidden bg-cover bg-center bg-no-repeat min-h-[calc(100vh-60px)]" style="background-image: url('bg_login.jpg');">
-    <!-- Lớp phủ nhẹ dịu mắt, tăng tương phản cho khung đăng nhập -->
-    <div class="absolute inset-0 bg-slate-900/10"></div>
+  <!-- MÀN HÌNH ĐĂNG NHẬP: TRỐNG ĐỒNG ĐÔNG SƠN VECTOR SẮC NÉT (0% BỂ HÌNH) -->
+  <!-- ============================================================== -->
+  <div id="view-login" class="flex-1 flex items-center justify-center p-4 relative overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 min-h-[calc(100vh-60px)]">
+    <!-- Hiệu ứng quầng sáng huyền ảo phía sau trống đồng -->
+    <div class="absolute w-[650px] h-[650px] rounded-full bg-indigo-500/15 blur-3xl pointer-events-none"></div>
+    <div class="absolute w-[450px] h-[450px] rounded-full bg-amber-500/10 blur-2xl pointer-events-none"></div>
+
+    <!-- Trống đồng Đông Sơn Vector: Độ nét tuyệt đối 100% trên mọi kích thước màn hình -->
+    <div class="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
+      <img id="login-drum-img" src="trong_dong_gold.svg" alt="Trống đồng Đông Sơn" class="rotating-drum select-none">
+    </div>
+
+    <!-- Nút điều khiển xoay/dừng trống đồng góc dưới phải -->
+    <div class="absolute bottom-3 right-4 z-20 flex items-center gap-2">
+      <button onclick="toggleDrumRotation()" id="btn-toggle-drum" class="px-3 py-1.5 text-[11px] font-medium bg-slate-800/80 hover:bg-slate-700/90 text-slate-300 hover:text-white rounded-lg border border-slate-700/60 backdrop-blur-sm transition flex items-center gap-1.5 shadow-sm cursor-pointer" title="Bật/Tắt hiệu ứng xoay trống đồng">
+        <i data-lucide="rotate-cw" class="w-3.5 h-3.5 text-amber-400"></i>
+        <span id="txt-toggle-drum">Đang xoay (Nhấn để dừng)</span>
+      </button>
+    </div>
 
     <!-- Thẻ đăng nhập sang trọng (Glassmorphic Card) -->
     <div class="bg-white/95 backdrop-blur-md rounded-2xl max-w-md w-full p-6 md:p-8 shadow-2xl border border-white/70 space-y-5 relative z-10">
@@ -1312,6 +1328,19 @@
         } else {
           switchRole(roleParam === 'part3' ? 'part2' : (roleParam || 'part2'));
         }
+      }
+    }
+
+    function toggleDrumRotation() {
+      const drum = document.getElementById('login-drum-img');
+      const txt = document.getElementById('txt-toggle-drum');
+      if (!drum) return;
+      if (drum.style.animationPlayState === 'paused') {
+        drum.style.animationPlayState = 'running';
+        if (txt) txt.textContent = 'Đang xoay (Nhấn để dừng)';
+      } else {
+        drum.style.animationPlayState = 'paused';
+        if (txt) txt.textContent = 'Ảnh tĩnh (Nhấn để xoay)';
       }
     }
 
