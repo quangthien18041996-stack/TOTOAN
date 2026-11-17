@@ -582,7 +582,7 @@
         <div class="mt-8 grid grid-cols-2 text-center text-xs md:text-sm">
           <div></div>
           <div>
-            <p class="italic text-xs">TP. Hồ Chí Minh, ngày ...... tháng ...... năm 202...</p>
+            <p class="italic text-xs" id="p2-date-line">TP. Hồ Chí Minh, ngày ...... tháng ...... năm 202...</p>
             <p class="font-bold uppercase mt-1">Người dự giờ</p>
             <p class="text-[11px] italic text-slate-500">(Ký số / Ký và ghi rõ họ tên)</p>
             <div class="h-16"></div>
@@ -730,7 +730,7 @@
           </div>
           <div class="flex flex-col justify-between">
             <div>
-              <p class="italic text-xs text-slate-600">TP. Hồ Chí Minh, ngày ...... tháng ...... năm 202...</p>
+              <p class="italic text-xs text-slate-600" id="p3-date-line">TP. Hồ Chí Minh, ngày ...... tháng ...... năm 202...</p>
               <p class="font-bold uppercase mt-1">Tổ trưởng chuyên môn</p>
               <p class="text-[11px] italic text-slate-500">(Ký số / Ký tên)</p>
             </div>
@@ -2509,6 +2509,48 @@
     // ==============================================================
     // PHẦN 2 LOGIC: PHIẾU DỰ GIỜ CÁ NHÂN (THEO TIẾT DẠY ĐÃ CHỌN)
     // ==============================================================
+    function formatSessionDate(timeStr, isBlank) {
+      if (isBlank) {
+        return "TP. Hồ Chí Minh, ngày ...... tháng ...... năm 202...";
+      }
+      let d = '', m = '', y = '';
+      if (timeStr && typeof timeStr === 'string') {
+        // 1. Try DD/MM/YYYY (e.g. 27/03/2025 or 27/3/2025)
+        let match = timeStr.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+        if (match) {
+          d = match[1].padStart(2, '0');
+          m = match[2].padStart(2, '0');
+          y = match[3];
+        } else {
+          // 2. Try YYYY-MM-DD
+          match = timeStr.match(/(\d{4})[-/](\d{1,2})[-/](\d{1,2})/);
+          if (match) {
+            y = match[1];
+            m = match[2].padStart(2, '0');
+            d = match[3].padStart(2, '0');
+          } else {
+            // 3. Try DD-MM-YYYY
+            match = timeStr.match(/(\d{1,2})-(\d{1,2})-(\d{4})/);
+            if (match) {
+              d = match[1].padStart(2, '0');
+              m = match[2].padStart(2, '0');
+              y = match[3];
+            }
+          }
+        }
+      }
+
+      // Fallback to real-time current date if not specified
+      if (!d || !m || !y) {
+        const now = new Date();
+        d = String(now.getDate()).padStart(2, '0');
+        m = String(now.getMonth() + 1).padStart(2, '0');
+        y = String(now.getFullYear());
+      }
+
+      return `TP. Hồ Chí Minh, ngày ${d} tháng ${m} năm ${y}`;
+    }
+
     function renderPart2UI() {
       const s = getCurrentSession();
       if (!s) return;
@@ -2517,6 +2559,11 @@
       const displayObsEl = document.getElementById('p2-display-observer-name');
       if (displayObsEl) displayObsEl.innerText = myObserverName;
       document.getElementById('p2-signature-name').innerText = myObserverName;
+
+      const p2DateEl = document.getElementById('p2-date-line');
+      if (p2DateEl) {
+        p2DateEl.innerText = formatSessionDate(s.teachingTime, s.isBlank);
+      }
 
       const sheetTeacherEl = document.getElementById('p2-sheet-teacher');
       if (sheetTeacherEl) {
@@ -2893,7 +2940,7 @@
             <tr>
               <td style="border: none; width: 50%;"></td>
               <td style="border: none; width: 50%; text-align: center;">
-                <i>TP. Hồ Chí Minh, ngày ...... tháng ...... năm 202...</i><br>
+                <i>${formatSessionDate(s.teachingTime, s.isBlank)}</i><br>
                 <b>Người dự giờ (Ký số / Ký tên)</b><br><br><br><br>
                 <b>${myObserverName}</b>
               </td>
@@ -2949,6 +2996,10 @@
       document.getElementById('p3-doc-class').innerText = isBlankSession ? 'Lớp: ............ • Tiết: ........' : `${s.className || ''} • ${s.period || ''}`;
       document.getElementById('p3-doc-time').innerText = isBlankSession ? '....................................................' : (s.teachingTime || '');
       document.getElementById('p3-sig-teacher').innerText = teacherSigName;
+      const p3DateEl = document.getElementById('p3-date-line');
+      if (p3DateEl) {
+        p3DateEl.innerText = formatSessionDate(s.teachingTime, isBlankSession);
+      }
 
       const observersNames = obsList.map(o => o.observerName).filter(Boolean);
       if (obsList.length === 0) {
@@ -3191,7 +3242,7 @@
                 <b>${isBlankSession ? '....................................................' : cleanPersonName(s.teacherName || 'Giáo viên bộ môn')}</b>
               </td>
               <td style="border: none; width: 50%; text-align: center; vertical-align: top;">
-                <p style="margin: 0; font-style: italic; font-size: 11pt;">TP. Hồ Chí Minh, ngày ...... tháng ...... năm 202...</p>
+                <p style="margin: 0; font-style: italic; font-size: 11pt;">${formatSessionDate(s.teachingTime, isBlankSession)}</p>
                 <b style="text-transform: uppercase;">Tổ trưởng chuyên môn</b><br>
                 <i style="font-size: 10pt; color: #555;">(Ký số / Ký tên)</i><br><br><br><br>
                 <b>Thiều Thị Thúy Thanh</b>
