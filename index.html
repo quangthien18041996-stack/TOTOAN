@@ -546,8 +546,8 @@
         <!-- Meta info lines -->
         <div class="space-y-2 text-sm md:text-base mb-6">
           <div class="flex items-center gap-2">
-            <span class="font-bold whitespace-nowrap">Họ và tên:</span>
-            <span id="p2-display-observer-name" class="font-semibold text-indigo-900 border-b border-dotted border-slate-600 flex-1 px-1">Cô Nguyễn Thị Lan</span>
+            <span class="font-bold whitespace-nowrap">Họ và tên giáo viên giảng dạy:</span>
+            <span id="p2-sheet-teacher" class="font-semibold text-slate-900 border-b border-dotted border-slate-600 flex-1 px-1">Cô Nguyễn Thị Lan</span>
           </div>
           <div class="flex items-center gap-2">
             <span class="font-bold whitespace-nowrap">Tên bài dạy:</span>
@@ -558,6 +558,7 @@
             <p>– <strong>Lớp:</strong> <span id="p2-sheet-class" class="font-semibold">8A1</span></p>
             <p>– <strong>Trường:</strong> THCS Phan Văn Trị</p>
             <p>– <strong>Tiết:</strong> <span id="p2-sheet-period">Tiết 56</span></p>
+            <p>– <strong>Người dự giờ:</strong> <span id="p2-display-observer-name" class="font-semibold text-indigo-900">Thiều Thị Thúy Thanh</span></p>
           </div>
         </div>
 
@@ -2513,8 +2514,14 @@
       if (!s) return;
 
       document.getElementById('p2-device-observer-label').innerText = myObserverName;
-      document.getElementById('p2-display-observer-name').innerText = myObserverName;
+      const displayObsEl = document.getElementById('p2-display-observer-name');
+      if (displayObsEl) displayObsEl.innerText = myObserverName;
       document.getElementById('p2-signature-name').innerText = myObserverName;
+
+      const sheetTeacherEl = document.getElementById('p2-sheet-teacher');
+      if (sheetTeacherEl) {
+        sheetTeacherEl.innerText = s.isBlank ? '....................................................' : (s.teacherName || '');
+      }
 
       document.getElementById('p2-sheet-lesson').innerText = s.isBlank ? '................................................................................' : (s.lessonTitle || '');
       document.getElementById('p2-sheet-subject').innerText = s.isBlank ? 'Toán' : (s.subject || 'Toán');
@@ -2873,8 +2880,8 @@
             </tr>
           </table>
           <h2 style="text-align: center; text-transform: uppercase;">PHIẾU QUAN SÁT HỌC SINH THEO NGHIÊN CỨU BÀI HỌC</h2>
-          <p><b>Họ và tên giáo viên dự:</b> ${myObserverName}</p>
-          <p><b>Giáo viên giảng dạy:</b> ${s.teacherName}</p>
+          <p><b>Họ và tên giáo viên giảng dạy:</b> ${s.teacherName}</p>
+          <p><b>Họ và tên người dự giờ:</b> ${myObserverName}</p>
           <p><b>Tên bài dạy:</b> ${s.lessonTitle}</p>
           <p><b>Môn:</b> ${s.subject || 'Toán'} &nbsp;–&nbsp; <b>Lớp:</b> ${s.className} &nbsp;–&nbsp; <b>Tiết:</b> ${s.period} &nbsp;–&nbsp; <b>Trường:</b> ${s.school || 'THCS Phan Văn Trị'}</p>
           <table>
