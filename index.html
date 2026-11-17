@@ -34,6 +34,23 @@
       .no-print { display: none !important; }
     }
 
+    /* Hiệu ứng hạt sáng & lưới tọa độ toán học chìm tinh tế cho cổng đăng nhập */
+    .math-grid-bg {
+      background-image: 
+        radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 32px 32px, 64px 64px, 64px 64px;
+    }
+
+    @keyframes float-slow {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-8px) rotate(1deg); }
+    }
+    .animate-float {
+      animation: float-slow 8s ease-in-out infinite;
+    }
+
     /* Hiệu ứng Trống đồng Đông Sơn xoay tròn êm ái */
     @keyframes spin-drum {
       from { transform: rotate(0deg); }
@@ -108,62 +125,156 @@
   <!-- ============================================================== -->
   <!-- MÀN HÌNH ĐĂNG NHẬP PHÂN QUYỀN (LOGIN PORTAL)                   -->
   <!-- ============================================================== -->
-  <!-- MÀN HÌNH ĐĂNG NHẬP: TRỐNG ĐỒNG ĐÔNG SƠN VECTOR SẮC NÉT (0% BỂ HÌNH) -->
+  <!-- MÀN HÌNH ĐĂNG NHẬP: CHUẨN CỔNG GIÁO DỤC HIỆN ĐẠI (SPLIT-SCREEN HERO) -->
   <!-- ============================================================== -->
-  <div id="view-login" class="flex-1 flex items-center justify-center p-4 relative overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 min-h-[calc(100vh-60px)]">
-    <!-- Hiệu ứng quầng sáng huyền ảo phía sau trống đồng -->
-    <div class="absolute w-[650px] h-[650px] rounded-full bg-indigo-500/15 blur-3xl pointer-events-none"></div>
-    <div class="absolute w-[450px] h-[450px] rounded-full bg-amber-500/10 blur-2xl pointer-events-none"></div>
+  <div id="view-login" class="flex-1 flex items-center justify-center p-4 md:p-8 relative overflow-hidden bg-slate-950 min-h-[calc(100vh-60px)] math-grid-bg">
+    <!-- Quầng sáng hiệu ứng Gradient đa tầng (Hoàn toàn không bể hình) -->
+    <div class="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] bg-indigo-600/20 rounded-full blur-[120px] pointer-events-none"></div>
+    <div class="absolute bottom-10 right-1/4 w-[450px] h-[450px] bg-blue-500/15 rounded-full blur-[100px] pointer-events-none"></div>
+    <div class="absolute top-1/3 right-10 w-[350px] h-[350px] bg-amber-500/10 rounded-full blur-[90px] pointer-events-none"></div>
 
-    <!-- Trống đồng Đông Sơn Vector: Độ nét tuyệt đối 100% trên mọi kích thước màn hình -->
-    <div class="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
-      <img id="login-drum-img" src="trong_dong_gold.svg" alt="Trống đồng Đông Sơn" class="rotating-drum select-none">
+    <!-- Họa tiết biểu tượng Toán học & Giáo dục chìm nghệ thuật (Vector 100% SVG) -->
+    <div class="absolute inset-0 pointer-events-none overflow-hidden select-none opacity-20">
+      <span class="absolute top-12 left-10 text-6xl font-serif text-indigo-300">∫</span>
+      <span class="absolute top-1/3 left-1/3 text-4xl font-serif text-blue-200">π</span>
+      <span class="absolute bottom-20 left-16 text-5xl font-serif text-amber-300">∑</span>
+      <span class="absolute top-20 right-1/3 text-3xl font-sans font-light text-indigo-200">f(x) = ax² + bx + c</span>
+      <span class="absolute bottom-32 right-1/4 text-4xl font-serif text-blue-300">√x</span>
+      <span class="absolute top-2/3 right-12 text-5xl font-serif text-indigo-300">Δ</span>
+      <svg class="absolute top-1/4 right-20 w-48 h-48 text-indigo-400/30 stroke-current animate-float" fill="none" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="40" stroke-width="1.5" stroke-dasharray="4 4" />
+        <polygon points="50,15 85,80 15,80" stroke-width="1.5" />
+      </svg>
     </div>
 
-    <!-- Nút điều khiển xoay/dừng trống đồng góc dưới phải -->
-    <div class="absolute bottom-3 right-4 z-20 flex items-center gap-2">
-      <button onclick="toggleDrumRotation()" id="btn-toggle-drum" class="px-3 py-1.5 text-[11px] font-medium bg-slate-800/80 hover:bg-slate-700/90 text-slate-300 hover:text-white rounded-lg border border-slate-700/60 backdrop-blur-sm transition flex items-center gap-1.5 shadow-sm cursor-pointer" title="Bật/Tắt hiệu ứng xoay trống đồng">
-        <i data-lucide="rotate-cw" class="w-3.5 h-3.5 text-amber-400"></i>
-        <span id="txt-toggle-drum">Đang xoay (Nhấn để dừng)</span>
-      </button>
-    </div>
-
-    <!-- Thẻ đăng nhập sang trọng (Glassmorphic Card) -->
-    <div class="bg-white/95 backdrop-blur-md rounded-2xl max-w-md w-full p-6 md:p-8 shadow-2xl border border-white/70 space-y-5 relative z-10">
-      <div class="text-center space-y-1">
-        <div class="w-14 h-14 bg-amber-50 text-amber-700 rounded-2xl flex items-center justify-center mx-auto mb-2 shadow-inner border border-amber-200">
-          <i data-lucide="shield-check" class="w-8 h-8 text-amber-600"></i>
+    <!-- Container 2 Cột chuẩn Web Giáo Dục Hiện Đại -->
+    <div class="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-10 py-4">
+      
+      <!-- CỘT TRÁI (7 Cột): Giới thiệu hệ thống, triết lý sư phạm & 3 tính năng cốt lõi -->
+      <div class="lg:col-span-7 space-y-6 text-left">
+        <!-- Huy hiệu cổng nghiệp vụ -->
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-indigo-500/10 via-indigo-500/20 to-blue-500/10 border border-indigo-400/30 text-indigo-300 text-xs font-semibold shadow-sm">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i>
+          <span>Sinh Hoạt Chuyên Môn Theo Nghiên Cứu Bài Học</span>
         </div>
-        <div class="text-[11px] font-bold text-indigo-700 uppercase tracking-wider">Trường THCS Phan Văn Trị • Quận Gò Vấp</div>
-        <h2 class="text-lg md:text-xl font-bold text-slate-900">Đăng Nhập Hệ Thống Dự Giờ</h2>
-        <p class="text-xs text-slate-500">Hệ thống phân quyền: <strong>Tổ Trưởng (Admin)</strong> quản lý cả 3 mục • <strong>Giáo viên</strong> thao tác mục 1 và 2</p>
+
+        <!-- Tiêu đề lớn & thông điệp chính -->
+        <div class="space-y-2">
+          <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white leading-tight tracking-tight">
+            Hệ Thống Dự Giờ & Quản Lý <br class="hidden sm:inline">
+            <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-blue-300 to-amber-300">
+              Chuyên Môn Tổ Toán
+            </span>
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-xl">
+            Nền tảng số hóa hỗ trợ giáo viên tổ chức tiết dạy, tự động đồng bộ kế hoạch bài dạy vào phiếu dự giờ và xuất biên bản sinh hoạt chuyên môn chuẩn quy định.
+          </p>
+        </div>
+
+        <!-- 3 Thẻ tính năng nổi bật (Feature Badges) -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+          <!-- Tính năng 1 -->
+          <div class="p-3.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm hover:border-indigo-400/40 transition">
+            <div class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center mb-2.5">
+              <i data-lucide="file-text" class="w-4 h-4"></i>
+            </div>
+            <h4 class="text-xs font-bold text-white mb-1">Kế Hoạch Bài Dạy</h4>
+            <p class="text-[11px] text-slate-400 leading-tight">Tự động nhận diện hoạt động từ file Word của giáo viên.</p>
+          </div>
+
+          <!-- Tính năng 2 -->
+          <div class="p-3.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm hover:border-blue-400/40 transition">
+            <div class="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center mb-2.5">
+              <i data-lucide="clipboard-check" class="w-4 h-4"></i>
+            </div>
+            <h4 class="text-xs font-bold text-white mb-1">Phiếu Dự Giờ Số</h4>
+            <p class="text-[11px] text-slate-400 leading-tight">Ghi chép hành vi học sinh và gợi ý phân tích sư phạm.</p>
+          </div>
+
+          <!-- Tính năng 3 -->
+          <div class="p-3.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm hover:border-amber-400/40 transition">
+            <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center mb-2.5">
+              <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+            </div>
+            <h4 class="text-xs font-bold text-white mb-1">Biên Bản Tự Động</h4>
+            <p class="text-[11px] text-slate-400 leading-tight">Tổng hợp toàn bộ ý kiến tổ và xuất file in chuẩn mẫu.</p>
+          </div>
+        </div>
+
+        <!-- Phân quyền người dùng -->
+        <div class="flex items-center gap-2 pt-2 text-xs text-slate-400 border-t border-white/10">
+          <i data-lucide="shield" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+          <span>Phân quyền rõ ràng: <strong>Tổ trưởng (Admin)</strong> quản trị toàn diện • <strong>Giáo viên</strong> thao tác mục 1 & 2</span>
+        </div>
       </div>
 
-      <!-- Traditional Username/Password Form -->
-      <form onsubmit="handleManualLogin(event)" class="space-y-4 pt-1">
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">Tên đăng nhập:</label>
-          <div class="relative">
-            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-              <i data-lucide="user" class="w-4 h-4"></i>
-            </span>
-            <input type="text" id="login-username" placeholder="Nhập tên đăng nhập (totruong, gv_huong...)" class="w-full text-xs pl-9 pr-3 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none">
+      <!-- CỘT PHẢI (5 Cột): Form Đăng nhập Chuyên Nghiệp -->
+      <div class="lg:col-span-5 flex justify-center lg:justify-end">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-slate-100 text-slate-800 relative space-y-4">
+          
+          <!-- Đầu thẻ đăng nhập -->
+          <div class="text-center space-y-1">
+            <div class="w-12 h-12 bg-indigo-50 text-indigo-700 rounded-2xl flex items-center justify-center mx-auto mb-2 shadow-inner border border-indigo-100">
+              <i data-lucide="shield-check" class="w-6 h-6 text-indigo-600"></i>
+            </div>
+            <div class="text-[11px] font-bold text-indigo-700 uppercase tracking-wider">Trường THCS Phan Văn Trị • Quận Gò Vấp</div>
+            <h3 class="text-lg sm:text-xl font-bold text-slate-900">Đăng Nhập Hệ Thống</h3>
+            <p class="text-xs text-slate-500">Vui lòng chọn vai trò hoặc nhập thông tin bên dưới</p>
+          </div>
+
+          <!-- Nút chọn nhanh vai trò (Tổ Trưởng / Giáo Viên) -->
+          <div class="bg-slate-50 p-1.5 rounded-xl border border-slate-200 grid grid-cols-2 gap-1.5">
+            <button type="button" onclick="quickFillLogin('totruong', '123')" id="btn-quick-totruong" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1.5 bg-white text-indigo-700 shadow-sm border border-slate-200 hover:bg-indigo-50 cursor-pointer">
+              <i data-lucide="award" class="w-3.5 h-3.5 text-amber-500"></i>
+              <span>Tổ Trưởng</span>
+            </button>
+            <button type="button" onclick="quickFillLogin('gv_huong', '123')" id="btn-quick-gv" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1.5 text-slate-600 hover:text-indigo-700 hover:bg-white cursor-pointer">
+              <i data-lucide="user-check" class="w-3.5 h-3.5 text-blue-500"></i>
+              <span>Giáo Viên</span>
+            </button>
+          </div>
+
+          <!-- Form đăng nhập chính -->
+          <form onsubmit="handleManualLogin(event)" class="space-y-3.5 pt-1">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Tên đăng nhập:</label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <i data-lucide="user" class="w-4 h-4"></i>
+                </span>
+                <input type="text" id="login-username" value="totruong" placeholder="Nhập tên đăng nhập (totruong, gv_huong...)" class="w-full text-xs pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition bg-white text-slate-900">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Mật khẩu:</label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <i data-lucide="lock" class="w-4 h-4"></i>
+                </span>
+                <input type="password" id="login-password" value="123" placeholder="Nhập mật khẩu..." class="w-full text-xs pl-10 pr-10 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition bg-white text-slate-900">
+                <button type="button" onclick="toggleLoginPassword()" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer" title="Ẩn/Hiện mật khẩu">
+                  <i data-lucide="eye" id="login-eye-icon" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+
+            <button type="submit" class="w-full bg-gradient-to-r from-indigo-700 via-indigo-600 to-blue-600 hover:from-indigo-800 hover:to-blue-700 text-white font-bold py-2.5 rounded-xl text-xs shadow-lg shadow-indigo-500/25 transition flex items-center justify-center gap-2 active:scale-95 cursor-pointer">
+              <i data-lucide="log-in" class="w-4 h-4"></i>
+              <span>ĐĂNG NHẬP HỆ THỐNG</span>
+            </button>
+          </form>
+
+          <!-- Chân trang thẻ đăng nhập -->
+          <div class="pt-2 border-t border-slate-100 text-center">
+            <p class="text-[11px] text-slate-400 flex items-center justify-center gap-1">
+              <i data-lucide="lock" class="w-3 h-3 text-emerald-500"></i>
+              Bảo mật nội bộ • Năm học 2026 - 2027
+            </p>
           </div>
         </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">Mật khẩu:</label>
-          <div class="relative">
-            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-              <i data-lucide="lock" class="w-4 h-4"></i>
-            </span>
-            <input type="password" id="login-password" placeholder="Nhập mật khẩu..." class="w-full text-xs pl-9 pr-3 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none">
-          </div>
-        </div>
-        <button type="submit" class="w-full bg-gradient-to-r from-indigo-700 to-indigo-800 hover:from-indigo-800 hover:to-indigo-900 text-white font-bold py-2.5 rounded-xl text-xs shadow-md transition flex items-center justify-center gap-1.5 active:scale-95">
-          <i data-lucide="log-in" class="w-4 h-4"></i>
-          <span>ĐĂNG NHẬP</span>
-        </button>
-      </form>
+      </div>
+
     </div>
   </div>
 
@@ -1331,16 +1442,37 @@
       }
     }
 
-    function toggleDrumRotation() {
-      const drum = document.getElementById('login-drum-img');
-      const txt = document.getElementById('txt-toggle-drum');
-      if (!drum) return;
-      if (drum.style.animationPlayState === 'paused') {
-        drum.style.animationPlayState = 'running';
-        if (txt) txt.textContent = 'Đang xoay (Nhấn để dừng)';
+    function quickFillLogin(u, p) {
+      const elU = document.getElementById('login-username');
+      const elP = document.getElementById('login-password');
+      if (elU) elU.value = u;
+      if (elP) elP.value = p;
+      const btnTT = document.getElementById('btn-quick-totruong');
+      const btnGV = document.getElementById('btn-quick-gv');
+      if (btnTT && btnGV) {
+        if (u === 'totruong') {
+          btnTT.className = "px-2.5 py-1.5 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1.5 bg-white text-indigo-700 shadow-sm border border-slate-200 hover:bg-indigo-50 cursor-pointer";
+          btnGV.className = "px-2.5 py-1.5 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1.5 text-slate-600 hover:text-indigo-700 hover:bg-white cursor-pointer";
+        } else {
+          btnGV.className = "px-2.5 py-1.5 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1.5 bg-white text-indigo-700 shadow-sm border border-slate-200 hover:bg-indigo-50 cursor-pointer";
+          btnTT.className = "px-2.5 py-1.5 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1.5 text-slate-600 hover:text-indigo-700 hover:bg-white cursor-pointer";
+        }
+      }
+    }
+
+    function toggleLoginPassword() {
+      const input = document.getElementById('login-password');
+      const icon = document.getElementById('login-eye-icon');
+      if (!input) return;
+      if (input.type === 'password') {
+        input.type = 'text';
+        if (icon) icon.setAttribute('data-lucide', 'eye-off');
       } else {
-        drum.style.animationPlayState = 'paused';
-        if (txt) txt.textContent = 'Ảnh tĩnh (Nhấn để xoay)';
+        input.type = 'password';
+        if (icon) icon.setAttribute('data-lucide', 'eye');
+      }
+      if (window.lucide && window.lucide.createIcons) {
+        window.lucide.createIcons();
       }
     }
 
