@@ -715,20 +715,27 @@
           <textarea id="p3-conclusion-text" rows="3" onchange="p3SaveConclusion()" class="w-full text-xs md:text-sm p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none leading-relaxed" placeholder="Ghi nhận kết luận thống nhất của tổ sau khi thảo luận góp ý cho tiết dạy..."></textarea>
         </div>
 
-        <!-- Signatures -->
-        <div class="mt-8 grid grid-cols-2 text-center text-xs md:text-sm">
-          <div>
-            <p class="font-bold uppercase">Giáo viên giảng dạy</p>
-            <p class="text-[11px] italic text-slate-500">(Ký số / Ký tên)</p>
-            <div class="h-16"></div>
-            <p class="font-semibold" id="p3-sig-teacher">Cô Nguyễn Thị Lan</p>
+        <!-- Signatures (Căn chỉnh 2 cột ngang hàng tuyệt đối) -->
+        <div class="mt-8 grid grid-cols-2 text-center text-xs md:text-sm items-start">
+          <div class="flex flex-col justify-between">
+            <div>
+              <p class="italic text-xs invisible select-none">&nbsp;</p>
+              <p class="font-bold uppercase mt-1">Giáo viên giảng dạy</p>
+              <p class="text-[11px] italic text-slate-500">(Ký số / Ký tên)</p>
+            </div>
+            <div class="mt-16">
+              <p class="font-semibold text-slate-900" id="p3-sig-teacher">Cô Nguyễn Thị Lan</p>
+            </div>
           </div>
-          <div>
-            <p class="italic text-xs">TP. Hồ Chí Minh, ngày ...... tháng ...... năm 202...</p>
-            <p class="font-bold uppercase mt-1">Tổ trưởng chuyên môn</p>
-            <p class="text-[11px] italic text-slate-500">(Ký số / Ký tên)</p>
-            <div class="h-16"></div>
-            <p class="font-semibold text-slate-900">Thiều Thị Thúy Thanh</p>
+          <div class="flex flex-col justify-between">
+            <div>
+              <p class="italic text-xs text-slate-600">TP. Hồ Chí Minh, ngày ...... tháng ...... năm 202...</p>
+              <p class="font-bold uppercase mt-1">Tổ trưởng chuyên môn</p>
+              <p class="text-[11px] italic text-slate-500">(Ký số / Ký tên)</p>
+            </div>
+            <div class="mt-16">
+              <p class="font-semibold text-slate-900">Thiều Thị Thúy Thanh</p>
+            </div>
           </div>
         </div>
 
@@ -2912,11 +2919,23 @@
       const subCount = document.getElementById('p3-sub-count');
       if (subCount) subCount.innerText = obsList.length;
 
+      let registeredTeacher = s.teacherName;
+      if (!registeredTeacher || registeredTeacher.includes('Tổ Trưởng') || registeredTeacher.includes('totruong')) {
+        if (s.id === 'TOAN8-T56-2025') registeredTeacher = 'Cô Nguyễn Thị Lan';
+        else if (s.id === 'TOAN8-T57-2025') registeredTeacher = 'Thầy Trần Minh Tuấn';
+        else if (s.id === 'TOAN9-T45-2025') registeredTeacher = 'Cô Hoàng Thị Hương';
+        else if (s.id === 'TOAN7-T52-2025') registeredTeacher = 'Cô Lê Thị Mai';
+        else if (s.id === 'TOAN6-T60-2025') registeredTeacher = 'Thầy Phạm Hải Nam';
+        else registeredTeacher = s.teacherName || 'Giáo viên bộ môn';
+        s.teacherName = registeredTeacher;
+      }
+      const teacherDisplay = isBlankSession ? '....................................................' : registeredTeacher;
+
       document.getElementById('p3-doc-lesson').innerText = isBlankSession ? '................................................................................' : (s.lessonTitle || '');
-      document.getElementById('p3-doc-teacher').innerText = isBlankSession ? '....................................................' : (s.teacherName || '');
+      document.getElementById('p3-doc-teacher').innerText = teacherDisplay;
       document.getElementById('p3-doc-class').innerText = isBlankSession ? 'Lớp: ............ • Tiết: ........' : `${s.className || ''} • ${s.period || ''}`;
       document.getElementById('p3-doc-time').innerText = isBlankSession ? '....................................................' : (s.teachingTime || '');
-      document.getElementById('p3-sig-teacher').innerText = isBlankSession ? '....................................................' : (s.teacherName || '');
+      document.getElementById('p3-sig-teacher').innerText = teacherDisplay;
 
       const observersNames = obsList.map(o => o.observerName).filter(Boolean);
       if (obsList.length === 0) {
@@ -3152,13 +3171,16 @@
           </div>
           <table style="border: none; width: 100%; margin-top: 30px;">
             <tr>
-              <td style="border: none; width: 50%; text-align: center;">
-                <b>Giáo viên giảng dạy (Ký số)</b><br><br><br><br>
-                <b>${isBlankSession ? '....................................................' : s.teacherName}</b>
+              <td style="border: none; width: 50%; text-align: center; vertical-align: top;">
+                <p style="margin: 0; font-size: 11pt; visibility: hidden;">&nbsp;</p>
+                <b style="text-transform: uppercase;">Giáo viên giảng dạy</b><br>
+                <i style="font-size: 10pt; color: #555;">(Ký số / Ký tên)</i><br><br><br><br>
+                <b>${isBlankSession ? '....................................................' : (s.teacherName || 'Giáo viên bộ môn')}</b>
               </td>
-              <td style="border: none; width: 50%; text-align: center;">
-                <i>TP. Hồ Chí Minh, ngày ...... tháng ...... năm 202...</i><br>
-                <b>Tổ trưởng chuyên môn (Ký số)</b><br><br><br><br>
+              <td style="border: none; width: 50%; text-align: center; vertical-align: top;">
+                <p style="margin: 0; font-style: italic; font-size: 11pt;">TP. Hồ Chí Minh, ngày ...... tháng ...... năm 202...</p>
+                <b style="text-transform: uppercase;">Tổ trưởng chuyên môn</b><br>
+                <i style="font-size: 10pt; color: #555;">(Ký số / Ký tên)</i><br><br><br><br>
                 <b>Thiều Thị Thúy Thanh</b>
               </td>
             </tr>
