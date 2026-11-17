@@ -24,14 +24,75 @@
       border-radius: 12px;
     }
 
+    .print-only-text {
+      display: none;
+    }
+
     @media print {
       body * { visibility: hidden; }
-      .print-target, .print-target * { visibility: visible; }
-      .print-target {
+      .print-target, .print-target * { visibility: visible !important; }
+      
+      /* Hỗ trợ khi người dùng bấm trực tiếp phím Ctrl+P: Tự động in bảng của mục đang mở */
+      #section-part2:not(.hidden) #p2-sheet-container,
+      #section-part2:not(.hidden) #p2-sheet-container *,
+      #section-part3:not(.hidden) #printable-area,
+      #section-part3:not(.hidden) #printable-area * {
+        visibility: visible !important;
+      }
+
+      .print-target,
+      #section-part2:not(.hidden) #p2-sheet-container,
+      #section-part3:not(.hidden) #printable-area {
         position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 1.2cm !important;
         box-shadow: none !important; border: none !important;
       }
       .no-print { display: none !important; }
+
+      /* Loại bỏ hoàn toàn thanh cuộn, tay cầm resize, và các dấu mũi tên lên xuống của textarea khi in / xuất PDF */
+      .screen-only-input,
+      textarea {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        width: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border: none !important;
+        resize: none !important;
+      }
+
+      .print-only-text {
+        display: block !important;
+        visibility: visible !important;
+        white-space: pre-wrap !important;
+        word-break: break-word !important;
+        font-family: 'Times New Roman', serif !important;
+        color: #000 !important;
+        background: transparent !important;
+        padding: 2px 0 !important;
+        min-height: 24px;
+      }
+
+      /* Loại bỏ mọi thanh cuộn, mũi tên cuộn lên/xuống ở toàn bộ trang in */
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        scrollbar-width: none !important;
+        -ms-overflow-style: none !important;
+      }
+      *::-webkit-scrollbar {
+        display: none !important;
+        width: 0 !important;
+        height: 0 !important;
+      }
+      *::-webkit-resizer {
+        display: none !important;
+      }
+      *::-webkit-inner-spin-button,
+      *::-webkit-outer-spin-button {
+        -webkit-appearance: none !important;
+        margin: 0 !important;
+      }
     }
 
     /* Hiệu ứng hạt sáng & lưới tọa độ toán học chìm tinh tế cho cổng đăng nhập */
@@ -725,7 +786,8 @@
           <label class="block font-bold text-xs md:text-sm text-slate-900 uppercase">
             Ý KIẾN KẾT LUẬN & THỐNG NHẤT CỦA TỔ CHUYÊN MÔN (Sau khi họp góp ý):
           </label>
-          <textarea id="p3-conclusion-text" rows="3" onchange="p3SaveConclusion()" class="w-full text-xs md:text-sm p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none leading-relaxed" placeholder="Ghi nhận kết luận thống nhất của tổ sau khi thảo luận góp ý cho tiết dạy..."></textarea>
+          <textarea id="p3-conclusion-text" rows="3" onchange="p3SaveConclusion()" class="screen-only-input w-full text-xs md:text-sm p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none leading-relaxed" placeholder="Ghi nhận kết luận thống nhất của tổ sau khi thảo luận góp ý cho tiết dạy..."></textarea>
+          <div id="p3-conclusion-print" class="print-only-text text-xs md:text-sm leading-relaxed p-1 border-b border-dotted border-slate-400 whitespace-pre-wrap"></div>
         </div>
 
         <!-- Signatures (Căn chỉnh 2 cột ngang hàng tuyệt đối) -->
@@ -2567,6 +2629,16 @@
     // ==============================================================
     // TIỆN ÍCH ĐỊNH DẠNG TÊN & NGÀY THÁNG CHUẨN HÀNH CHÍNH
     // ==============================================================
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
     function cleanPersonName(name) {
       if (!name) return '';
       return name.replace(/^(Thầy|Cô|thầy|cô)\s+/i, '').trim();
@@ -2742,7 +2814,8 @@
         <tr class="align-top">
           <!-- Cột 1: Nội dung hoạt động -->
           <td class="border border-slate-800 p-2 font-bold text-slate-900 bg-slate-50/40 w-1/4">
-            <textarea onchange="p2UpdateRow(${idx}, 'activityTitle', this.value)" rows="${Math.max(4, (row.activityTitle || '').split('\n').length + 1)}" style="min-height: 90px;" class="w-full bg-transparent font-bold text-xs md:text-sm p-1 rounded outline-none resize-y focus:bg-white focus:ring-1 focus:ring-indigo-400 leading-snug">${row.activityTitle || ''}</textarea>
+            <textarea onchange="p2UpdateRow(${idx}, 'activityTitle', this.value)" rows="${Math.max(4, (row.activityTitle || '').split('\n').length + 1)}" style="min-height: 90px;" class="screen-only-input w-full bg-transparent font-bold text-xs md:text-sm p-1 rounded outline-none resize-y focus:bg-white focus:ring-1 focus:ring-indigo-400 leading-snug">${escapeHtml(row.activityTitle || '')}</textarea>
+            <div id="p2-t-print-${idx}" class="print-only-text font-bold text-xs md:text-sm leading-snug whitespace-pre-wrap">${escapeHtml(row.activityTitle || '')}</div>
             <div class="no-print mt-1 text-right">
               <button onclick="p2DeleteRow(${idx})" class="text-[10px] text-slate-400 hover:text-red-500">Xóa dòng</button>
             </div>
@@ -2750,7 +2823,8 @@
 
           <!-- Cột 2: Biểu hiện của học sinh (Tích chọn nhanh) -->
           <td class="border border-slate-800 p-2 w-5/12 align-top">
-            <textarea id="p2-b-${idx}" onfocus="p2SetActiveInput(this)" oninput="p2UpdateRow(${idx}, 'behavior', this.value)" rows="3" placeholder="Gõ hoặc chạm chọn nhanh các biểu hiện bên dưới..." class="w-full text-xs md:text-sm p-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-indigo-400 resize-y leading-relaxed">${row.behavior || ''}</textarea>
+            <textarea id="p2-b-${idx}" onfocus="p2SetActiveInput(this)" oninput="p2UpdateRow(${idx}, 'behavior', this.value)" rows="3" placeholder="Gõ hoặc chạm chọn nhanh các biểu hiện bên dưới..." class="screen-only-input w-full text-xs md:text-sm p-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-indigo-400 resize-y leading-relaxed">${escapeHtml(row.behavior || '')}</textarea>
+            <div id="p2-b-print-${idx}" class="print-only-text text-xs md:text-sm leading-relaxed whitespace-pre-wrap">${escapeHtml(row.behavior || '')}</div>
             
             <!-- In-cell Quick Pick Pills for Behavior (no-print) -->
             <div class="no-print mt-2 space-y-1.5 pt-1.5 border-t border-slate-100">
@@ -2780,7 +2854,8 @@
 
           <!-- Cột 3: Nguyên nhân, biện pháp (Tích chọn nhanh Vì... Có thể...) -->
           <td class="border border-slate-800 p-2 w-1/3 align-top">
-            <textarea id="p2-s-${idx}" onfocus="p2SetActiveInput(this)" oninput="p2UpdateRow(${idx}, 'solution', this.value)" rows="3" placeholder="Gõ hoặc chạm chọn Vì... Nên... Có thể... bên dưới..." class="w-full text-xs md:text-sm p-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-indigo-400 resize-y leading-relaxed">${row.solution || ''}</textarea>
+            <textarea id="p2-s-${idx}" onfocus="p2SetActiveInput(this)" oninput="p2UpdateRow(${idx}, 'solution', this.value)" rows="3" placeholder="Gõ hoặc chạm chọn Vì... Nên... Có thể... bên dưới..." class="screen-only-input w-full text-xs md:text-sm p-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-indigo-400 resize-y leading-relaxed">${escapeHtml(row.solution || '')}</textarea>
+            <div id="p2-s-print-${idx}" class="print-only-text text-xs md:text-sm leading-relaxed whitespace-pre-wrap">${escapeHtml(row.solution || '')}</div>
             
             <!-- In-cell Quick Pick Pills for Cause & Solution (no-print) -->
             <div class="no-print mt-2 space-y-1.5 pt-1.5 border-t border-slate-100">
@@ -2861,6 +2936,16 @@
         // Auto-save draft on this device for this session
         const localDraftKey = `pvt_draft_${s.id}_${myObserverName.replace(/\s+/g, '_')}`;
         localStorage.setItem(localDraftKey, JSON.stringify(p2Rows));
+
+        // Đồng bộ tức thì nội dung chữ sang thẻ in ấn PDF
+        let printElId = '';
+        if (field === 'activityTitle') printElId = `p2-t-print-${idx}`;
+        else if (field === 'behavior') printElId = `p2-b-print-${idx}`;
+        else if (field === 'solution') printElId = `p2-s-print-${idx}`;
+        if (printElId) {
+          const pel = document.getElementById(printElId);
+          if (pel) pel.innerText = value || '';
+        }
       }
     }
 
@@ -3158,6 +3243,18 @@
 
     // 2. Xuất PDF luôn để ký số (Phần 2)
     function p2ExportPDF() {
+      // Đảm bảo toàn bộ chữ trong các ô được đồng bộ sang thẻ văn bản in ấn chuẩn
+      if (Array.isArray(p2Rows)) {
+        p2Rows.forEach((r, idx) => {
+          const tel = document.getElementById(`p2-t-print-${idx}`);
+          if (tel) tel.innerText = r.activityTitle || '';
+          const bel = document.getElementById(`p2-b-print-${idx}`);
+          if (bel) bel.innerText = r.behavior || '';
+          const sel = document.getElementById(`p2-s-print-${idx}`);
+          if (sel) sel.innerText = r.solution || '';
+        });
+      }
+
       const p3Sheet = document.getElementById('printable-area');
       const p2Sheet = document.getElementById('p2-sheet-container');
       if (p3Sheet) p3Sheet.classList.remove('print-target');
@@ -3295,6 +3392,10 @@
           }
         }
         conclusionInput.value = sessConclusion;
+        const cPrintEl = document.getElementById('p3-conclusion-print');
+        if (cPrintEl) {
+          cPrintEl.innerText = sessConclusion || (isBlankSession ? '....................................................................................................................' : '');
+        }
       }
 
       p3SynthesizeResults();
@@ -3384,6 +3485,8 @@
     async function p3SaveConclusion() {
       const s = getCurrentSession();
       const conclusion = document.getElementById('p3-conclusion-text').value.trim();
+      const cPrintEl = document.getElementById('p3-conclusion-print');
+      if (cPrintEl) cPrintEl.innerText = conclusion || '';
       
       appData.meetingMinutes = appData.meetingMinutes || {};
       appData.meetingMinutes[s.id] = {
@@ -3405,6 +3508,10 @@
     // 2. Xuất PDF Tổ để ký số (Phần 3)
     function p3PrintMaster() {
       p3SaveConclusion();
+      const conclusion = (document.getElementById('p3-conclusion-text') && document.getElementById('p3-conclusion-text').value.trim()) || '';
+      const cPrintEl = document.getElementById('p3-conclusion-print');
+      if (cPrintEl) cPrintEl.innerText = conclusion || '....................................................................................................................';
+
       const p2Sheet = document.getElementById('p2-sheet-container');
       const p3Sheet = document.getElementById('printable-area');
       if (p2Sheet) p2Sheet.classList.remove('print-target');
