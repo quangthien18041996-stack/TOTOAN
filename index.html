@@ -586,7 +586,7 @@
             <p class="font-bold uppercase mt-1">Người dự giờ</p>
             <p class="text-[11px] italic text-slate-500">(Ký số / Ký và ghi rõ họ tên)</p>
             <div class="h-16"></div>
-            <p class="font-semibold" id="p2-signature-name">Cô Nguyễn Thị Lan</p>
+            <p class="font-semibold text-slate-900" id="p2-signature-name">Nguyễn Thị Lan</p>
           </div>
         </div>
 
@@ -2507,8 +2507,13 @@
     }
 
     // ==============================================================
-    // PHẦN 2 LOGIC: PHIẾU DỰ GIỜ CÁ NHÂN (THEO TIẾT DẠY ĐÃ CHỌN)
+    // TIỆN ÍCH ĐỊNH DẠNG TÊN & NGÀY THÁNG CHUẨN HÀNH CHÍNH
     // ==============================================================
+    function cleanPersonName(name) {
+      if (!name) return '';
+      return name.replace(/^(Thầy|Cô|thầy|cô)\s+/i, '').trim();
+    }
+
     function formatSessionDate(timeStr, isBlank) {
       if (isBlank) {
         return "TP. Hồ Chí Minh, ngày ...... tháng ...... năm 202...";
@@ -2551,14 +2556,17 @@
       return `TP. Hồ Chí Minh, ngày ${d} tháng ${m} năm ${y}`;
     }
 
+    // ==============================================================
+    // PHẦN 2 LOGIC: PHIẾU DỰ GIỜ CÁ NHÂN (THEO TIẾT DẠY ĐÃ CHỌN)
+    // ==============================================================
     function renderPart2UI() {
       const s = getCurrentSession();
       if (!s) return;
 
       document.getElementById('p2-device-observer-label').innerText = myObserverName;
       const displayObsEl = document.getElementById('p2-display-observer-name');
-      if (displayObsEl) displayObsEl.innerText = myObserverName;
-      document.getElementById('p2-signature-name').innerText = myObserverName;
+      if (displayObsEl) displayObsEl.innerText = cleanPersonName(myObserverName);
+      document.getElementById('p2-signature-name').innerText = cleanPersonName(myObserverName);
 
       const p2DateEl = document.getElementById('p2-date-line');
       if (p2DateEl) {
@@ -2567,7 +2575,7 @@
 
       const sheetTeacherEl = document.getElementById('p2-sheet-teacher');
       if (sheetTeacherEl) {
-        sheetTeacherEl.innerText = s.isBlank ? '....................................................' : (s.teacherName || '');
+        sheetTeacherEl.innerText = s.isBlank ? '....................................................' : cleanPersonName(s.teacherName || '');
       }
 
       document.getElementById('p2-sheet-lesson').innerText = s.isBlank ? '................................................................................' : (s.lessonTitle || '');
@@ -2927,8 +2935,8 @@
             </tr>
           </table>
           <h2 style="text-align: center; text-transform: uppercase;">PHIẾU QUAN SÁT HỌC SINH THEO NGHIÊN CỨU BÀI HỌC</h2>
-          <p><b>Họ và tên giáo viên giảng dạy:</b> ${s.teacherName}</p>
-          <p><b>Họ và tên người dự giờ:</b> ${myObserverName}</p>
+          <p><b>Họ và tên giáo viên giảng dạy:</b> ${cleanPersonName(s.teacherName)}</p>
+          <p><b>Họ và tên người dự giờ:</b> ${cleanPersonName(myObserverName)}</p>
           <p><b>Tên bài dạy:</b> ${s.lessonTitle}</p>
           <p><b>Môn:</b> ${s.subject || 'Toán'} &nbsp;–&nbsp; <b>Lớp:</b> ${s.className} &nbsp;–&nbsp; <b>Tiết:</b> ${s.period} &nbsp;–&nbsp; <b>Trường:</b> ${s.school || 'THCS Phan Văn Trị'}</p>
           <table>
@@ -2942,7 +2950,7 @@
               <td style="border: none; width: 50%; text-align: center;">
                 <i>${formatSessionDate(s.teachingTime, s.isBlank)}</i><br>
                 <b>Người dự giờ (Ký số / Ký tên)</b><br><br><br><br>
-                <b>${myObserverName}</b>
+                <b>${cleanPersonName(myObserverName)}</b>
               </td>
             </tr>
           </table>
@@ -2953,18 +2961,13 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `Phieu_Du_Gio_${myObserverName.replace(/\s+/g, '_')}_${(s.className || '').replace(/\s+/g, '_')}.doc`;
+      a.download = `Phieu_Du_Gio_${cleanPersonName(myObserverName).replace(/\s+/g, '_')}_${(s.className || '').replace(/\s+/g, '_')}.doc`;
       a.click();
     }
 
     // ==============================================================
     // PHẦN 3 LOGIC: TỔ TRƯỞNG CHUYÊN MÔN TỔNG HỢP (THEO TIẾT DẠY ĐÃ CHỌN)
     // ==============================================================
-    function cleanPersonName(name) {
-      if (!name) return '';
-      return name.replace(/^(Thầy|Cô|thầy|cô)\s+/i, '').trim();
-    }
-
     function renderPart3UI() {
       const s = getCurrentSession();
       if (!s) return;
