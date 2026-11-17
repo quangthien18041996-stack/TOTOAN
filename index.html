@@ -421,6 +421,63 @@
         </div>
       </div>
 
+      <!-- Quản Lý & Tạo Tài Khoản Giáo Viên (Dành Riêng Cho Tổ Trưởng) -->
+      <div class="bg-white rounded-xl p-4 md:p-5 border border-indigo-200 shadow-sm space-y-4 no-print">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center shadow-sm border border-indigo-100">
+              <i data-lucide="user-plus" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h3 class="text-sm md:text-base font-bold text-slate-800 flex items-center gap-2">
+                <span>Quản Lý & Tạo Tài Khoản Giáo Viên</span>
+                <span class="bg-indigo-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full"><span id="p3-users-count">5</span> tài khoản</span>
+              </h3>
+              <p class="text-xs text-slate-500">Tổ trưởng tạo thêm tài khoản cho giáo viên trong tổ; bấm "Tạo & Cập nhật" là giáo viên có thể đăng nhập được ngay.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form tạo tài khoản giáo viên mới -->
+        <form onsubmit="p3AddNewTeacher(event)" class="bg-indigo-50/60 border border-indigo-100 rounded-xl p-3.5 space-y-2">
+          <div class="text-xs font-bold text-indigo-900 flex items-center gap-1.5">
+            <i data-lucide="plus-circle" class="w-3.5 h-3.5 text-indigo-600"></i>
+            <span>Thêm tài khoản giáo viên mới:</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-700 mb-1">Họ và tên giáo viên:</label>
+              <input type="text" id="new-teacher-name" oninput="p3AutoSuggestUsername()" placeholder="VD: Thầy Nguyễn Văn A" class="w-full text-xs p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none bg-white font-medium" required>
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-700 mb-1">Tên đăng nhập (viết thường, không dấu):</label>
+              <input type="text" id="new-teacher-username" placeholder="VD: gv_a" class="w-full text-xs p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none bg-white font-mono" required>
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-700 mb-1">Mật khẩu khởi tạo:</label>
+              <div class="flex gap-2">
+                <input type="text" id="new-teacher-password" value="123" placeholder="Mật khẩu..." class="w-full text-xs p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none bg-white font-mono" required>
+                <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-2.5 rounded-lg shadow-sm whitespace-nowrap transition flex items-center gap-1.5 active:scale-95">
+                  <i data-lucide="check" class="w-4 h-4"></i>
+                  <span>TẠO & CẬP NHẬT</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+
+        <!-- Danh sách tài khoản hiện tại trong tổ -->
+        <div>
+          <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <i data-lucide="users" class="w-3.5 h-3.5 text-indigo-600"></i>
+            <span>Danh sách tài khoản trong Tổ Toán:</span>
+          </div>
+          <div id="p3-users-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5">
+            <!-- Rendered by renderUserAccountsUI() -->
+          </div>
+        </div>
+      </div>
+
       <!-- Submitted Teachers Status -->
       <div class="bg-white rounded-xl p-3.5 border border-slate-200 shadow-sm">
         <div class="flex items-center justify-between mb-2">
@@ -661,7 +718,7 @@
     // ==============================================================
     // HỆ THỐNG XÁC THỰC VÀ PHÂN QUYỀN (RBAC AUTHENTICATION)
     // ==============================================================
-    const USERS_DB = {
+    const DEFAULT_USERS_DB = {
       'totruong': {
         username: 'totruong',
         fullName: 'Thầy Tổ Trưởng Chuyên Môn',
@@ -698,6 +755,172 @@
         password: '123'
       }
     };
+
+    let USERS_DB = (function() {
+      try {
+        const stored = localStorage.getItem('pvt_users_db');
+        if (stored) {
+          return Object.assign({}, DEFAULT_USERS_DB, JSON.parse(stored));
+        }
+      } catch (e) {}
+      return Object.assign({}, DEFAULT_USERS_DB);
+    })();
+
+    // Tự động gợi ý username khi gõ họ tên giáo viên (bỏ dấu tiếng Việt, lấy tên cuối)
+    function p3AutoSuggestUsername() {
+      const nameInput = document.getElementById('new-teacher-name');
+      const userInput = document.getElementById('new-teacher-username');
+      if (!nameInput || !userInput) return;
+      const name = nameInput.value || '';
+      if (!name) return;
+
+      if (!userInput.value || userInput.dataset.autofilled === 'true') {
+        const clean = name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D").toLowerCase();
+        const parts = clean.trim().split(/\s+/).filter(p => p !== 'thay' && p !== 'co');
+        const last = parts.length > 0 ? parts[parts.length - 1] : 'gv';
+        userInput.value = 'gv_' + last;
+        userInput.dataset.autofilled = 'true';
+      }
+    }
+
+    // Tổ trưởng tạo tài khoản giáo viên mới & cập nhật ngay
+    function p3AddNewTeacher(event) {
+      if (event) event.preventDefault();
+      const nameInput = document.getElementById('new-teacher-name');
+      const userInput = document.getElementById('new-teacher-username');
+      const passInput = document.getElementById('new-teacher-password');
+
+      const fullName = (nameInput.value || '').trim();
+      let username = (userInput.value || '').trim().toLowerCase().replace(/\s+/g, '_');
+      const password = (passInput.value || '').trim();
+
+      if (!fullName) {
+        alert("Vui lòng nhập họ và tên giáo viên!");
+        nameInput.focus();
+        return;
+      }
+      if (!username) {
+        alert("Vui lòng nhập tên đăng nhập!");
+        userInput.focus();
+        return;
+      }
+      if (!password) {
+        alert("Vui lòng nhập mật khẩu!");
+        passInput.focus();
+        return;
+      }
+
+      if (USERS_DB[username]) {
+        if (!confirm(`Tài khoản "${username}" đã tồn tại (${USERS_DB[username].fullName}). Thầy/Cô có muốn CẬP NHẬT lại mật khẩu và họ tên cho tài khoản này không?`)) {
+          return;
+        }
+      }
+
+      USERS_DB[username] = {
+        username: username,
+        fullName: fullName,
+        role: 'TEACHER',
+        roleLabel: 'Giáo Viên',
+        password: password
+      };
+
+      // Lưu bộ nhớ trình duyệt
+      localStorage.setItem('pvt_users_db', JSON.stringify(USERS_DB));
+
+      // Đồng bộ ngay lên đám mây qua ntfy.sh để điện thoại của GV đăng nhập được ngay
+      try {
+        fetch(`https://ntfy.sh/${CLOUD_SYNC_TOPIC}`, {
+          method: 'POST',
+          body: JSON.stringify({
+            type: 'SYNC_USERS_DB',
+            payload: USERS_DB
+          }),
+          headers: { 'Title': `Cap nhat tai khoan: ${fullName}` }
+        }).catch(() => {});
+      } catch (e) {}
+
+      // Reset form
+      nameInput.value = '';
+      userInput.value = '';
+      userInput.dataset.autofilled = '';
+      passInput.value = '123';
+
+      renderUserAccountsUI();
+      alert(`✓ ĐÃ TẠO TÀI KHOẢN THÀNH CÔNG!\n\n• Họ và tên: ${fullName}\n• Tên đăng nhập: ${username}\n• Mật khẩu: ${password}\n\nTài khoản đã được cập nhật vào hệ thống. Giáo viên có thể đăng nhập ngay lập tức!`);
+    }
+
+    // Xóa tài khoản giáo viên
+    function p3DeleteTeacher(username) {
+      if (username === 'totruong') {
+        alert("Không thể xóa tài khoản Tổ Trưởng (Admin)!");
+        return;
+      }
+      const u = USERS_DB[username];
+      if (!u) return;
+
+      if (confirm(`Thầy/Cô có chắc chắn muốn xóa tài khoản "${username}" (${u.fullName}) khỏi hệ thống?`)) {
+        delete USERS_DB[username];
+        localStorage.setItem('pvt_users_db', JSON.stringify(USERS_DB));
+        try {
+          fetch(`https://ntfy.sh/${CLOUD_SYNC_TOPIC}`, {
+            method: 'POST',
+            body: JSON.stringify({
+              type: 'SYNC_USERS_DB',
+              payload: USERS_DB
+            }),
+            headers: { 'Title': `Xoa tai khoan: ${username}` }
+          }).catch(() => {});
+        } catch (e) {}
+        renderUserAccountsUI();
+      }
+    }
+
+    // Render danh sách tài khoản trong Phần 3
+    function renderUserAccountsUI() {
+      const container = document.getElementById('p3-users-list');
+      if (!container) return;
+
+      const keys = Object.keys(USERS_DB);
+      const countEl = document.getElementById('p3-users-count');
+      if (countEl) countEl.innerText = keys.length;
+
+      container.innerHTML = keys.map(k => {
+        const u = USERS_DB[k];
+        const isAdmin = u.role === 'ADMIN';
+        return `
+          <div class="flex items-center justify-between p-3 rounded-xl border ${isAdmin ? 'bg-amber-50/70 border-amber-300' : 'bg-slate-50 border-slate-200'} text-xs transition shadow-2xs">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="text-base">${isAdmin ? '👑' : '👩‍🏫'}</span>
+              <div class="min-w-0">
+                <div class="font-bold text-slate-800 flex items-center gap-1.5 truncate">
+                  <span class="truncate">${u.fullName}</span>
+                  <span class="${isAdmin ? 'bg-amber-400 text-slate-900 font-extrabold' : 'bg-indigo-100 text-indigo-700 font-semibold'} text-[9px] px-1.5 py-0.2 rounded shrink-0 uppercase">
+                    ${isAdmin ? 'Tổ Trưởng' : 'Giáo Viên'}
+                  </span>
+                </div>
+                <div class="text-[11px] text-slate-500 mt-0.5 flex flex-wrap items-center gap-1.5">
+                  <span>Tài khoản: <strong class="text-indigo-700 font-mono">${u.username}</strong></span>
+                  <span>•</span>
+                  <span>Mật khẩu: <strong class="text-slate-700 font-mono">${u.password}</strong></span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="flex items-center gap-1 shrink-0 ml-2">
+              ${!isAdmin ? `
+                <button type="button" onclick="p3DeleteTeacher('${u.username}')" class="text-slate-400 hover:text-rose-600 p-1.5 rounded hover:bg-white transition" title="Xóa tài khoản này">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                </button>
+              ` : `
+                <span class="text-[9px] text-amber-700 font-bold px-1.5 py-0.5 bg-amber-100 rounded">Cố định</span>
+              `}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
 
     let currentUser = null;
     try {
@@ -787,6 +1010,14 @@
         document.getElementById('login-password').focus();
         return;
       }
+
+      // Luôn làm mới danh sách tài khoản từ bộ nhớ
+      try {
+        const stored = localStorage.getItem('pvt_users_db');
+        if (stored) {
+          USERS_DB = Object.assign({}, DEFAULT_USERS_DB, USERS_DB, JSON.parse(stored));
+        }
+      } catch (e) {}
 
       const key = u.toLowerCase();
       let matchedUser = USERS_DB[key];
@@ -907,12 +1138,13 @@
 
     // Realtime Cloud Sync via ntfy.sh (No config needed, works between phone & PC)
     function initCloudSync() {
-      // 1. Fetch recent submissions from cloud cache
+      // 1. Fetch recent submissions & user updates from cloud cache
       fetch(`https://ntfy.sh/${CLOUD_SYNC_TOPIC}/json?poll=1`)
         .then(res => res.text())
         .then(text => {
           const lines = text.trim().split('\n');
           let updated = false;
+          let usersUpdated = false;
           lines.forEach(line => {
             try {
               const msg = JSON.parse(line);
@@ -921,6 +1153,10 @@
                 if (data.type === 'SUBMIT_OBSERVATION' && data.payload) {
                   mergeObservationIntoState(data.payload);
                   updated = true;
+                } else if (data.type === 'SYNC_USERS_DB' && data.payload) {
+                  USERS_DB = Object.assign({}, DEFAULT_USERS_DB, USERS_DB, data.payload);
+                  localStorage.setItem('pvt_users_db', JSON.stringify(USERS_DB));
+                  usersUpdated = true;
                 }
               }
             } catch (e) {}
@@ -928,10 +1164,13 @@
           if (updated) {
             renderPart3UI();
           }
+          if (usersUpdated) {
+            renderUserAccountsUI();
+          }
         })
         .catch(err => console.log("Cloud sync poll notice:", err));
 
-      // 2. Listen live for incoming submissions
+      // 2. Listen live for incoming submissions & user syncs
       try {
         const sse = new EventSource(`https://ntfy.sh/${CLOUD_SYNC_TOPIC}/sse`);
         sse.onmessage = (event) => {
@@ -942,6 +1181,10 @@
               if (data.type === 'SUBMIT_OBSERVATION' && data.payload) {
                 mergeObservationIntoState(data.payload);
                 renderPart3UI();
+              } else if (data.type === 'SYNC_USERS_DB' && data.payload) {
+                USERS_DB = Object.assign({}, DEFAULT_USERS_DB, USERS_DB, data.payload);
+                localStorage.setItem('pvt_users_db', JSON.stringify(USERS_DB));
+                renderUserAccountsUI();
               }
             }
           } catch (e) {}
@@ -1516,6 +1759,7 @@
       }
 
       p3SynthesizeResults();
+      renderUserAccountsUI();
       lucide.createIcons();
     }
 
