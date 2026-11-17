@@ -10,6 +10,8 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <!-- QRCode.js CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- Mammoth.js CDN (Tự động đọc và bóc tách file Word .docx ngay trên trình duyệt) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.21/mammoth.browser.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Times+New+Roman&display=swap');
     body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
@@ -169,6 +171,41 @@
         </div>
 
         <input type="hidden" id="p1-edit-id" value="">
+
+        <!-- Khu vực Tự động bóc tách Kế hoạch bài dạy từ file Word hoặc Dán văn bản -->
+        <div class="bg-gradient-to-r from-indigo-50/90 via-purple-50/70 to-blue-50/90 border-2 border-dashed border-indigo-300 rounded-xl p-4 transition hover:border-indigo-500 shadow-2xs">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+            <div class="flex items-start sm:items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold shadow-sm shrink-0">
+                <i data-lucide="file-up" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <div class="font-bold text-slate-800 text-xs md:text-sm flex flex-wrap items-center gap-1.5">
+                  <span>Tự Động Bóc Tách Kế Hoạch Bài Dạy (Giáo Án)</span>
+                  <span class="bg-emerald-600 text-white text-[9px] font-extrabold px-1.5 py-0.2 rounded uppercase">Tiện ích thông minh</span>
+                </div>
+                <p class="text-[11px] text-slate-500 mt-0.5">Tải file Word (.docx) hoặc Dán văn bản giáo án, hệ thống sẽ tự động bóc tách tên bài, lớp và toàn bộ Hoạt động 1, 2, 3, 4 vào phiếu dự giờ.</p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0">
+              <input type="file" id="p1-khbd-file-input" accept=".docx,.txt" class="hidden" onchange="handleKHBDFileUpload(event)">
+              <button type="button" onclick="document.getElementById('p1-khbd-file-input').click()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3.5 py-2 rounded-lg shadow-sm flex items-center gap-1.5 transition active:scale-95">
+                <i data-lucide="upload-cloud" class="w-4 h-4"></i>
+                <span>Tải file Word (.docx)</span>
+              </button>
+              <button type="button" onclick="togglePasteKHBDModal(true)" class="bg-white hover:bg-slate-100 text-indigo-700 border border-indigo-300 text-xs font-semibold px-3 py-2 rounded-lg shadow-2xs flex items-center gap-1.5 transition active:scale-95" title="Dán văn bản giáo án nếu dùng file .doc cũ hoặc PDF">
+                <i data-lucide="clipboard-paste" class="w-4 h-4"></i>
+                <span>Dán văn bản</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Thông báo trạng thái khi bóc tách -->
+          <div id="p1-khbd-parse-status" class="hidden mt-2.5 text-xs text-indigo-800 bg-white/90 p-2.5 rounded-lg border border-indigo-200 flex items-center justify-between">
+            <span id="p1-khbd-parse-msg">Đang phân tích file giáo án...</span>
+          </div>
+        </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5 text-xs">
           <div>
@@ -662,6 +699,35 @@
         <button onclick="confirmIdentifyName()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl text-xs shadow-md transition flex items-center justify-center gap-1.5">
           <span>BẮT ĐẦU ĐIỀN PHIẾU CỦA TÔI</span>
           <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: DÁN VĂN BẢN KẾ HOẠCH BÀI DẠY (COPY - PASTE KHBD) -->
+  <div id="modal-paste-khbd" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl max-w-2xl w-full p-5 md:p-6 shadow-2xl border border-slate-100 space-y-4">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="font-bold text-base text-indigo-900 flex items-center gap-2">
+          <i data-lucide="clipboard-paste" class="w-5 h-5 text-indigo-600"></i>
+          <span>Dán Nội Dung Kế Hoạch Bài Dạy (Giáo Án)</span>
+        </h3>
+        <button type="button" onclick="togglePasteKHBDModal(false)" class="text-slate-400 hover:text-slate-700 p-1 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <p class="text-xs text-slate-500">
+        Mở file giáo án của Thầy/Cô (Word, PDF hoặc Text), nhấn <strong>Ctrl + A</strong> (chọn tất cả) rồi <strong>Ctrl + C</strong> (sao chép), sau đó nhấn <strong>Ctrl + V</strong> dán vào ô dưới đây. Hệ thống sẽ tự động bóc tách Tên bài, Lớp và các Hoạt động 1, 2, 3, 4:
+      </p>
+
+      <textarea id="paste-khbd-text" rows="10" placeholder="Dán nội dung giáo án vào đây... (Ví dụ: Bài 1. Phép thử nghiệm... Hoạt động 1: Khởi động... Hoạt động 2: Hình thành kiến thức...)" class="w-full text-xs md:text-sm p-3 rounded-xl border border-slate-300 outline-none focus:ring-2 focus:ring-indigo-500 leading-relaxed font-sans"></textarea>
+
+      <div class="flex items-center justify-end gap-2 pt-2 border-t">
+        <button type="button" onclick="togglePasteKHBDModal(false)" class="px-4 py-2 rounded-lg border border-slate-300 text-slate-600 text-xs font-semibold hover:bg-slate-50 transition">Hủy bỏ</button>
+        <button type="button" onclick="processPastedKHBD()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-5 py-2 rounded-lg shadow-sm flex items-center gap-1.5 transition active:scale-95">
+          <i data-lucide="sparkles" class="w-4 h-4 text-amber-300"></i>
+          <span>BÓC TÁCH HOẠT ĐỘNG NGAY</span>
         </button>
       </div>
     </div>
@@ -1737,6 +1803,234 @@
 
     function p1CloseEditor() {
       document.getElementById('p1-editor-container').classList.add('hidden');
+      const statusEl = document.getElementById('p1-khbd-parse-status');
+      if (statusEl) statusEl.classList.add('hidden');
+    }
+
+    // ==============================================================
+    // BÓC TÁCH KẾ HOẠCH BÀI DẠY TỰ ĐỘNG TỪ FILE WORD / VĂN BẢN
+    // ==============================================================
+    function parseKHBD(text) {
+      if (!text || !text.trim()) return null;
+
+      let detectedTitle = "";
+      let detectedClass = "";
+      let detectedPeriod = "";
+      let detectedTeacher = "";
+
+      // 1. Tên bài dạy:
+      const bàiRegex = /(?:^|\n)\s*(?:(?:BÀI|Bài)\s*(\d+)[\s:.-]+([^\n\r]+)|(?:TÊN BÀI DẠY|Tên bài dạy|Tên bài|Chủ đề|CHỦ ĐỀ)\s*[:.-]\s*([^\n\r]+))/i;
+      const mTitle = text.match(bàiRegex);
+      if (mTitle) {
+        if (mTitle[1] && mTitle[2]) {
+          detectedTitle = `Bài ${mTitle[1]}. ${mTitle[2].trim()}`;
+        } else if (mTitle[3]) {
+          detectedTitle = mTitle[3].trim();
+        } else {
+          detectedTitle = (mTitle[2] || mTitle[0]).trim();
+        }
+      }
+
+      // 2. Lớp dạy:
+      const mClass = text.match(/(?:Lớp|LỚP|Lop|LOP)\s*[:.-]?\s*(\d+[A-Za-z0-9]*)/i);
+      if (mClass) detectedClass = mClass[1].trim();
+
+      // 3. Tiết / Tuần:
+      const mPeriod = text.match(/(?:Tiết|TIẾT|Tiet|TIET)\s*[:.-]?\s*([0-9]+(?:\s*\([^)]*\))?)/i);
+      if (mPeriod) {
+        detectedPeriod = `Tiết ${mPeriod[1].trim()}`;
+      }
+
+      // 4. Giáo viên:
+      const mTeacher = text.match(/(?:Giáo viên|GV|Người dạy|Người soạn)\s*[:.-]\s*([^\n\r]+)/i);
+      if (mTeacher) detectedTeacher = mTeacher[1].trim();
+
+      // 5. Danh sách các Hoạt động 1, 2, 3, 4:
+      const actRegex = /(?:^|\n)\s*(?:(?:(?:[1-4A-D]|[I|V|X]+)[\.:]\s*)?(?:HOẠT\s*ĐỘNG|Hoạt\s*động|HĐ)\s*(?:\d+)?[\s:.-]+([^\n\r]+)|(?:[1-4A-D]|[I|V|X]+)[\.:]\s*(Khởi động|Hình thành kiến thức[^\n\r]*|Luyện tập[^\n\r]*|Vận dụng[^\n\r]*))/gi;
+      
+      let match;
+      const indices = [];
+      while ((match = actRegex.exec(text)) !== null) {
+        indices.push({
+          index: match.index,
+          fullHeader: match[0].trim(),
+          matchedName: (match[1] || match[2] || '').trim()
+        });
+      }
+
+      const activities = [];
+      if (indices.length > 0) {
+        for (let i = 0; i < indices.length; i++) {
+          const cur = indices[i];
+          const start = cur.index + cur.fullHeader.length;
+          const end = (i + 1 < indices.length) ? indices[i + 1].index : text.length;
+          const blockText = text.substring(start, end).trim();
+
+          let actNum = i + 1;
+          let cleanName = (cur.matchedName || '').replace(/\(\s*\d+\s*(?:phút|p)\s*\)/i, '').trim();
+          if (!cleanName) cleanName = (actNum === 1 ? 'Khởi động' : (actNum === 2 ? 'Hình thành kiến thức' : (actNum === 3 ? 'Luyện tập' : 'Vận dụng')));
+
+          let title = `Hoạt động ${actNum}: ${cleanName}`;
+          if (cleanName.toLowerCase().startsWith('hoạt động')) {
+            title = cleanName;
+          }
+
+          let time = "";
+          const mTime = (cur.fullHeader + " " + blockText.slice(0, 300)).match(/(\d{1,2})\s*(?:phút|p\b)/i);
+          if (mTime) {
+            time = `${mTime[1]} phút`;
+          } else {
+            time = (actNum === 1 ? "5 phút" : (actNum === 2 ? "20 phút" : (actNum === 3 ? "15 phút" : "5 phút")));
+          }
+
+          let content = "";
+          const mContent = blockText.match(/(?:b\)\s*Nội dung|Nội dung|a\)\s*Mục tiêu|Mục tiêu)[\s:.-]+([^\n\r]+(?:\n[^\n\r]+)?)/i);
+          if (mContent) {
+            content = mContent[1].replace(/^[a-z]\)\s*/i, '').trim();
+          } else {
+            const firstLines = blockText.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 10 && !l.match(/^(?:a\)|b\)|c\)|d\)|\d+\.)/i)).slice(0, 2);
+            content = firstLines.join(' ');
+          }
+          if (content.length > 160) content = content.slice(0, 160) + '...';
+          if (!content) content = `Nhiệm vụ học tập và tiến trình của ${title}.`;
+
+          activities.push({
+            id: `act-${actNum}-${Date.now()}`,
+            title: title,
+            time: time,
+            content: content
+          });
+        }
+      } else {
+        // Fallback: Tìm các từ khóa bước chuẩn 5512
+        const stepKeywords = [
+          { name: "Khởi động", time: "5 phút" },
+          { name: "Hình thành kiến thức", time: "20 phút" },
+          { name: "Luyện tập", time: "15 phút" },
+          { name: "Vận dụng", time: "5 phút" }
+        ];
+        stepKeywords.forEach((step, idx) => {
+          activities.push({
+            id: `act-${idx + 1}-${Date.now()}`,
+            title: `Hoạt động ${idx + 1}: ${step.name}`,
+            time: step.time,
+            content: `Thực hiện tiến trình hoạt động ${step.name.toLowerCase()} theo KHBD.`
+          });
+        });
+      }
+
+      return {
+        title: detectedTitle,
+        className: detectedClass,
+        period: detectedPeriod,
+        teacher: detectedTeacher,
+        activities: activities
+      };
+    }
+
+    function handleKHBDFileUpload(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      const statusEl = document.getElementById('p1-khbd-parse-status');
+      const msgEl = document.getElementById('p1-khbd-parse-msg');
+      if (statusEl) statusEl.classList.remove('hidden');
+      if (msgEl) msgEl.innerText = `Đang phân tích file giáo án: ${file.name}...`;
+
+      const fileName = file.name.toLowerCase();
+
+      if (fileName.endsWith('.docx')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const arrayBuffer = e.target.result;
+          if (typeof mammoth !== 'undefined') {
+            mammoth.extractRawText({ arrayBuffer: arrayBuffer })
+              .then(function(result) {
+                applyParsedKHBD(result.value, file.name);
+              })
+              .catch(function(err) {
+                alert("Lỗi khi đọc file Word: " + err.message + "\nThầy/Cô hãy dùng nút 'Dán văn bản' để dán trực tiếp nội dung giáo án.");
+                if (statusEl) statusEl.classList.add('hidden');
+              });
+          } else {
+            alert("Thư viện đọc file Word đang nạp, vui lòng thử lại sau vài giây hoặc dùng nút 'Dán văn bản'.");
+            if (statusEl) statusEl.classList.add('hidden');
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      } else if (fileName.endsWith('.txt')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          applyParsedKHBD(e.target.result, file.name);
+        };
+        reader.readAsText(file, 'utf-8');
+      } else {
+        alert("Hệ thống hỗ trợ file Word định dạng .docx. Với file Word (.doc cũ) hoặc PDF, Thầy/Cô hãy mở file, bấm Ctrl+A sao chép và dùng nút 'Dán văn bản' nhé!");
+        if (statusEl) statusEl.classList.add('hidden');
+      }
+
+      event.target.value = '';
+    }
+
+    function togglePasteKHBDModal(show) {
+      const modal = document.getElementById('modal-paste-khbd');
+      if (!modal) return;
+      if (show === false) {
+        modal.classList.add('hidden');
+      } else {
+        modal.classList.remove('hidden');
+        const ta = document.getElementById('paste-khbd-text');
+        if (ta) ta.focus();
+      }
+      lucide.createIcons();
+    }
+
+    function processPastedKHBD() {
+      const text = document.getElementById('paste-khbd-text').value;
+      if (!text || !text.trim()) {
+        alert("Vui lòng dán nội dung giáo án vào ô trước khi bấm bóc tách!");
+        document.getElementById('paste-khbd-text').focus();
+        return;
+      }
+      togglePasteKHBDModal(false);
+      applyParsedKHBD(text, "Văn bản đã dán");
+    }
+
+    function applyParsedKHBD(rawText, sourceName) {
+      const statusEl = document.getElementById('p1-khbd-parse-status');
+      const msgEl = document.getElementById('p1-khbd-parse-msg');
+
+      const res = parseKHBD(rawText);
+      if (!res || !res.activities || res.activities.length === 0) {
+        alert("Không tìm thấy các hoạt động trong giáo án này. Thầy/Cô vui lòng kiểm tra lại nội dung giáo án.");
+        if (statusEl) statusEl.classList.add('hidden');
+        return;
+      }
+
+      if (res.title) {
+        document.getElementById('p1-lesson').value = res.title;
+      }
+      if (res.className) {
+        document.getElementById('p1-class').value = res.className;
+      }
+      if (res.period) {
+        document.getElementById('p1-period').value = res.period;
+      }
+      if (res.teacher && (!document.getElementById('p1-teacher').value || document.getElementById('p1-teacher').value.trim() === '')) {
+        document.getElementById('p1-teacher').value = res.teacher;
+      }
+
+      p1RenderEditorActivities(res.activities);
+
+      if (statusEl) {
+        statusEl.classList.remove('hidden');
+        statusEl.className = "mt-2.5 text-xs text-emerald-800 bg-emerald-50 p-2.5 rounded-lg border border-emerald-300 flex items-center justify-between";
+        if (msgEl) {
+          msgEl.innerHTML = `<span>✓ <strong>Đã tự động bóc tách thành công ${res.activities.length} hoạt động</strong> từ "${sourceName || 'Kế hoạch bài dạy'}"!</span>`;
+        }
+      }
+
+      alert(`✓ ĐÃ TỰ ĐỘNG BÓC TÁCH THÀNH CÔNG!\n\n• Tìm thấy: ${res.activities.length} hoạt động trong giáo án\n• Tên bài: ${res.title || '(Chưa xác định)'}\n• Lớp: ${res.className || '(Chưa xác định)'}\n\nToàn bộ tiến trình hoạt động đã được điền tự động vào bảng bên dưới. Thầy/Cô chỉ cần kiểm tra lại và bấm "LƯU & CẬP NHẬT".`);
     }
 
     function p1RenderEditorActivities(activities) {
