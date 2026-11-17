@@ -103,7 +103,7 @@ INITIAL_DATA = {
     ],
     "meetingMinutes": {
         "conclusion": "Tiết dạy thành công, giáo viên chuẩn bị bài chu đáo, học sinh được thực hành trải nghiệm trực quan. Các nhóm hoạt động sôi nổi. Cần lưu ý nhắc học sinh quy cách viết tập hợp đầy đủ các phần tử gồm cả số 0.",
-        "evaluatedBy": "Tổ Trưởng Chuyên Môn - Tổ Toán THCS Phan Văn Trị"
+        "evaluatedBy": "Tổ Trưởng Chuyên Môn - Thiều Thị Thúy Thanh"
     }
 }
 
