@@ -475,6 +475,18 @@
         </div>
 
         <div class="flex flex-wrap items-center gap-2">
+          <!-- Nạp file KHBD trực tiếp vào phiếu -->
+          <input type="file" id="p2-khbd-file-input" accept=".docx,.txt" class="hidden" onchange="p2HandleKHBDFileUpload(event)">
+          <button type="button" onclick="document.getElementById('p2-khbd-file-input').click()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow-sm flex items-center gap-1.5 transition active:scale-95" title="Tải file KHBD (.docx) để tự động cập nhật các hoạt động vào phiếu này">
+            <i data-lucide="upload-cloud" class="w-3.5 h-3.5"></i>
+            <span>Nạp KHBD (.docx)</span>
+          </button>
+          
+          <button type="button" onclick="p2SyncFromKHBD()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-3 py-2 rounded-lg border border-slate-300 shadow-sm flex items-center gap-1.5 transition active:scale-95" title="Đồng bộ lại nội dung các hoạt động theo Kế hoạch bài dạy đã nạp">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-indigo-600"></i>
+            <span>Đồng bộ từ KHBD</span>
+          </button>
+
           <button onclick="p2SubmitObservation()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3.5 py-2 rounded-lg shadow-sm flex items-center gap-1.5 transition active:scale-95">
             <i data-lucide="send" class="w-3.5 h-3.5"></i>
             <span>HOÀN THÀNH DỰ GIỜ</span>
@@ -483,13 +495,13 @@
           <!-- Mục 1: Xuất Word để chỉnh sửa thêm -->
           <button onclick="p2ExportWord()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3 py-2 rounded-lg shadow-sm flex items-center gap-1.5 transition active:scale-95" title="Tải file Word về máy để mở chỉnh sửa thêm">
             <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
-            <span>Xuất Word (Chỉnh sửa thêm)</span>
+            <span>Xuất Word</span>
           </button>
 
           <!-- Mục 2: Xuất PDF luôn để ký số -->
           <button onclick="p2ExportPDF()" class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow-sm flex items-center gap-1.5 transition active:scale-95" title="Lưu/in file PDF chuẩn để ký số ngay">
             <i data-lucide="file-check-2" class="w-3.5 h-3.5"></i>
-            <span>Xuất PDF (Ký số ngay)</span>
+            <span>Xuất PDF</span>
           </button>
         </div>
       </div>
@@ -2099,7 +2111,7 @@
       if (mTeacher) detectedTeacher = mTeacher[1].trim();
 
       // 5. Danh sách các Hoạt động 1, 2, 3, 4:
-      const actRegex = /(?:^|\n)\s*(?:(?:(?:[1-4A-D]|[I|V|X]+)[\.:]\s*)?(?:HOẠT\s*ĐỘNG|Hoạt\s*động|HĐ)\s*(?:\d+)?[\s:.-]+([^\n\r]+)|(?:[1-4A-D]|[I|V|X]+)[\.:]\s*(Khởi động|Hình thành kiến thức[^\n\r]*|Luyện tập[^\n\r]*|Vận dụng[^\n\r]*))/gi;
+      const actRegex = /(?:^|\n)\s*(?:(?:(?:[1-4A-D]|[I|V|X]+)[\.:]\s*)?(?:HOẠT\s*ĐỘNG|Hoạt\s*động|HĐ)\s*(\d+)?[\s:.-]*([^\n\r]*)|(?:[1-4A-D]|[I|V|X]+)[\.:]\s*(Khởi động|Hình thành kiến thức[^\n\r]*|Luyện tập[^\n\r]*|Vận dụng[^\n\r]*))/gi;
       
       let match;
       const indices = [];
@@ -2107,7 +2119,8 @@
         indices.push({
           index: match.index,
           fullHeader: match[0].trim(),
-          matchedName: (match[1] || match[2] || '').trim()
+          actNum: match[1] || '',
+          matchedName: (match[2] || match[3] || '').trim()
         });
       }
 
@@ -2119,11 +2132,22 @@
           const end = (i + 1 < indices.length) ? indices[i + 1].index : text.length;
           const blockText = text.substring(start, end).trim();
 
-          let actNum = i + 1;
-          let cleanName = (cur.matchedName || '').replace(/\(\s*\d+\s*(?:phút|p)\s*\)/i, '').trim();
-          if (!cleanName) cleanName = (actNum === 1 ? 'Khởi động' : (actNum === 2 ? 'Hình thành kiến thức' : (actNum === 3 ? 'Luyện tập' : 'Vận dụng')));
+          let actNum = parseInt(cur.actNum) || (i + 1);
+          let rawName = (cur.matchedName || '').replace(/\(\s*\d+\s*(?:phút|p)\s*\)/i, '').trim();
+          let cleanName = rawName;
 
-          let title = `Hoạt động ${actNum}: ${cleanName}`;
+          // Nếu tên rỗng hoặc chỉ ghi chung chung "Hoạt động 1", tìm tiêu đề ở dòng đầu tiên của blockText
+          if (!cleanName || /^(?:hoạt\s*động|hđ)\s*\d*$/i.test(cleanName)) {
+            const firstLine = blockText.split(/\r?\n/).map(l => l.trim()).filter(l => l && !l.match(/^(?:a\)|b\)|c\)|d\)|\d+\.)\s*(?:mục tiêu|nội dung|sản phẩm|tổ chức)/i))[0] || '';
+            if (firstLine && firstLine.length < 80 && !firstLine.includes(':')) {
+              cleanName = firstLine;
+            } else {
+              const defaultSteps = ["Khởi động", "Hình thành kiến thức", "Luyện tập", "Vận dụng & Mở rộng"];
+              cleanName = defaultSteps[i] || `Nhiệm vụ ${i + 1}`;
+            }
+          }
+
+          let title = `Hoạt động ${i + 1}: ${cleanName}`;
           if (cleanName.toLowerCase().startsWith('hoạt động')) {
             title = cleanName;
           }
@@ -2133,18 +2157,18 @@
           if (mTime) {
             time = `${mTime[1]} phút`;
           } else {
-            time = (actNum === 1 ? "5 phút" : (actNum === 2 ? "20 phút" : (actNum === 3 ? "15 phút" : "5 phút")));
+            time = (i === 0 ? "5 phút" : (i === 1 ? "20 phút" : (i === 2 ? "15 phút" : "5 phút")));
           }
 
           let content = "";
-          const mContent = blockText.match(/(?:b\)\s*Nội dung|Nội dung|a\)\s*Mục tiêu|Mục tiêu)[\s:.-]+([^\n\r]+(?:\n[^\n\r]+)?)/i);
+          const mContent = blockText.match(/(?:b\)\s*Nội dung|Nội dung|a\)\s*Mục tiêu|Mục tiêu|Tiến trình|Nhiệm vụ)[\s:.-]+([^\n\r]+(?:\n[^\n\r]+)?)/i);
           if (mContent) {
             content = mContent[1].replace(/^[a-z]\)\s*/i, '').trim();
           } else {
-            const firstLines = blockText.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 10 && !l.match(/^(?:a\)|b\)|c\)|d\)|\d+\.)/i)).slice(0, 2);
+            const firstLines = blockText.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 8 && !l.match(/^(?:a\)|b\)|c\)|d\)|\d+\.)/i)).slice(0, 2);
             content = firstLines.join(' ');
           }
-          if (content.length > 160) content = content.slice(0, 160) + '...';
+          if (content.length > 180) content = content.slice(0, 180) + '...';
           if (!content) content = `Nhiệm vụ học tập và tiến trình của ${title}.`;
 
           activities.push({
@@ -2277,13 +2301,22 @@
 
       if (statusEl) {
         statusEl.classList.remove('hidden');
-        statusEl.className = "mt-2.5 text-xs text-emerald-800 bg-emerald-50 p-2.5 rounded-lg border border-emerald-300 flex items-center justify-between";
+        statusEl.className = "mt-2.5 text-xs text-emerald-800 bg-emerald-50 p-2.5 rounded-lg border border-emerald-300";
         if (msgEl) {
-          msgEl.innerHTML = `<span>✓ <strong>Đã tự động bóc tách thành công ${res.activities.length} hoạt động</strong> từ "${sourceName || 'Kế hoạch bài dạy'}"!</span>`;
+          msgEl.innerHTML = `
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <span>✓ <strong>Đã tự động bóc tách thành công ${res.activities.length} hoạt động</strong> từ "${sourceName || 'Kế hoạch bài dạy'}"!</span>
+              <button type="button" onclick="p1SaveSession()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-3 py-1.5 rounded-lg shadow-sm flex items-center gap-1 shrink-0">
+                <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                <span>Lưu & Áp Dụng Vào Phiếu Ngay</span>
+              </button>
+            </div>
+          `;
+          lucide.createIcons();
         }
       }
 
-      alert(`✓ ĐÃ TỰ ĐỘNG BÓC TÁCH THÀNH CÔNG!\n\n• Tìm thấy: ${res.activities.length} hoạt động trong giáo án\n• Tên bài: ${res.title || '(Chưa xác định)'}\n• Lớp: ${res.className || '(Chưa xác định)'}\n\nToàn bộ tiến trình hoạt động đã được điền tự động vào bảng bên dưới. Thầy/Cô chỉ cần kiểm tra lại và bấm "LƯU & CẬP NHẬT".`);
+      alert(`✓ ĐÃ TỰ ĐỘNG BÓC TÁCH THÀNH CÔNG!\n\n• Tìm thấy: ${res.activities.length} hoạt động trong giáo án\n• Tên bài: ${res.title || '(Chưa xác định)'}\n• Lớp: ${res.className || '(Chưa xác định)'}\n\nToàn bộ tiến trình hoạt động đã được nạp vào bảng bên dưới.\n\n👉 Thầy/Cô hãy bấm nút "LƯU & CẬP NHẬT" (hoặc nút "Lưu & Áp Dụng Vào Phiếu Ngay") để hệ thống đưa các hoạt động này vào Phiếu dự giờ!`);
     }
 
     function p1RenderEditorActivities(activities) {
@@ -2429,6 +2462,31 @@
       localStorage.setItem('pvt_selected_session_id', currentSessionId);
       localStorage.setItem('pvt_master_data', JSON.stringify(appData));
 
+      // Tự động đồng bộ các hoạt động mới vào bản nháp Phiếu dự giờ Phần 2 (giữ nguyên nhận xét đã ghi)
+      const localDraftKey = `pvt_draft_${sessionObj.id}_${myObserverName.replace(/\s+/g, '_')}`;
+      const savedDraft = localStorage.getItem(localDraftKey);
+      if (savedDraft) {
+        try {
+          const draftRows = JSON.parse(savedDraft);
+          const updatedDraft = sessionObj.activities.map((a, idx) => {
+            const richTitle = formatActivityDesc(a, idx + 1);
+            const prev = draftRows.find(r => r.activityId === a.id) || draftRows[idx];
+            return {
+              activityId: a.id,
+              activityTitle: richTitle,
+              behavior: prev ? (prev.behavior || '') : '',
+              solution: prev ? (prev.solution || '') : ''
+            };
+          });
+          if (draftRows.length > sessionObj.activities.length) {
+            for (let i = sessionObj.activities.length; i < draftRows.length; i++) {
+              updatedDraft.push(draftRows[i]);
+            }
+          }
+          localStorage.setItem(localDraftKey, JSON.stringify(updatedDraft));
+        } catch (e) {}
+      }
+
       // Đồng bộ ngay lên đám mây qua ntfy.sh
       try {
         fetch(`https://ntfy.sh/${CLOUD_SYNC_TOPIC}`, {
@@ -2514,6 +2572,37 @@
       return name.replace(/^(Thầy|Cô|thầy|cô)\s+/i, '').trim();
     }
 
+    function isGenericActivityTitle(title) {
+      if (!title) return true;
+      const t = title.trim();
+      return /^(?:hoạt\s*động|hđ)\s*\d+\s*[:.-]?\s*$/i.test(t);
+    }
+
+    function formatActivityDesc(a, fallbackIdx) {
+      if (!a) return `Hoạt động ${fallbackIdx || 1}`;
+      let title = (a.title || `Hoạt động ${fallbackIdx || 1}`).trim();
+      let time = (a.time || '').trim();
+      let content = (a.content || '').trim();
+
+      // Nếu tiêu đề chỉ ghi trơ "Hoạt động 1" hoặc "HĐ 1", bổ sung bước chuẩn
+      if (/^(?:hoạt\s*động|hđ)\s*\d+$/i.test(title)) {
+        const defaultSteps = ["Khởi động", "Hình thành kiến thức", "Luyện tập", "Vận dụng & Mở rộng"];
+        const idx = (fallbackIdx || 1) - 1;
+        if (defaultSteps[idx]) {
+          title = `${title}: ${defaultSteps[idx]}`;
+        }
+      }
+
+      let text = title;
+      if (time && !text.includes(time)) {
+        text += ` (${time})`;
+      }
+      if (content && !text.includes(content) && !content.toLowerCase().startsWith('nhiệm vụ học tập và tiến trình')) {
+        text += `\n• ${content}`;
+      }
+      return text;
+    }
+
     function formatSessionDate(timeStr, isBlank) {
       if (isBlank) {
         return "TP. Hồ Chí Minh, ngày ...... tháng ...... năm 202...";
@@ -2595,28 +2684,46 @@
         const localDraftKey = `pvt_draft_${s.id}_${myObserverName.replace(/\s+/g, '_')}`;
         const savedDraft = localStorage.getItem(localDraftKey);
 
+        let draftRows = null;
         if (savedDraft) {
-          try { p2Rows = JSON.parse(savedDraft); } catch (e) { p2Rows = []; }
-        } else {
-          // Tìm xem giáo viên này đã nộp phiếu cho tiết dạy này chưa
-          const existing = (appData.observations || []).find(o => (o.sessionId === s.id || (!o.sessionId && s.id === "TOAN8-T56-2025")) && o.observerName === myObserverName);
-          if (existing && existing.records && existing.records.length > 0) {
-            p2Rows = JSON.parse(JSON.stringify(existing.records));
-          } else if (s.activities && s.activities.length > 0) {
-            p2Rows = s.activities.map(a => ({
+          try { draftRows = JSON.parse(savedDraft); } catch (e) { draftRows = null; }
+        }
+
+        // Tìm xem giáo viên này đã nộp phiếu cho tiết dạy này chưa
+        const existing = (appData.observations || []).find(o => (o.sessionId === s.id || (!o.sessionId && s.id === "TOAN8-T56-2025")) && o.observerName === myObserverName);
+        const sourceRows = draftRows || (existing && existing.records && existing.records.length > 0 ? existing.records : null);
+
+        if (s.activities && s.activities.length > 0) {
+          // Luôn đồng bộ và bổ sung nội dung KHBD từ session vào bảng quan sát
+          p2Rows = s.activities.map((a, idx) => {
+            const richTitle = formatActivityDesc(a, idx + 1);
+            const matchedRow = sourceRows ? (sourceRows.find(r => r.activityId === a.id) || sourceRows[idx]) : null;
+            return {
               activityId: a.id,
-              activityTitle: a.title,
-              behavior: '',
-              solution: ''
-            }));
-          } else {
-            p2Rows = [
-              { activityTitle: "Hoạt động 1: Khởi động", behavior: '', solution: '' },
-              { activityTitle: "Hoạt động 2: Hình thành kiến thức", behavior: '', solution: '' },
-              { activityTitle: "Hoạt động 3: Luyện tập", behavior: '', solution: '' },
-              { activityTitle: "Hoạt động 4: Vận dụng", behavior: '', solution: '' }
-            ];
+              // Nếu tên cũ chỉ là "Hoạt động 1" chung chung hoặc richTitle chi tiết hơn, cập nhật theo KHBD
+              activityTitle: (matchedRow && matchedRow.activityTitle && !isGenericActivityTitle(matchedRow.activityTitle))
+                ? matchedRow.activityTitle
+                : richTitle,
+              behavior: matchedRow ? (matchedRow.behavior || '') : '',
+              solution: matchedRow ? (matchedRow.solution || '') : ''
+            };
+          });
+
+          // Nếu người dùng đã tự thêm các dòng riêng ngoài danh sách activities, giữ lại các dòng đó
+          if (sourceRows && sourceRows.length > s.activities.length) {
+            for (let i = s.activities.length; i < sourceRows.length; i++) {
+              p2Rows.push(sourceRows[i]);
+            }
           }
+        } else if (sourceRows && sourceRows.length > 0) {
+          p2Rows = sourceRows;
+        } else {
+          p2Rows = [
+            { activityTitle: "Hoạt động 1: Khởi động (5 phút)\n• Nhiệm vụ mở đầu tạo hứng thú học tập", behavior: '', solution: '' },
+            { activityTitle: "Hoạt động 2: Hình thành kiến thức (20 phút)\n• Học sinh khám phá và tiếp thu kiến thức mới", behavior: '', solution: '' },
+            { activityTitle: "Hoạt động 3: Luyện tập (15 phút)\n• Vận dụng kiến thức giải quyết bài tập", behavior: '', solution: '' },
+            { activityTitle: "Hoạt động 4: Vận dụng (5 phút)\n• Mở rộng liên hệ thực tiễn và tự học", behavior: '', solution: '' }
+          ];
         }
       }
 
@@ -2635,7 +2742,7 @@
         <tr class="align-top">
           <!-- Cột 1: Nội dung hoạt động -->
           <td class="border border-slate-800 p-2 font-bold text-slate-900 bg-slate-50/40 w-1/4">
-            <textarea onchange="p2UpdateRow(${idx}, 'activityTitle', this.value)" rows="3" class="w-full bg-transparent font-bold text-xs md:text-sm p-1 rounded outline-none resize-none focus:bg-white focus:ring-1 focus:ring-indigo-400">${row.activityTitle || ''}</textarea>
+            <textarea onchange="p2UpdateRow(${idx}, 'activityTitle', this.value)" rows="${Math.max(4, (row.activityTitle || '').split('\n').length + 1)}" style="min-height: 90px;" class="w-full bg-transparent font-bold text-xs md:text-sm p-1 rounded outline-none resize-y focus:bg-white focus:ring-1 focus:ring-indigo-400 leading-snug">${row.activityTitle || ''}</textarea>
             <div class="no-print mt-1 text-right">
               <button onclick="p2DeleteRow(${idx})" class="text-[10px] text-slate-400 hover:text-red-500">Xóa dòng</button>
             </div>
@@ -2837,6 +2944,157 @@
         document.getElementById('p2-voice-label').innerText = "Nói để nhập";
       };
       p2SpeechRec.start();
+    }
+
+    // ==============================================================
+    // NẠP & ĐỒNG BỘ KẾ HOẠCH BÀI DẠY TRỰC TIẾP TRÊN PHIẾU DỰ GIỜ (PHẦN 2)
+    // ==============================================================
+    function p2HandleKHBDFileUpload(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      const fileName = file.name.toLowerCase();
+      if (!fileName.endsWith('.docx') && !fileName.endsWith('.txt')) {
+        alert("Hệ thống hỗ trợ file Word định dạng .docx (hoặc .txt).\nVới file Word .doc cũ hoặc PDF, Thầy/Cô hãy copy văn bản giáo án rồi dán vào nhé!");
+        event.target.value = '';
+        return;
+      }
+
+      const s = getCurrentSession();
+      if (!s) {
+        alert("Vui lòng chọn một tiết dạy trước khi nạp KHBD!");
+        event.target.value = '';
+        return;
+      }
+
+      if (fileName.endsWith('.docx')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const arrayBuffer = e.target.result;
+          if (typeof mammoth !== 'undefined') {
+            mammoth.extractRawText({ arrayBuffer: arrayBuffer })
+              .then(function(result) {
+                p2ApplyParsedKHBD(result.value, file.name);
+              })
+              .catch(function(err) {
+                alert("Lỗi khi đọc file Word: " + err.message);
+              });
+          } else {
+            alert("Thư viện đọc file Word đang nạp, vui lòng thử lại sau vài giây.");
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      } else {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          p2ApplyParsedKHBD(e.target.result, file.name);
+        };
+        reader.readAsText(file, 'utf-8');
+      }
+
+      event.target.value = '';
+    }
+
+    function p2ApplyParsedKHBD(rawText, sourceName) {
+      const res = parseKHBD(rawText);
+      if (!res || !res.activities || res.activities.length === 0) {
+        alert("Không tìm thấy các hoạt động trong giáo án này. Thầy/Cô vui lòng kiểm tra lại nội dung file.");
+        return;
+      }
+
+      const s = getCurrentSession();
+      if (!s) return;
+
+      // Cập nhật thông tin tiết nếu bóc tách được và hiện tại chưa có hoặc ngắn
+      if (res.title && (!s.lessonTitle || s.lessonTitle.length < 5)) s.lessonTitle = res.title;
+      if (res.className && !s.className) s.className = res.className;
+      if (res.period && !s.period) s.period = res.period;
+      if (res.teacher && (!s.teacherName || s.teacherName.length < 3)) s.teacherName = res.teacher;
+
+      // Lưu danh sách activities vào session
+      s.activities = res.activities;
+
+      // Cập nhật appData.sessions
+      appData.sessions = appData.sessions || [];
+      const idx = appData.sessions.findIndex(x => x.id === s.id);
+      if (idx >= 0) {
+        appData.sessions[idx] = s;
+      } else {
+        appData.sessions.push(s);
+      }
+      localStorage.setItem('pvt_master_data', JSON.stringify(appData));
+
+      // Ghép vào p2Rows nhưng BẢO LƯU 100% CÁC NHẬN XÉT ĐÃ GHI
+      const existingDraft = p2Rows || [];
+      p2Rows = res.activities.map((a, i) => {
+        const richTitle = formatActivityDesc(a, i + 1);
+        const prev = existingDraft.find(r => r.activityId === a.id) || existingDraft[i];
+        return {
+          activityId: a.id,
+          activityTitle: richTitle,
+          behavior: prev ? (prev.behavior || '') : '',
+          solution: prev ? (prev.solution || '') : ''
+        };
+      });
+
+      // Nếu người dùng đã tự thêm các dòng riêng, giữ lại
+      if (existingDraft.length > res.activities.length) {
+        for (let i = res.activities.length; i < existingDraft.length; i++) {
+          p2Rows.push(existingDraft[i]);
+        }
+      }
+
+      // Lưu ngay vào localStorage draft
+      const localDraftKey = `pvt_draft_${s.id}_${myObserverName.replace(/\s+/g, '_')}`;
+      localStorage.setItem(localDraftKey, JSON.stringify(p2Rows));
+
+      renderPart2UI();
+      renderPart3UI();
+
+      // Đồng bộ ngay lên đám mây
+      try {
+        fetch(`https://ntfy.sh/${CLOUD_SYNC_TOPIC}`, {
+          method: 'POST',
+          body: JSON.stringify({ type: 'SYNC_SESSIONS', payload: appData.sessions }),
+          headers: { 'Title': `Cap nhat KHBD: ${s.lessonTitle}` }
+        }).catch(() => {});
+      } catch (e) {}
+
+      alert(`✓ ĐÃ NẠP KẾ HOẠCH BÀI DẠY VÀO PHIẾU THÀNH CÔNG!\n\n• Đã bóc tách: ${res.activities.length} hoạt động từ "${sourceName || 'File KHBD'}"\n• Tiết dạy: ${s.lessonTitle} (${s.className || ''})\n• Toàn bộ tiến trình hoạt động đã được điền tự động vào Cột 1.\n• Tất cả các nhận xét Thầy/Cô đã ghi trước đó vẫn được giữ nguyên vẹn.`);
+    }
+
+    function p2SyncFromKHBD() {
+      const s = getCurrentSession();
+      if (!s) return;
+
+      if (!s.activities || s.activities.length === 0) {
+        alert("Tiết dạy này chưa có dữ liệu Kế hoạch bài dạy chi tiết.\n\nThầy/Cô hãy bấm nút 'Nạp KHBD (.docx)' bên cạnh để tải file giáo án Word vào phiếu nhé!");
+        return;
+      }
+
+      const existingDraft = p2Rows || [];
+      p2Rows = s.activities.map((a, i) => {
+        const richTitle = formatActivityDesc(a, i + 1);
+        const prev = existingDraft.find(r => r.activityId === a.id) || existingDraft[i];
+        return {
+          activityId: a.id,
+          activityTitle: richTitle,
+          behavior: prev ? (prev.behavior || '') : '',
+          solution: prev ? (prev.solution || '') : ''
+        };
+      });
+
+      if (existingDraft.length > s.activities.length) {
+        for (let i = s.activities.length; i < existingDraft.length; i++) {
+          p2Rows.push(existingDraft[i]);
+        }
+      }
+
+      const localDraftKey = `pvt_draft_${s.id}_${myObserverName.replace(/\s+/g, '_')}`;
+      localStorage.setItem(localDraftKey, JSON.stringify(p2Rows));
+
+      p2RenderTableRows();
+      alert(`✓ ĐÃ ĐỒNG BỘ NỘI DUNG TỪ KẾ HOẠCH BÀI DẠY!\n\n• Đã nạp lại ${s.activities.length} hoạt động từ KHBD của tiết "${s.lessonTitle}".\n• Các nhận xét Thầy/Cô đã ghi trong phiếu vẫn được giữ nguyên.`);
     }
 
     // Nộp Phiếu dự giờ sang Phần 3 (Gắn đúng sessionId)
