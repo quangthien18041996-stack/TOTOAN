@@ -255,12 +255,20 @@
           </div>
         </div>
 
-        <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
-          <button type="button" onclick="p1CloseEditor()" class="px-4 py-2 rounded-lg border border-slate-300 text-slate-600 text-xs font-semibold hover:bg-slate-50 transition">Hủy bỏ</button>
-          <button type="button" onclick="p1SaveSession()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-5 py-2 rounded-lg shadow-sm flex items-center gap-1.5 transition active:scale-95">
-            <i data-lucide="save" class="w-4 h-4"></i>
-            <span>LƯU & CẬP NHẬT TIẾT DẠY</span>
-          </button>
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+          <div>
+            <button type="button" id="p1-btn-delete-in-editor" onclick="p1DeleteCurrentEditingSession()" class="hidden px-3.5 py-2 rounded-lg border border-rose-200 text-rose-600 hover:bg-rose-50 text-xs font-semibold flex items-center gap-1.5 transition active:scale-95">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+              <span>Xóa tiết dạy này</span>
+            </button>
+          </div>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="p1CloseEditor()" class="px-4 py-2 rounded-lg border border-slate-300 text-slate-600 text-xs font-semibold hover:bg-slate-50 transition">Hủy bỏ</button>
+            <button type="button" onclick="p1SaveSession()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-5 py-2 rounded-lg shadow-sm flex items-center gap-1.5 transition active:scale-95">
+              <i data-lucide="save" class="w-4 h-4"></i>
+              <span>LƯU & CẬP NHẬT TIẾT DẠY</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -1721,11 +1729,9 @@
                 <i data-lucide="edit-3" class="w-4 h-4"></i>
               </button>
 
-              ${sessions.length > 1 ? `
-                <button onclick="p1DeleteSession('${s.id}')" class="text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-2 rounded-lg border border-transparent hover:border-rose-200 transition" title="Xóa tiết dạy này">
-                  <i data-lucide="trash-2" class="w-4 h-4"></i>
-                </button>
-              ` : ''}
+              <button onclick="p1DeleteSession('${s.id}')" class="text-rose-500 hover:text-rose-700 hover:bg-rose-50 p-2 rounded-lg border border-rose-200 transition" title="Xóa tiết dạy này">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+              </button>
             </div>
           </div>
         `;
@@ -1744,6 +1750,9 @@
 
     function p1OpenNewSessionForm() {
       document.getElementById('p1-edit-id').value = '';
+      const delBtn = document.getElementById('p1-btn-delete-in-editor');
+      if (delBtn) delBtn.classList.add('hidden');
+
       document.getElementById('p1-editor-title').innerHTML = `
         <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-600"></i>
         <span>Đăng Ký Tiết Dạy & Kế Hoạch Bài Dạy Mới</span>
@@ -1780,6 +1789,9 @@
       if (!s) return;
 
       document.getElementById('p1-edit-id').value = s.id;
+      const delBtn = document.getElementById('p1-btn-delete-in-editor');
+      if (delBtn) delBtn.classList.remove('hidden');
+
       document.getElementById('p1-editor-title').innerHTML = `
         <i data-lucide="edit-3" class="w-4 h-4 text-indigo-600"></i>
         <span>Chỉnh Sửa Tiết Dạy: ${s.subject || 'Toán'} ${s.className || ''} - ${s.teacherName}</span>
@@ -2195,24 +2207,78 @@
     }
 
     function p1DeleteSession(sessionId) {
-      if ((appData.sessions || []).length <= 1) {
-        alert("Hệ thống cần lưu lại ít nhất 1 tiết dạy!");
-        return;
-      }
-      const s = appData.sessions.find(x => x.id === sessionId);
+      const s = (appData.sessions || []).find(x => x.id === sessionId);
       if (!s) return;
 
-      if (confirm(`Thầy/Cô có chắc chắn muốn xóa tiết dạy "${s.lessonTitle}" của ${s.teacherName}?`)) {
-        appData.sessions = appData.sessions.filter(x => x.id !== sessionId);
-        if (currentSessionId === sessionId) {
+      const obsCount = (appData.observations || []).filter(o => o.sessionId === s.id).length;
+      let msg = `Thầy/Cô có chắc chắn muốn xóa tiết dạy:\n"${s.lessonTitle}"\n(GV: ${s.teacherName} - Lớp: ${s.className}) không?`;
+      if (obsCount > 0) {
+        msg += `\n\n⚠️ Chú ý: Tiết dạy này hiện có ${obsCount} phiếu dự giờ đã nộp. Khi xóa, toàn bộ phiếu dự giờ liên quan cũng sẽ bị xóa vĩnh viễn!`;
+      }
+
+      if (confirm(msg)) {
+        appData.sessions = (appData.sessions || []).filter(x => x.id !== sessionId);
+        appData.observations = (appData.observations || []).filter(o => o.sessionId !== sessionId);
+
+        // Xóa draft dự giờ của tiết này trong localStorage
+        try {
+          Object.keys(localStorage).forEach(k => {
+            if (k.startsWith(`pvt_draft_${sessionId}`)) {
+              localStorage.removeItem(k);
+            }
+          });
+        } catch (e) {}
+
+        // Nếu xóa hết sạch tiết dạy, khởi tạo lại 1 tiết dạy mặc định chuẩn
+        if (appData.sessions.length === 0) {
+          const defaultSession = {
+            id: `SESSION-${Date.now()}`,
+            teacherName: (currentUser && currentUser.fullName) ? currentUser.fullName : 'Cô Nguyễn Thị Lan',
+            subject: 'Toán',
+            className: '8A1',
+            period: 'Tiết 1',
+            lessonTitle: 'Tiết dạy mới (Chưa đặt tên)',
+            teachingTime: new Date().toLocaleDateString('vi-VN') + ' - 08:00',
+            school: 'THCS Phan Văn Trị',
+            activities: [
+              { id: `act-1-${Date.now()}`, title: 'Hoạt động 1: Khởi động', time: '5 phút', content: 'Khởi động bài học' },
+              { id: `act-2-${Date.now()}`, title: 'Hoạt động 2: Hình thành kiến thức', time: '20 phút', content: 'Hình thành kiến thức mới' },
+              { id: `act-3-${Date.now()}`, title: 'Hoạt động 3: Luyện tập', time: '15 phút', content: 'Luyện tập củng cố' },
+              { id: `act-4-${Date.now()}`, title: 'Hoạt động 4: Vận dụng', time: '5 phút', content: 'Vận dụng mở rộng' }
+            ]
+          };
+          appData.sessions = [defaultSession];
+          currentSessionId = defaultSession.id;
+        } else if (currentSessionId === sessionId) {
           currentSessionId = appData.sessions[0].id;
-          localStorage.setItem('pvt_selected_session_id', currentSessionId);
         }
+
+        localStorage.setItem('pvt_selected_session_id', currentSessionId);
         localStorage.setItem('pvt_master_data', JSON.stringify(appData));
+
+        // Đồng bộ xóa lên đám mây
+        try {
+          fetch(`https://ntfy.sh/${CLOUD_SYNC_TOPIC}`, {
+            method: 'POST',
+            body: JSON.stringify({ type: 'SYNC_SESSIONS', payload: appData.sessions }),
+            headers: { 'Title': `Xóa tiết dạy: ${s.lessonTitle}` }
+          }).catch(() => {});
+        } catch (e) {}
+
+        p1CloseEditor();
         renderPart1UI();
         renderSessionsDropdowns();
         renderPart2UI();
         renderPart3UI();
+
+        alert(`✓ Đã xóa tiết dạy "${s.lessonTitle}" thành công!`);
+      }
+    }
+
+    function p1DeleteCurrentEditingSession() {
+      const editId = document.getElementById('p1-edit-id').value;
+      if (editId) {
+        p1DeleteSession(editId);
       }
     }
 
