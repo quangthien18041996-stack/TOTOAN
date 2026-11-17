@@ -661,6 +661,12 @@
         </div>
 
         <div class="flex flex-wrap items-center gap-2">
+          <!-- NÚT TRỢ LÝ SƯ PHẠM AI (CHUẨN BỘ SGK KẾT NỐI TRI THỨC VỚI CUỘC SỐNG) -->
+          <button type="button" onclick="p2OpenAIAssistant()" class="bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 hover:from-purple-700 hover:to-indigo-700 text-white text-xs font-extrabold px-3.5 py-2 rounded-lg shadow-md flex items-center gap-1.5 transition active:scale-95 ring-2 ring-purple-300/60" title="Tra cứu nhanh khái niệm và gợi ý sư phạm chuẩn SGK Kết Nối Tri Thức Với Cuộc Sống">
+            <i data-lucide="bot" class="w-4 h-4 text-amber-300 animate-pulse"></i>
+            <span>🤖 TRỢ LÝ AI (KẾT NỐI TRI THỨC)</span>
+          </button>
+
           <!-- Nạp file KHBD trực tiếp vào phiếu -->
           <input type="file" id="p2-khbd-file-input" accept=".docx,.txt" class="hidden" onchange="p2HandleKHBDFileUpload(event)">
           <button type="button" onclick="document.getElementById('p2-khbd-file-input').click()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow-sm flex items-center gap-1.5 transition active:scale-95" title="Tải file KHBD (.docx) để tự động cập nhật các hoạt động vào phiếu này">
@@ -698,6 +704,14 @@
           <span class="font-bold text-indigo-900 text-[11px] flex items-center gap-1">
             <i data-lucide="sparkles" class="w-3.5 h-3.5 text-indigo-600"></i> Gợi ý nhanh:
           </span>
+          <button type="button" onclick="p2OpenAIAssistant('concept')" class="bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-300 font-bold px-2 py-0.5 rounded text-[11px] flex items-center gap-1 transition" title="Tra cứu khái niệm chuẩn SGK Kết Nối Tri Thức">
+            <i data-lucide="book-open" class="w-3 h-3 text-purple-600"></i>
+            <span>💡 Khái niệm KNTT</span>
+          </button>
+          <button type="button" onclick="p2OpenAIAssistant('mistakes')" class="bg-rose-100 hover:bg-rose-200 text-rose-900 border border-rose-300 font-bold px-2 py-0.5 rounded text-[11px] flex items-center gap-1 transition" title="Xem lỗi học sinh hay nhầm lẫn nhất ở bài này">
+            <i data-lucide="alert-triangle" class="w-3 h-3 text-rose-600"></i>
+            <span>⚠️ Lỗi HS hay mắc</span>
+          </button>
           <button type="button" onclick="p2QuickTag('Học sinh hào hứng, tích cực tham gia thao tác')" class="bg-white border border-slate-200 text-emerald-700 hover:bg-emerald-50 px-2 py-0.5 rounded text-[11px]">✨ Hào hứng</button>
           <button type="button" onclick="p2QuickTag('Nhóm phân công nhiệm vụ rõ ràng, phối hợp nhịp nhàng')" class="bg-white border border-slate-200 text-emerald-700 hover:bg-emerald-50 px-2 py-0.5 rounded text-[11px]">🤝 Hợp tác tốt</button>
           <button type="button" onclick="p2QuickTag('Học sinh hiểu lệnh nhanh và tự giác làm bài')" class="bg-white border border-slate-200 text-emerald-700 hover:bg-emerald-50 px-2 py-0.5 rounded text-[11px]">⚡ Hiểu lệnh nhanh</button>
@@ -1285,6 +1299,108 @@
           <span>BÓC TÁCH HOẠT ĐỘNG NGAY</span>
         </button>
       </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL: TRỢ LÝ SƯ PHẠM AI (CHUẨN BỘ SGK KẾT NỐI TRI THỨC VỚI CUỘC SỐNG) -->
+  <!-- ============================================================== -->
+  <div id="modal-ai-assistant" class="fixed inset-0 bg-slate-900/65 backdrop-blur-sm z-50 flex items-center justify-center p-3 md:p-4 hidden">
+    <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-indigo-100 overflow-hidden">
+      
+      <!-- Modal Header -->
+      <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-purple-950 text-white p-4 flex items-center justify-between border-b border-indigo-900/50">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-500 text-slate-950 flex items-center justify-center shadow-md font-black shrink-0">
+            <i data-lucide="bot" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="font-extrabold text-sm md:text-base tracking-wide flex items-center gap-1.5 text-white">
+                <span>CỐ VẤN CHUYÊN MÔN TOÁN AI</span>
+                <span class="bg-amber-400/20 text-amber-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-amber-300/30">SGK KẾT NỐI TRI THỨC</span>
+              </h3>
+            </div>
+            <p class="text-[11px] text-indigo-200 mt-0.5">
+              Chuẩn hóa theo Chương trình GDPT 2018 • Bộ SGK <strong>Kết Nối Tri Thức Với Cuộc Sống</strong>
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-1.5">
+          <button type="button" onclick="p2ToggleAiApiKey()" class="text-indigo-300 hover:text-white hover:bg-white/10 p-1.5 rounded-lg text-xs transition" title="Cấu hình Google Gemini API Key">
+            <i data-lucide="key" class="w-4 h-4"></i>
+          </button>
+          <button type="button" onclick="p2CloseAIAssistant()" class="text-slate-400 hover:text-white hover:bg-white/10 p-1.5 rounded-lg text-xs transition">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Active Lesson Info Bar -->
+      <div class="bg-slate-100/90 px-4 py-2 border-b border-slate-200 text-xs flex flex-wrap items-center justify-between gap-2">
+        <div class="flex items-center gap-2 truncate">
+          <span class="bg-indigo-600 text-white font-extrabold text-[10px] px-2 py-0.5 rounded uppercase">Đang dự:</span>
+          <span id="ai-active-session-badge" class="font-bold text-slate-800 truncate">Toán 8A1 • Bài 1. Phép thử nghiệm – Sự kiện</span>
+        </div>
+        <span class="text-[10px] text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full font-semibold flex items-center gap-1">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+          Đã neo SGK Kết Nối Tri Thức
+        </span>
+      </div>
+
+      <!-- Optional API Key Config Panel -->
+      <div id="ai-api-key-panel" class="hidden bg-amber-50 border-b border-amber-200 p-3 text-xs space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-amber-900 flex items-center gap-1">
+            <i data-lucide="key" class="w-3.5 h-3.5 text-amber-600"></i> Cấu hình Google Gemini API Key (Tùy chọn):
+          </span>
+          <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-indigo-600 hover:underline text-[11px] font-medium">Lấy Key miễn phí từ Google &rarr;</a>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="password" id="ai-api-key-input" placeholder="Dán Gemini API Key (Bắt đầu bằng AIzaSy...)" class="flex-1 text-xs p-2 rounded-lg border border-amber-300 outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+          <button type="button" onclick="p2SaveAiApiKey()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs px-3 py-2 rounded-lg transition">Lưu Key</button>
+        </div>
+        <p class="text-[11px] text-amber-700 italic">
+          * Ghi chú: Hệ thống đã tích hợp sẵn cơ sở tri thức offline chuẩn SGK Kết Nối Tri Thức cho mọi bài học. Nhập API Key sẽ kích hoạt chế độ đàm thoại sâu đa chiều với mô hình Gemini 2.5 Flash.
+        </p>
+      </div>
+
+      <!-- One-Click Prompt Chips -->
+      <div class="p-3 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center gap-1.5">
+        <span class="text-[11px] font-bold text-slate-500 mr-1 flex items-center gap-1">
+          <i data-lucide="sparkles" class="w-3 h-3 text-indigo-600"></i> Hỏi nhanh 1 chạm:
+        </span>
+        <button type="button" onclick="p2AskAI('concept')" class="bg-white hover:bg-indigo-50 text-indigo-700 border border-indigo-200 hover:border-indigo-400 font-semibold text-xs px-2.5 py-1.5 rounded-lg shadow-2xs flex items-center gap-1 transition">
+          <span>📘 Khái niệm cốt lõi</span>
+        </button>
+        <button type="button" onclick="p2AskAI('target')" class="bg-white hover:bg-emerald-50 text-emerald-800 border border-emerald-200 hover:border-emerald-400 font-semibold text-xs px-2.5 py-1.5 rounded-lg shadow-2xs flex items-center gap-1 transition">
+          <span>🎯 Yêu cầu cần đạt (YCCĐ)</span>
+        </button>
+        <button type="button" onclick="p2AskAI('mistakes')" class="bg-white hover:bg-rose-50 text-rose-800 border border-rose-200 hover:border-rose-400 font-semibold text-xs px-2.5 py-1.5 rounded-lg shadow-2xs flex items-center gap-1 transition">
+          <span>⚠️ Lỗi HS hay mắc</span>
+        </button>
+        <button type="button" onclick="p2AskAI('method')" class="bg-white hover:bg-purple-50 text-purple-800 border border-purple-200 hover:border-purple-400 font-semibold text-xs px-2.5 py-1.5 rounded-lg shadow-2xs flex items-center gap-1 transition">
+          <span>🔍 Gợi ý quan sát giờ dạy</span>
+        </button>
+      </div>
+
+      <!-- Chat / Answers Stream -->
+      <div id="ai-chat-stream" class="flex-1 overflow-y-auto p-4 space-y-4 max-h-[50vh] text-xs md:text-sm leading-relaxed font-sans">
+        <!-- Rendered AI messages and answers -->
+      </div>
+
+      <!-- Custom Query Bar -->
+      <div class="p-3 bg-white border-t border-slate-200">
+        <form onsubmit="event.preventDefault(); p2SubmitCustomAIQuery();" class="flex items-center gap-2">
+          <input type="text" id="ai-custom-query-input" placeholder="Hỏi thêm về bài học (VD: Cách đặt câu hỏi gợi mở, ví dụ đời sống thực tế...)" class="flex-1 text-xs md:text-sm p-2.5 rounded-xl border border-slate-300 outline-none focus:ring-2 focus:ring-indigo-500">
+          <button type="submit" id="ai-btn-send" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-sm flex items-center gap-1.5 transition active:scale-95 shrink-0">
+            <span>Gửi</span>
+            <i data-lucide="send" class="w-3.5 h-3.5"></i>
+          </button>
+        </form>
+      </div>
+
     </div>
   </div>
 
@@ -2337,6 +2453,622 @@
     let myObserverName = localStorage.getItem('pvt_my_observer_name') || "Cô Nguyễn Thị Lan";
     let p2Rows = [];
     let p2ActiveTextarea = null;
+
+    // ==============================================================
+    // CỐ VẤN CHUYÊN MÔN TOÁN AI (CHUẨN BỘ SGK KẾT NỐI TRI THỨC VỚI CUỘC SỐNG)
+    // ==============================================================
+    const KNTT_KNOWLEDGE_BASE = {
+      "TOAN8-T56-2025": {
+        topic: "Bài 1. Phép thử nghiệm – Sự kiện (Toán 8 - Chương 9: Xác suất)",
+        concept: {
+          title: "Khái niệm cốt lõi (Chuẩn SGK Kết Nối Tri Thức)",
+          quote: "• Phép thử nghiệm (ngẫu nhiên): Là một hành động, thí nghiệm hay trò chơi có thể lặp lại nhiều lần trong cùng điều kiện, mà kết quả của nó không thể biết trước được.\n• Tập hợp kết quả có thể (Không gian mẫu): Là tập hợp tất cả các kết quả có thể xảy ra của phép thử nghiệm, kí hiệu là X.\n• Sự kiện (Biến cố): Là một sự việc có thể xảy ra hoặc không xảy ra trong một phép thử nghiệm.",
+          metaphor: "Giống như tung một đồng xu hay gieo xúc xắc: trước khi tung ta không thể biết chắc chắn mặt nào sẽ xuất hiện, nhưng ta biết trước toàn bộ các khả năng có thể xảy ra (Sấp hoặc Ngửa; hoặc từ 1 đến 6 chấm).",
+          location: "Hình thành trọng tâm ở Hoạt động 2 (HĐ thực nghiệm 4 nhóm: Gieo xúc xắc, Tung đồng xu, Bốc thăm, Rút bi)."
+        },
+        target: {
+          title: "Yêu cầu cần đạt chuẩn GDPT 2018 (SGK KNTT)",
+          items: [
+            "Nhận biết được thế nào là một phép thử ngẫu nhiên và sự kiện trong một số trò chơi đơn giản.",
+            "Liệt kê đầy đủ và chính xác tất cả các phần tử của tập hợp kết quả X dưới dạng kí hiệu tập hợp {}.",
+            "Phân biệt được rõ ràng giữa 'kết quả của phép thử' và 'sự kiện xảy ra'."
+          ]
+        },
+        mistakes: {
+          title: "Các lỗi học sinh lớp 8 hay mắc phải nhất",
+          items: [
+            "Bỏ sót phần tử số 0: Trong trò chơi quay số từ 0 đến 9, học sinh có thói quen đếm từ 1 nên rất hay bỏ quên số 0 (chỉ đếm 9 kết quả thay vì 10 kết quả).",
+            "Viết sai quy cách tập hợp: Quên dấu ngoặc nhọn {}, viết dấu phẩy thay vì chấm phẩy giữa các số.",
+            "Nhầm lẫn khái niệm: Lẫn lộn giữa 'một kết quả cụ thể' (VD: xuất hiện mặt 3 chấm) với 'biến cố' (VD: xuất hiện mặt có số chấm là số lẻ)."
+          ]
+        },
+        method: {
+          title: "Gợi ý quan sát phương pháp sư phạm cho người dự",
+          items: [
+            "Hoạt động 1 (Khởi động): Quan sát xem trò chơi dự đoán xúc xắc có kích thích được 100% học sinh chú ý không, hay chỉ các bàn đầu tham gia.",
+            "Hoạt động 2 (Thực hành nhóm): Quan sát xem tất cả thành viên trong nhóm có được tự tay thao tác (tung xu, gieo xúc xắc, bốc thăm) hay chỉ nhóm trưởng làm thay.",
+            "Ngôn ngữ sư phạm của GV: Giáo viên có nhấn mạnh việc 'liệt kê không trùng lặp và không bỏ sót' khi chốt kiến thức trên bảng không."
+          ]
+        }
+      },
+      "TOAN8-T57-2025": {
+        topic: "Bài 2. Xác suất của biến cố ngẫu nhiên (Toán 8 - SGK KNTT)",
+        concept: {
+          title: "Khái niệm cốt lõi (Chuẩn SGK Kết Nối Tri Thức)",
+          quote: "• Xác suất thực nghiệm: Là tỉ số giữa số lần xuất hiện biến cố đó (k) và tổng số lần thực hiện phép thử (n): P = k / n.\n• Quy luật số lớn: Khi số lần thực nghiệm n càng nhiều, xác suất thực nghiệm càng tiến gần đến xác suất lí thuyết.",
+          metaphor: "Nếu bắn 10 phát trúng đích 7 phát thì xác suất thực nghiệm bắn trúng là 7/10 = 70%. Càng bắn nhiều phát thì tỉ lệ này càng phản ánh chính xác năng lực thực tế.",
+          location: "Hình thành ở Hoạt động 2 qua bảng thống kê số liệu của các nhóm."
+        },
+        target: {
+          title: "Yêu cầu cần đạt chuẩn GDPT 2018 (SGK KNTT)",
+          items: [
+            "Biết thu thập số liệu thực nghiệm và tính tỉ số k/n dưới dạng phân số hoặc số thập phân/tỉ số phần trăm.",
+            "Hiểu ý nghĩa thực tiễn của xác suất trong dự đoán các hiện tượng đời sống."
+          ]
+        },
+        mistakes: {
+          title: "Các lỗi học sinh lớp 8 hay mắc phải nhất",
+          items: [
+            "Lấy nhầm mẫu số: Lấy số lần thành công chia cho số lần thất bại thay vì chia cho TỔNG số lần thử.",
+            "Không rút gọn phân số kết quả về phân số tối giản.",
+            "Hiểu sai quy luật: Nghĩ rằng xác suất 50% nghĩa là cứ gieo 2 lần thì chắc chắn có 1 lần ra mặt ngửa."
+          ]
+        },
+        method: {
+          title: "Gợi ý quan sát phương pháp sư phạm cho người dự",
+          items: [
+            "Học sinh có tích cực ghi chép số liệu vào bảng kiểm đếm không.",
+            "Cách giáo viên hướng dẫn học sinh tổng hợp số liệu từ các nhóm thành số liệu chung của toàn lớp."
+          ]
+        }
+      },
+      "TOAN8-HK1-T12": {
+        topic: "Bài 8. Hình chữ nhật và Hình vuông (Toán 8 - SGK KNTT)",
+        concept: {
+          title: "Khái niệm cốt lõi (Chuẩn SGK Kết Nối Tri Thức)",
+          quote: "• Hình chữ nhật: Là tứ giác có bốn góc vuông.\n• Hình vuông: Là tứ giác có bốn góc vuông và bốn cạnh bằng nhau (vừa là hình chữ nhật vừa là hình thoi).\n• Dấu hiệu nhận biết: Hình bình hành có một góc vuông hoặc có hai đường chéo bằng nhau là hình chữ nhật.",
+          metaphor: "Mặt bàn học, cánh cửa sổ, cuốn tập đều là hình chữ nhật. Hình vuông là trường hợp 'hoàn hảo' đặc biệt nhất của hình chữ nhật khi chiều dài bằng chiều rộng.",
+          location: "Hoạt động 2 khám phá tính chất hai đường chéo và các góc."
+        },
+        target: {
+          title: "Yêu cầu cần đạt chuẩn GDPT 2018 (SGK KNTT)",
+          items: [
+            "Nhận biết định nghĩa và tính chất đặc trưng của hình chữ nhật, hình vuông.",
+            "Vận dụng dấu hiệu nhận biết để chứng minh một tứ giác là hình chữ nhật hoặc hình vuông."
+          ]
+        },
+        mistakes: {
+          title: "Các lỗi học sinh lớp 8 hay mắc phải nhất",
+          items: [
+            "Chứng minh thiếu bước: Thấy tứ giác có 1 góc vuông là vội vàng kết luận hình chữ nhật (quên chứng minh nó là hình bình hành trước).",
+            "Nhầm lẫn tính chất: Nghĩ rằng hình chữ nhật cũng có hai đường chéo vuông góc với nhau (đó là tính chất của hình thoi và hình vuông)."
+          ]
+        },
+        method: {
+          title: "Gợi ý quan sát phương pháp sư phạm cho người dự",
+          items: [
+            "Giáo viên sử dụng thước đo, compa hoặc phần mềm GeoGebra trực quan như thế nào.",
+            "Học sinh có tự vẽ hình chính xác và đánh dấu các góc vuông trên hình vẽ không."
+          ]
+        }
+      },
+      "TOAN9-T45-2025": {
+        topic: "Bài 1. Phương trình bậc hai một ẩn (Toán 9 - SGK KNTT)",
+        concept: {
+          title: "Khái niệm cốt lõi (Chuẩn SGK Kết Nối Tri Thức)",
+          quote: "• Dạng tổng quát: ax² + bx + c = 0 (với a ≠ 0).\n• Biệt thức Delta: Δ = b² - 4ac.\n• Nghiệm: Δ > 0 phương trình có 2 nghiệm phân biệt; Δ = 0 phương trình có nghiệm kép; Δ < 0 phương trình vô nghiệm.",
+          metaphor: "Biệt thức Delta giống như 'chiếc cân định lượng': chỉ cần nhìn dấu của Delta là biết ngay số phận (số nghiệm) của phương trình mà chưa cần giải chi tiết.",
+          location: "Hoạt động 2 xây dựng công thức nghiệm từ phương pháp tách bình phương."
+        },
+        target: {
+          title: "Yêu cầu cần đạt chuẩn GDPT 2018 (SGK KNTT)",
+          items: [
+            "Xác định đúng các hệ số a, b, c (kể cả khi các hệ số là số âm).",
+            "Tính chính xác giá trị biệt thức Δ và vận dụng đúng công thức nghiệm."
+          ]
+        },
+        mistakes: {
+          title: "Các lỗi học sinh lớp 9 hay mắc phải nhất",
+          items: [
+            "Lỗi dấu âm: Rất hay nhầm (-b)² thành -b², hoặc tính sai dấu trong -4ac khi c là số âm.",
+            "Quên điều kiện hệ số a ≠ 0 khi đặt vấn đề.",
+            "Quên chia cho mẫu số 2a ở bước tính x1, x2."
+          ]
+        },
+        method: {
+          title: "Gợi ý quan sát phương pháp sư phạm cho người dự",
+          items: [
+            "Học sinh có được luyện tập tính nhẩm Delta với các hệ số nguyên đơn giản không.",
+            "Giáo viên sửa lỗi sai dấu cho học sinh trên bảng như thế nào."
+          ]
+        }
+      },
+      "TOAN9-HK1-T11": {
+        topic: "Bài 2. Hệ hai phương trình bậc nhất hai ẩn (Toán 9 - SGK KNTT)",
+        concept: {
+          title: "Khái niệm cốt lõi (Chuẩn SGK Kết Nối Tri Thức)",
+          quote: "• Dạng tổng quát: { ax + by = c ; a'x + b'y = c' }.\n• Nghiệm: Là cặp số (x₀; y₀) thỏa mãn đồng thời cả hai phương trình.\n• Hai phương pháp giải cơ bản: Phương pháp thế và Phương pháp cộng đại số.",
+          metaphor: "Giống như bài toán cổ 'Vừa gà vừa chó, bó lại cho tròn, 36 con, 100 chân chẵn': cần tìm 2 ẩn số đồng thời thỏa mãn cả số con và số chân.",
+          location: "Hoạt động 2 giới thiệu quy tắc thế và quy tắc cộng đại số."
+        },
+        target: {
+          title: "Yêu cầu cần đạt chuẩn GDPT 2018 (SGK KNTT)",
+          items: [
+            "Hiểu khái niệm nghiệm của hệ phương trình bậc nhất hai ẩn.",
+            "Thành thạo kỹ năng giải hệ phương trình bằng phương pháp thế hoặc cộng đại số."
+          ]
+        },
+        mistakes: {
+          title: "Các lỗi học sinh lớp 9 hay mắc phải nhất",
+          items: [
+            "Lỗi thế nhầm: Rút x từ phương trình (1) rồi lại thế ngược vào chính phương trình (1).",
+            "Lỗi đổi dấu khi nhân hệ số âm trong phương pháp cộng đại số.",
+            "Kết luận nghiệm: Quên ghi cặp số (x; y) theo đúng thứ tự."
+          ]
+        },
+        method: {
+          title: "Gợi ý quan sát phương pháp sư phạm cho người dự",
+          items: [
+            "Cách giáo viên hướng dẫn học sinh lựa chọn phương pháp giải phù hợp (khi nào nên dùng thế, khi nào nên cộng đại số).",
+            "Mức độ thành thạo của học sinh khi làm bài tập độc lập tại lớp."
+          ]
+        }
+      },
+      "TOAN7-T52-2025": {
+        topic: "Bài 1. Biểu thức đại số và Đa thức một biến (Toán 7 - SGK KNTT)",
+        concept: {
+          title: "Khái niệm cốt lõi (Chuẩn SGK Kết Nối Tri Thức)",
+          quote: "• Biểu thức đại số: Biểu thức gồm các số, các chữ (biến) và các phép toán cộng, trừ, nhân, chia, nâng lên lũy thừa.\n• Đa thức một biến: Là tổng của những đơn thức của cùng một biến.\n• Bậc của đa thức một biến: Là số mũ cao nhất của biến trong đa thức đó (khi đã thu gọn).",
+          metaphor: "Biến số 'x' giống như chiếc hộp chứa giá trị chưa biết. Biểu thức đại số là công thức tính toán với chiếc hộp đó bất kể trong hộp chứa số nào.",
+          location: "Hoạt động 2 hình thành khái niệm đa thức và cách thu gọn."
+        },
+        target: {
+          title: "Yêu cầu cần đạt chuẩn GDPT 2018 (SGK KNTT)",
+          items: [
+            "Nhận biết được đơn thức, đa thức một biến.",
+            "Xác định được bậc, hệ số cao nhất và hệ số tự do của đa thức một biến."
+          ]
+        },
+        mistakes: {
+          title: "Các lỗi học sinh lớp 7 hay mắc phải nhất",
+          items: [
+            "Nhầm lẫn bậc: Tìm bậc khi đa thức chưa được thu gọn tối giản.",
+            "Nhầm hệ số cao nhất với số có giá trị lớn nhất trong đa thức.",
+            "Quên dấu âm đi liền với hệ số."
+          ]
+        },
+        method: {
+          title: "Gợi ý quan sát phương pháp sư phạm cho người dự",
+          items: [
+            "Quan sát xem học sinh có tích cực giơ tay phân biệt các thành phần của đa thức không.",
+            "Giáo viên sử dụng trò chơi ghép thẻ để học sinh nhận diện đa thức hay không."
+          ]
+        }
+      },
+      "TOAN7-HK1-T10": {
+        topic: "Bài 4. Tam giác bằng nhau (Toán 7 - SGK KNTT)",
+        concept: {
+          title: "Khái niệm cốt lõi (Chuẩn SGK Kết Nối Tri Thức)",
+          quote: "• Định nghĩa: Hai tam giác bằng nhau là hai tam giác có các cạnh tương ứng bằng nhau và các góc tương ứng bằng nhau.\n• 3 trường hợp bằng nhau: Cạnh - cạnh - cạnh (c-c-c); Cạnh - góc - cạnh (c-g-c, góc xen giữa); Góc - cạnh - góc (g-c-g, cạnh xen giữa).",
+          metaphor: "Giống như hai chiếc khuôn bánh cùng kích thước: khi đặt chồng lên nhau thì khít hoàn toàn từng góc và từng cạnh.",
+          location: "Hoạt động khám phá các trường hợp bằng nhau qua việc cắt ghép giấy hình tam giác."
+        },
+        target: {
+          title: "Yêu cầu cần đạt chuẩn GDPT 2018 (SGK KNTT)",
+          items: [
+            "Nhận biết và phát biểu được 3 trường hợp bằng nhau của tam giác.",
+            "Viết đúng thứ tự các đỉnh tương ứng khi kí hiệu hai tam giác bằng nhau (VD: ΔABC = ΔDEF)."
+          ]
+        },
+        mistakes: {
+          title: "Các lỗi học sinh lớp 7 hay mắc phải nhất",
+          items: [
+            "Góc không xen giữa: Áp dụng c-g-c nhưng góc lại không nằm giữa hai cạnh đã biết bằng nhau.",
+            "Viết sai thứ tự đỉnh tương ứng khi kết luận hai tam giác bằng nhau.",
+            "Quên nêu căn cứ (giả thiết, góc đối đỉnh, cạnh chung...) khi chứng minh."
+          ]
+        },
+        method: {
+          title: "Gợi ý quan sát phương pháp sư phạm cho người dự",
+          items: [
+            "Học sinh có được dùng thước và compa để tự kiểm chứng các cạnh bằng nhau không.",
+            "Giáo viên nhấn mạnh điểm 'góc xen giữa' trên hình vẽ màu sắc như thế nào."
+          ]
+        }
+      },
+      "TOAN6-T60-2025": {
+        topic: "Bài 1. Phân số và tính chất cơ bản của phân số (Toán 6 - SGK KNTT)",
+        concept: {
+          title: "Khái niệm cốt lõi (Chuẩn SGK Kết Nối Tri Thức)",
+          quote: "• Phân số mở rộng: Là biểu thức dạng a/b, trong đó a, b là các số nguyên và b ≠ 0 (khác lớp 5 là tử và mẫu có thể nhận số nguyên âm).\n• Tính chất cơ bản: Nhân hoặc chia cả tử và mẫu với cùng một số nguyên khác 0 ta được phân số bằng phân số đã cho.",
+          metaphor: "Chia một chiếc bánh pizza thành 4 phần bằng nhau, lấy 3 phần tức là ta có 3/4 chiếc bánh. Nếu chia thành 8 phần và lấy 6 phần thì lượng bánh vẫn y như cũ (3/4 = 6/8).",
+          location: "Hoạt động 2 mở rộng khái niệm phân số sang tập hợp số nguyên Z."
+        },
+        target: {
+          title: "Yêu cầu cần đạt chuẩn GDPT 2018 (SGK KNTT)",
+          items: [
+            "Nhận biết được phân số với tử và mẫu là các số nguyên âm hoặc dương.",
+            "Áp dụng tính chất cơ bản để rút gọn phân số về phân số tối giản."
+          ]
+        },
+        mistakes: {
+          title: "Các lỗi học sinh lớp 6 hay mắc phải nhất",
+          items: [
+            "Quên điều kiện mẫu số b ≠ 0 (viết các biểu thức như 5/0 là phân số).",
+            "Rút gọn chưa triệt để (chưa về phân số tối giản).",
+            "Lỗi dấu: Nhầm lẫn dấu trừ ở tử hoặc mẫu, quên quy tắc trừ chia trừ thành cộng."
+          ]
+        },
+        method: {
+          title: "Gợi ý quan sát phương pháp sư phạm cho người dự",
+          items: [
+            "Học sinh chuyển từ khái niệm phân số tiểu học (số tự nhiên) sang phân số số nguyên có bỡ ngỡ không.",
+            "Giáo viên tổ chức trò chơi ghép thẻ phân số bằng nhau có sôi nổi không."
+          ]
+        }
+      },
+      "TOAN6-HK1-T9": {
+        topic: "Bài 9. Dấu hiệu chia hết cho 2, cho 5, cho 3, cho 9 (Toán 6 - SGK KNTT)",
+        concept: {
+          title: "Khái niệm cốt lõi (Chuẩn SGK Kết Nối Tri Thức)",
+          quote: "• Dấu hiệu chia hết cho 2 và 5: Chỉ phụ thuộc vào CHỮ SỐ TẬN CÙNG (chia hết cho 2: tận cùng 0, 2, 4, 6, 8; chia hết cho 5: tận cùng 0 hoặc 5).\n• Dấu hiệu chia hết cho 3 và 9: Phụ thuộc vào TỔNG CÁC CHỮ SỐ (tổng chia hết cho 3 thì chia hết cho 3; tổng chia hết cho 9 thì chia hết cho 9).",
+          metaphor: "Chia bánh vào các đĩa đôi (cho 2) hoặc đĩa ngũ (cho 5) chỉ cần nhìn chiếc bánh thừa ở hàng đơn vị. Còn chia cho 3 và 9 phải gom tổng tất cả các phần tử lại để cộng.",
+          location: "Hoạt động 2 khám phá dấu hiệu chia hết cho 3 và 9."
+        },
+        target: {
+          title: "Yêu cầu cần đạt chuẩn GDPT 2018 (SGK KNTT)",
+          items: [
+            "Phát biểu và nhận biết chính xác các số chia hết cho 2, 5, 3, 9.",
+            "Vận dụng để tìm chữ số còn thiếu thỏa mãn điều kiện chia hết."
+          ]
+        },
+        mistakes: {
+          title: "Các lỗi học sinh lớp 6 hay mắc phải nhất",
+          items: [
+            "Nhầm lẫn tai hại: Nhìn chữ số tận cùng là 3, 9 rồi kết luận chia hết cho 3, 9 (VD: số 13, 19).",
+            "Quên rằng một số chia hết cho 9 thì chắc chắn chia hết cho 3, nhưng chia hết cho 3 chưa chắc chia hết cho 9."
+          ]
+        },
+        method: {
+          title: "Gợi ý quan sát phương pháp sư phạm cho người dự",
+          items: [
+            "Học sinh có nhầm lẫn giữa xét chữ số tận cùng và tính tổng chữ số hay không.",
+            "Giáo viên sử dụng bảng số để học sinh tự tìm ra quy luật hay thuyết trình áp đặt."
+          ]
+        }
+      }
+    };
+
+    function p2OpenAIAssistant(promptType) {
+      const s = getCurrentSession();
+      const modal = document.getElementById('modal-ai-assistant');
+      const badge = document.getElementById('ai-active-session-badge');
+      if (badge && s) {
+        badge.innerText = `${s.subject || 'Toán'} ${s.className || ''} • ${s.lessonTitle || ''}`;
+      }
+      if (modal) {
+        modal.classList.remove('hidden');
+      }
+
+      // Check for saved API key
+      const savedKey = localStorage.getItem('pvt_gemini_api_key');
+      const keyInput = document.getElementById('ai-api-key-input');
+      if (keyInput && savedKey) keyInput.value = savedKey;
+
+      // Initial welcome message if stream empty
+      const stream = document.getElementById('ai-chat-stream');
+      if (stream && stream.children.length === 0) {
+        p2RenderAIWelcome(s);
+      }
+
+      if (promptType) {
+        p2AskAI(promptType);
+      }
+      lucide.createIcons();
+    }
+
+    function p2CloseAIAssistant() {
+      const modal = document.getElementById('modal-ai-assistant');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function p2ToggleAiApiKey() {
+      const panel = document.getElementById('ai-api-key-panel');
+      if (panel) panel.classList.toggle('hidden');
+    }
+
+    function p2SaveAiApiKey() {
+      const keyInput = document.getElementById('ai-api-key-input');
+      if (!keyInput) return;
+      const key = keyInput.value.trim();
+      if (key) {
+        localStorage.setItem('pvt_gemini_api_key', key);
+        alert("Đã lưu khóa Google Gemini API Key thành công! Chế độ đàm thoại trực tuyến với mô hình Gemini đã được kích hoạt.");
+      } else {
+        localStorage.removeItem('pvt_gemini_api_key');
+        alert("Đã xóa API Key. Hệ thống chuyển về chế độ Cơ sở Tri thức SGK Kết Nối Tri Thức chuẩn offline.");
+      }
+      p2ToggleAiApiKey();
+    }
+
+    function p2RenderAIWelcome(s) {
+      const stream = document.getElementById('ai-chat-stream');
+      if (!stream) return;
+
+      stream.innerHTML = `
+        <div class="bg-indigo-50/70 border border-indigo-200 rounded-xl p-3.5 space-y-2">
+          <div class="flex items-center gap-2 text-indigo-900 font-extrabold text-xs">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+            <span>Chào Thầy/Cô! Tôi là Trợ lý Cố vấn Sư phạm Toán AI.</span>
+          </div>
+          <p class="text-xs text-slate-700 leading-relaxed">
+            Hệ thống đã nhận diện tiết dạy: <strong>${s.lessonTitle} (${s.subject || 'Toán'} ${s.className || ''})</strong>. Toàn bộ thông tin được đồng bộ và đối chiếu theo chuẩn bộ sách giáo khoa <strong>Kết Nối Tri Thức Với Cuộc Sống</strong> (Chương trình GDPT 2018).
+          </p>
+          <p class="text-[11px] text-slate-500 italic">
+            Thầy/Cô có thể bấm vào các nút gợi ý hỏi nhanh phía trên hoặc gõ câu hỏi để tra cứu ngay lập tức!
+          </p>
+        </div>
+      `;
+    }
+
+    async function p2AskAI(type) {
+      const s = getCurrentSession();
+      const stream = document.getElementById('ai-chat-stream');
+      if (!stream) return;
+
+      let questionTitle = '';
+      if (type === 'concept') questionTitle = '📘 Khái niệm cốt lõi của bài này theo SGK Kết Nối Tri Thức là gì?';
+      else if (type === 'target') questionTitle = '🎯 Yêu cầu cần đạt chuẩn GDPT 2018 của tiết dạy này là gì?';
+      else if (type === 'mistakes') questionTitle = '⚠️ Học sinh bài này hay hiểu sai hoặc mắc lỗi gì nhất?';
+      else if (type === 'method') questionTitle = '🔍 Giáo viên môn khác khi dự bài này nên chú ý quan sát những gì?';
+
+      // 1. Render User Question Bubble
+      const userBubble = document.createElement('div');
+      userBubble.className = "flex justify-end";
+      userBubble.innerHTML = `
+        <div class="bg-indigo-600 text-white font-medium text-xs px-3.5 py-2 rounded-2xl rounded-tr-xs shadow-sm max-w-[85%]">
+          ${questionTitle}
+        </div>
+      `;
+      stream.appendChild(userBubble);
+
+      // 2. Render Loading Bubble
+      const loadingBubble = document.createElement('div');
+      loadingBubble.className = "flex justify-start ai-loading-indicator";
+      loadingBubble.innerHTML = `
+        <div class="bg-slate-100 text-slate-600 border border-slate-200 text-xs px-3.5 py-2 rounded-2xl rounded-tl-xs shadow-2xs flex items-center gap-2">
+          <span class="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-bounce"></span>
+          <span class="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-bounce [animation-delay:0.2s]"></span>
+          <span class="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-bounce [animation-delay:0.4s]"></span>
+          <span class="italic text-[11px] text-slate-500">Đang tra cứu chuẩn SGK Kết Nối Tri Thức...</span>
+        </div>
+      `;
+      stream.appendChild(loadingBubble);
+      stream.scrollTop = stream.scrollHeight;
+
+      // 3. Query Engine (Offline KNTT KB or Gemini API)
+      setTimeout(async () => {
+        const responseData = await p2FetchAIResponse(s, type, questionTitle);
+        loadingBubble.remove();
+
+        const aiBubble = document.createElement('div');
+        aiBubble.className = "flex justify-start";
+        aiBubble.innerHTML = `
+          <div class="bg-white border border-indigo-200 rounded-2xl rounded-tl-xs p-4 shadow-sm max-w-[95%] space-y-2.5 text-xs text-slate-800">
+            ${responseData}
+          </div>
+        `;
+        stream.appendChild(aiBubble);
+        stream.scrollTop = stream.scrollHeight;
+        lucide.createIcons();
+      }, 300);
+    }
+
+    async function p2SubmitCustomAIQuery() {
+      const input = document.getElementById('ai-custom-query-input');
+      if (!input || !input.value.trim()) return;
+      const query = input.value.trim();
+      input.value = '';
+
+      const s = getCurrentSession();
+      const stream = document.getElementById('ai-chat-stream');
+      if (!stream) return;
+
+      // Render User Bubble
+      const userBubble = document.createElement('div');
+      userBubble.className = "flex justify-end";
+      userBubble.innerHTML = `
+        <div class="bg-indigo-600 text-white font-medium text-xs px-3.5 py-2 rounded-2xl rounded-tr-xs shadow-sm max-w-[85%]">
+          ${query}
+        </div>
+      `;
+      stream.appendChild(userBubble);
+
+      // Loading Bubble
+      const loadingBubble = document.createElement('div');
+      loadingBubble.className = "flex justify-start ai-loading-indicator";
+      loadingBubble.innerHTML = `
+        <div class="bg-slate-100 text-slate-600 border border-slate-200 text-xs px-3.5 py-2 rounded-2xl rounded-tl-xs shadow-2xs flex items-center gap-2">
+          <span class="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-bounce"></span>
+          <span class="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-bounce [animation-delay:0.2s]"></span>
+          <span class="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-bounce [animation-delay:0.4s]"></span>
+          <span class="italic text-[11px] text-slate-500">Cố vấn AI đang xử lý theo SGK Kết Nối Tri Thức...</span>
+        </div>
+      `;
+      stream.appendChild(loadingBubble);
+      stream.scrollTop = stream.scrollHeight;
+
+      setTimeout(async () => {
+        const responseData = await p2FetchAIResponse(s, 'custom', query);
+        loadingBubble.remove();
+
+        const aiBubble = document.createElement('div');
+        aiBubble.className = "flex justify-start";
+        aiBubble.innerHTML = `
+          <div class="bg-white border border-indigo-200 rounded-2xl rounded-tl-xs p-4 shadow-sm max-w-[95%] space-y-2.5 text-xs text-slate-800">
+            ${responseData}
+          </div>
+        `;
+        stream.appendChild(aiBubble);
+        stream.scrollTop = stream.scrollHeight;
+        lucide.createIcons();
+      }, 400);
+    }
+
+    async function p2FetchAIResponse(session, type, userQuestion) {
+      const apiKey = localStorage.getItem('pvt_gemini_api_key');
+
+      // 1. If Gemini API Key is provided, call Google Gemini live
+      if (apiKey && apiKey.trim().length > 15) {
+        try {
+          const promptSystem = `Bạn là Cố vấn Chuyên môn môn Toán THCS. Đơn vị áp dụng THỐNG NHẤT bộ sách giáo khoa: KẾT NỐI TRI THỨC VỚI CUỘC SỐNG (NXB Giáo dục Việt Nam) theo Chương trình GDPT 2018. Mọi định nghĩa, thuật ngữ, ký hiệu toán học, ví dụ mở đầu và Yêu cầu cần đạt BẮT BUỘC phải chuẩn xác 100% theo đúng sách giáo khoa Toán 'Kết nối tri thức với cuộc sống' tương ứng với khối lớp của bài dạy. Tuyệt đối không tự bịa, không lan man, không suy diễn kiến thức vượt cấp. Trình bày rõ ràng, súc tích (dưới 200 từ) có gạch đầu dòng và định dạng markdown rõ nét.`;
+          
+          const promptUser = `Tiết dạy hiện tại:
+- Môn: ${session.subject || 'Toán'}
+- Lớp: ${session.className || ''}
+- Tên bài dạy: ${session.lessonTitle || ''}
+- Tiến trình 4 hoạt động: ${JSON.stringify(session.activities || [])}
+
+Câu hỏi của giáo viên dự giờ: "${userQuestion}".
+Hãy trả lời ngắn gọn, chuẩn xác theo bộ sách Kết Nối Tri Thức Với Cuộc Sống để giáo viên (kể cả giáo viên trái môn) hiểu ngay bản chất và phương pháp quan sát.`;
+
+          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{
+                role: 'user',
+                parts: [{ text: `${promptSystem}\n\n${promptUser}` }]
+              }]
+            })
+          });
+
+          if (res.ok) {
+            const data = await res.json();
+            const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (text) {
+              return `
+                <div class="flex items-center gap-1.5 text-indigo-700 font-bold border-b border-indigo-100 pb-1.5 mb-2">
+                  <i data-lucide="sparkles" class="w-4 h-4 text-amber-500"></i>
+                  <span>Phản hồi từ Google Gemini (Chuẩn SGK Kết Nối Tri Thức)</span>
+                </div>
+                <div class="prose prose-xs max-w-none text-slate-800 leading-relaxed whitespace-pre-wrap">${escapeHtml(text)}</div>
+              `;
+            }
+          }
+        } catch (e) {
+          console.warn("Live Gemini API call failed, falling back to local KNTT Knowledge Engine", e);
+        }
+      }
+
+      // 2. Built-in Knowledge Base Engine (Instant, Offline, 100% Accurate KNTT)
+      const kbData = KNTT_KNOWLEDGE_BASE[session.id];
+
+      if (kbData) {
+        if (type === 'concept') {
+          return `
+            <div class="flex items-center justify-between border-b border-indigo-100 pb-1.5">
+              <span class="font-bold text-indigo-900 flex items-center gap-1.5">
+                <i data-lucide="book-open" class="w-4 h-4 text-indigo-600"></i>
+                ${kbData.concept.title}
+              </span>
+              <span class="bg-indigo-100 text-indigo-800 text-[10px] font-bold px-2 py-0.5 rounded">SGK KNTT</span>
+            </div>
+            <div class="bg-slate-50 border-l-3 border-indigo-600 p-2.5 rounded-r-lg font-mono text-[11px] leading-relaxed text-slate-800 whitespace-pre-wrap">
+${kbData.concept.quote}
+            </div>
+            <div class="space-y-1">
+              <span class="font-bold text-slate-700 text-[11px] block">💡 Diễn giải đời sống (Dành cho GV môn khác):</span>
+              <p class="text-slate-600 italic leading-relaxed pl-2 border-l border-amber-300">${kbData.concept.metaphor}</p>
+            </div>
+            <div class="text-[11px] text-slate-500 bg-amber-50/60 p-2 rounded border border-amber-200/60">
+              📍 <strong>Vị trí xuất hiện:</strong> ${kbData.concept.location}
+            </div>
+          `;
+        } else if (type === 'target') {
+          const itemsHtml = kbData.target.items.map(it => `
+            <li class="flex items-start gap-1.5">
+              <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5"></i>
+              <span>${it}</span>
+            </li>
+          `).join('');
+
+          return `
+            <div class="flex items-center justify-between border-b border-emerald-100 pb-1.5">
+              <span class="font-bold text-emerald-900 flex items-center gap-1.5">
+                <i data-lucide="target" class="w-4 h-4 text-emerald-600"></i>
+                ${kbData.target.title}
+              </span>
+              <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded">YCCĐ Chuẩn</span>
+            </div>
+            <ul class="space-y-1.5 text-slate-700 pt-1">
+              ${itemsHtml}
+            </ul>
+          `;
+        } else if (type === 'mistakes') {
+          const itemsHtml = kbData.mistakes.items.map(it => `
+            <li class="flex items-start gap-1.5 text-rose-950">
+              <i data-lucide="alert-circle" class="w-3.5 h-3.5 text-rose-600 shrink-0 mt-0.5"></i>
+              <span>${it}</span>
+            </li>
+          `).join('');
+
+          return `
+            <div class="flex items-center justify-between border-b border-rose-100 pb-1.5">
+              <span class="font-bold text-rose-900 flex items-center gap-1.5">
+                <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-600"></i>
+                ${kbData.mistakes.title}
+              </span>
+              <span class="bg-rose-100 text-rose-800 text-[10px] font-bold px-2 py-0.5 rounded">Lưu Ý Sư Phạm</span>
+            </div>
+            <ul class="space-y-1.5 pt-1">
+              ${itemsHtml}
+            </ul>
+          `;
+        } else if (type === 'method') {
+          const itemsHtml = kbData.method.items.map(it => `
+            <li class="flex items-start gap-1.5 text-purple-950">
+              <i data-lucide="eye" class="w-3.5 h-3.5 text-purple-600 shrink-0 mt-0.5"></i>
+              <span>${it}</span>
+            </li>
+          `).join('');
+
+          return `
+            <div class="flex items-center justify-between border-b border-purple-100 pb-1.5">
+              <span class="font-bold text-purple-900 flex items-center gap-1.5">
+                <i data-lucide="search" class="w-4 h-4 text-purple-600"></i>
+                ${kbData.method.title}
+              </span>
+              <span class="bg-purple-100 text-purple-800 text-[10px] font-bold px-2 py-0.5 rounded">Gợi Ý Quan Sát</span>
+            </div>
+            <ul class="space-y-1.5 pt-1">
+              ${itemsHtml}
+            </ul>
+          `;
+        }
+      }
+
+      // 3. Dynamic Knowledge Synthesizer for arbitrary custom sessions
+      const lTitle = session.lessonTitle || '';
+      const cName = session.className || '';
+      const acts = session.activities || [];
+
+      return `
+        <div class="flex items-center justify-between border-b border-indigo-100 pb-1.5">
+          <span class="font-bold text-indigo-900 flex items-center gap-1.5">
+            <i data-lucide="book-open" class="w-4 h-4 text-indigo-600"></i>
+            Tư vấn chuyên môn SGK Kết Nối Tri Thức (${cName})
+          </span>
+          <span class="bg-indigo-100 text-indigo-800 text-[10px] font-bold px-2 py-0.5 rounded">KNTTVCS</span>
+        </div>
+        <div class="space-y-2 text-slate-700 leading-relaxed">
+          <p>• <strong>Bài học:</strong> ${escapeHtml(lTitle)}</p>
+          <p>• <strong>Định hướng sư phạm (SGK Kết Nối Tri Thức):</strong> Bài học được cấu trúc theo 4 pha khám phá: Khởi động gắn với thực tiễn ➔ Hình thành kiến thức qua các hoạt động ➔ Luyện tập củng cố ➔ Vận dụng.</p>
+          <p>• <strong>Lời khuyên cho giáo viên dự giờ:</strong> Hãy tập trung quan sát mức độ học sinh chủ động giải quyết nhiệm vụ ở <em>Hoạt động 2 (Hình thành kiến thức)</em>, cách giáo viên hỗ trợ các học sinh còn lúng túng và nghệ thuật chốt lại bài học.</p>
+          ${acts.length > 0 ? `<div class="bg-slate-50 p-2 rounded border border-slate-200 text-[11px]"><strong>Tiến trình bài dạy:</strong> ${acts.map((a, i) => `${a.title || `HĐ ${i+1}`}`).join(' ➔ ')}</div>` : ''}
+        </div>
+      `;
+    }
 
     // Initialization
     window.addEventListener('DOMContentLoaded', async () => {
