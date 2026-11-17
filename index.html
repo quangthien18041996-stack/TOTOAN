@@ -724,7 +724,7 @@
               <p class="text-[11px] italic text-slate-500">(Ký số / Ký tên)</p>
             </div>
             <div class="mt-16">
-              <p class="font-semibold text-slate-900" id="p3-sig-teacher">Cô Nguyễn Thị Lan</p>
+              <p class="font-semibold text-slate-900" id="p3-sig-teacher">Nguyễn Thị Lan</p>
             </div>
           </div>
           <div class="flex flex-col justify-between">
@@ -2906,6 +2906,11 @@
     // ==============================================================
     // PHẦN 3 LOGIC: TỔ TRƯỞNG CHUYÊN MÔN TỔNG HỢP (THEO TIẾT DẠY ĐÃ CHỌN)
     // ==============================================================
+    function cleanPersonName(name) {
+      if (!name) return '';
+      return name.replace(/^(Thầy|Cô|thầy|cô)\s+/i, '').trim();
+    }
+
     function renderPart3UI() {
       const s = getCurrentSession();
       if (!s) return;
@@ -2930,12 +2935,13 @@
         s.teacherName = registeredTeacher;
       }
       const teacherDisplay = isBlankSession ? '....................................................' : registeredTeacher;
+      const teacherSigName = isBlankSession ? '....................................................' : cleanPersonName(registeredTeacher);
 
       document.getElementById('p3-doc-lesson').innerText = isBlankSession ? '................................................................................' : (s.lessonTitle || '');
       document.getElementById('p3-doc-teacher').innerText = teacherDisplay;
       document.getElementById('p3-doc-class').innerText = isBlankSession ? 'Lớp: ............ • Tiết: ........' : `${s.className || ''} • ${s.period || ''}`;
       document.getElementById('p3-doc-time').innerText = isBlankSession ? '....................................................' : (s.teachingTime || '');
-      document.getElementById('p3-sig-teacher').innerText = teacherDisplay;
+      document.getElementById('p3-sig-teacher').innerText = teacherSigName;
 
       const observersNames = obsList.map(o => o.observerName).filter(Boolean);
       if (obsList.length === 0) {
@@ -3175,7 +3181,7 @@
                 <p style="margin: 0; font-size: 11pt; visibility: hidden;">&nbsp;</p>
                 <b style="text-transform: uppercase;">Giáo viên giảng dạy</b><br>
                 <i style="font-size: 10pt; color: #555;">(Ký số / Ký tên)</i><br><br><br><br>
-                <b>${isBlankSession ? '....................................................' : (s.teacherName || 'Giáo viên bộ môn')}</b>
+                <b>${isBlankSession ? '....................................................' : cleanPersonName(s.teacherName || 'Giáo viên bộ môn')}</b>
               </td>
               <td style="border: none; width: 50%; text-align: center; vertical-align: top;">
                 <p style="margin: 0; font-style: italic; font-size: 11pt;">TP. Hồ Chí Minh, ngày ...... tháng ...... năm 202...</p>
