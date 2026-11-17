@@ -87,10 +87,226 @@
           "solution": "Giáo viên nên bao quát và di chuyển xuống cuối lớp nhiều hơn."
         }
       ]
+    },
+    {
+      "id": "SUB-1794880091291",
+      "sessionId": "TOAN9-T45-2025",
+      "sessionTitle": "Toán 9A1 - Góc ở tâm. Số đo cung (Hình học 9)",
+      "observerName": "Cô Hoàng Thị Hương",
+      "timestamp": "08:48 AM",
+      "records": [
+        {
+          "activityId": "act-huong-1",
+          "activityTitle": "Hoạt động 1: Khởi động (Quan sát kim đồng hồ tròn)",
+          "behavior": "Học sinh rất hào hứng, sôi nổi tham gia thao tác",
+          "solution": ""
+        },
+        {
+          "activityId": "act-huong-2",
+          "activityTitle": "Hoạt động 2: Hình thành kiến thức (Định nghĩa góc ở tâm)",
+          "behavior": "",
+          "solution": ""
+        },
+        {
+          "activityId": "act-huong-3",
+          "activityTitle": "Hoạt động 3: Luyện tập (Tính số đo cung lớn, cung nhỏ)",
+          "behavior": "",
+          "solution": ""
+        },
+        {
+          "activityId": "act-huong-4",
+          "activityTitle": "Hoạt động 4: Giao nhiệm vụ tự học",
+          "behavior": "",
+          "solution": ""
+        }
+      ]
     }
   ],
   "meetingMinutes": {
+    "sessionId": "TOAN8-T56-2025",
     "conclusion": "Tiết dạy thành công, giáo viên chuẩn bị bài chu đáo, học sinh được thực hành trải nghiệm trực quan. Các nhóm hoạt động sôi nổi. Cần lưu ý nhắc học sinh quy cách viết tập hợp đầy đủ các phần tử gồm cả số 0.",
-    "evaluatedBy": "Tổ Trưởng Chuyên Môn - Tổ Toán THCS Phan Văn Trị"
-  }
+    "evaluatedBy": "Tổ Trưởng Chuyên Môn - Tổ Toán"
+  },
+  "sessions": [
+    {
+      "id": "TOAN8-T56-2025",
+      "teacherName": "Cô Nguyễn Thị Lan",
+      "subject": "Toán",
+      "className": "8A1",
+      "period": "Tiết 56 (Tuần 28)",
+      "teachingTime": "27/03/2025 - 08:00",
+      "lessonTitle": "Bài 1. Phép thử nghiệm – Sự kiện (Chương 9)",
+      "school": "THCS Phan Văn Trị",
+      "activities": [
+        {
+          "id": "act-lan-1",
+          "title": "Hoạt động 1: Khởi động (Trò chơi xúc xắc & bốc thăm)",
+          "time": "5 phút",
+          "content": "Giáo viên tổ chức trò chơi dự đoán số chấm xúc xắc nhằm kích thích sự tò mò của học sinh về kết quả không thể đoán trước."
+        },
+        {
+          "id": "act-lan-2",
+          "title": "Hoạt động 2: Hình thành kiến thức (Thực nghiệm 4 nhóm)",
+          "time": "20 phút",
+          "content": "Chia 4 nhóm: Nhóm 1 (Gieo xúc xắc), Nhóm 2 (Tung đồng xu), Nhóm 3 (Bốc thăm 1..3), Nhóm 4 (Rút bi màu). Rút ra khái niệm phép thử nghiệm và tập hợp kết quả X."
+        },
+        {
+          "id": "act-lan-3",
+          "title": "Hoạt động 3: Luyện tập (Bài 1, Bài 2 SGK trang 107)",
+          "time": "12 phút",
+          "content": "Học sinh làm việc cá nhân xác định không gian kết quả của bút bi/bút chì, chọn ngày học bơi, và vòng quay số 0-9."
+        },
+        {
+          "id": "act-lan-4",
+          "title": "Hoạt động 4: Vận dụng & Hướng dẫn tự học về nhà",
+          "time": "5 phút",
+          "content": "Hệ thống lại lý thuyết, dặn dò bài tập 3 trang 102 và chuẩn bị Tiết 2."
+        }
+      ]
+    },
+    {
+      "id": "TOAN8-T57-2025",
+      "teacherName": "Thầy Trần Minh Tuấn",
+      "subject": "Toán",
+      "className": "8A2",
+      "period": "Tiết 57 (Tuần 28)",
+      "teachingTime": "27/03/2025 - 08:50",
+      "lessonTitle": "Bài 2. Xác suất thực nghiệm của biến cố trong trò chơi",
+      "school": "THCS Phan Văn Trị",
+      "activities": [
+        {
+          "id": "act-tuan-1",
+          "title": "Hoạt động 1: Khởi động (Trò chơi tung đồng xu 20 lần)",
+          "time": "7 phút",
+          "content": "Học sinh thực hành gieo đồng xu và đếm số lần xuất hiện mặt Sấp, ghi lại bảng số liệu."
+        },
+        {
+          "id": "act-tuan-2",
+          "title": "Hoạt động 2: Hình thành kiến thức (Công thức xác suất k/n)",
+          "time": "18 phút",
+          "content": "Xây dựng định nghĩa tỉ số giữa số lần biến cố xảy ra k và tổng số lần thực hiện phép thử n."
+        },
+        {
+          "id": "act-tuan-3",
+          "title": "Hoạt động 3: Luyện tập (Bài tập 1 SGK trang 112)",
+          "time": "15 phút",
+          "content": "Tính xác suất thực nghiệm của sự kiện xuất hiện mặt chấm chẵn khi gieo xúc xắc 30 lần."
+        },
+        {
+          "id": "act-tuan-4",
+          "title": "Hoạt động 4: Vận dụng thực tế & Đánh giá",
+          "time": "5 phút",
+          "content": "Ứng dụng xác suất trong dự báo thời tiết và thống kê trò chơi dân gian."
+        }
+      ]
+    },
+    {
+      "id": "TOAN9-T45-2025",
+      "teacherName": "Cô Hoàng Thị Hương",
+      "subject": "Toán",
+      "className": "9A1",
+      "period": "Tiết 45 (Tuần 28)",
+      "teachingTime": "27/03/2025 - 09:50",
+      "lessonTitle": "Góc ở tâm. Số đo cung (Hình học 9)",
+      "school": "THCS Phan Văn Trị",
+      "activities": [
+        {
+          "id": "act-huong-1",
+          "title": "Hoạt động 1: Khởi động (Quan sát kim đồng hồ tròn)",
+          "time": "6 phút",
+          "content": "Xác định góc tạo bởi hai kim đồng hồ lúc 3 giờ và liên hệ trực quan với cung tròn bị chắn."
+        },
+        {
+          "id": "act-huong-2",
+          "title": "Hoạt động 2: Hình thành kiến thức (Định nghĩa góc ở tâm)",
+          "time": "20 phút",
+          "content": "Học sinh dùng compa vẽ đường tròn, đo góc AOB và so sánh với số đo cung AB tương ứng."
+        },
+        {
+          "id": "act-huong-3",
+          "title": "Hoạt động 3: Luyện tập (Tính số đo cung lớn, cung nhỏ)",
+          "time": "14 phút",
+          "content": "Bài tập so sánh hai cung trên cùng một đường tròn và liên hệ cung - dây."
+        },
+        {
+          "id": "act-huong-4",
+          "title": "Hoạt động 4: Giao nhiệm vụ tự học",
+          "time": "5 phút",
+          "content": "Tìm các ứng dụng của góc ở tâm trong kiến trúc bánh xe và vòng quay mặt trời."
+        }
+      ]
+    },
+    {
+      "id": "TOAN7-T52-2025",
+      "teacherName": "Cô Lê Thị Mai",
+      "subject": "Toán",
+      "className": "7A3",
+      "period": "Tiết 52 (Tuần 28)",
+      "teachingTime": "27/03/2025 - 13:30",
+      "lessonTitle": "Tam giác bằng nhau (Trường hợp Cạnh - Cạnh - Cạnh)",
+      "school": "THCS Phan Văn Trị",
+      "activities": [
+        {
+          "id": "act-mai-1",
+          "title": "Hoạt động 1: Khởi động (Ghép tam giác bằng que tính)",
+          "time": "5 phút",
+          "content": "Mỗi nhóm ghép 1 tam giác có 3 cạnh cho trước rồi đặt chồng lên nhau kiểm tra độ trùng khít."
+        },
+        {
+          "id": "act-mai-2",
+          "title": "Hoạt động 2: Hình thành kiến thức (Trường hợp c.c.c)",
+          "time": "20 phút",
+          "content": "Phát biểu định lý bằng nhau Cạnh - Cạnh - Cạnh và quy ước ghi thứ tự các đỉnh tương ứng."
+        },
+        {
+          "id": "act-mai-3",
+          "title": "Hoạt động 3: Luyện tập chứng minh tam giác bằng nhau",
+          "time": "15 phút",
+          "content": "Trình bày bài toán chứng minh hai tam giác ABC và ABD có chung cạnh AB."
+        },
+        {
+          "id": "act-mai-4",
+          "title": "Hoạt động 4: Củng cố & Dặn dò",
+          "time": "5 phút",
+          "content": "Học sinh tóm tắt sơ đồ tư duy các bước chứng minh hình học chuẩn mực."
+        }
+      ]
+    },
+    {
+      "id": "TOAN6-T60-2025",
+      "teacherName": "Thầy Phạm Hải Nam",
+      "subject": "Toán",
+      "className": "6A2",
+      "period": "Tiết 60 (Tuần 28)",
+      "teachingTime": "27/03/2025 - 14:20",
+      "lessonTitle": "Hình có trục đối xứng trong thực tiễn",
+      "school": "THCS Phan Văn Trị",
+      "activities": [
+        {
+          "id": "act-nam-1",
+          "title": "Hoạt động 1: Khởi động (Gấp giấy cắt hình trái tim)",
+          "time": "8 phút",
+          "content": "Học sinh gấp đôi tờ giấy và cắt hình để khám phá đường gấp chia đôi hai nửa đối xứng."
+        },
+        {
+          "id": "act-nam-2",
+          "title": "Hoạt động 2: Hình thành kiến thức (Trục đối xứng)",
+          "time": "17 phút",
+          "content": "Tìm trục đối xứng của hình tam giác đều, hình vuông, hình tròn và logo thương hiệu quen thuộc."
+        },
+        {
+          "id": "act-nam-3",
+          "title": "Hoạt động 3: Luyện tập nhận biết trục đối xứng",
+          "time": "15 phút",
+          "content": "Thảo luận nhóm tìm trục đối xứng của các chữ cái tiếng Việt in hoa (A, B, H, M, O)."
+        },
+        {
+          "id": "act-nam-4",
+          "title": "Hoạt động 4: Vận dụng sáng tạo",
+          "time": "5 phút",
+          "content": "Thiết kế một họa tiết trang trí hoặc cắt một chữ cái có trục đối xứng."
+        }
+      ]
+    }
+  ]
 }
