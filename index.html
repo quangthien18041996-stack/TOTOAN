@@ -1392,8 +1392,26 @@
     let currentSessionId = localStorage.getItem('pvt_selected_session_id') || "TOAN8-T56-2025";
 
     function getCurrentSession() {
-      if (!appData.sessions || appData.sessions.length === 0) {
-        appData.sessions = JSON.parse(JSON.stringify(DEFAULT_SESSIONS));
+      if (currentSessionId === 'BLANK-SESSION' || !appData.sessions || appData.sessions.length === 0) {
+        const blankSession = {
+          id: 'BLANK-SESSION',
+          teacherName: '....................................................',
+          subject: 'Toán',
+          className: '..........',
+          period: 'Tiết ......',
+          lessonTitle: '................................................................................',
+          teachingTime: '....................................................',
+          school: 'THCS Phan Văn Trị',
+          activities: [
+            { id: 'act-blank-1', title: 'Hoạt động 1: Khởi động', time: '..... phút', content: '' },
+            { id: 'act-blank-2', title: 'Hoạt động 2: Hình thành kiến thức', time: '..... phút', content: '' },
+            { id: 'act-blank-3', title: 'Hoạt động 3: Luyện tập', time: '..... phút', content: '' },
+            { id: 'act-blank-4', title: 'Hoạt động 4: Vận dụng', time: '..... phút', content: '' }
+          ],
+          isBlank: true
+        };
+        appData.session = blankSession;
+        return blankSession;
       }
       let found = appData.sessions.find(s => s.id === currentSessionId);
       if (!found) {
@@ -1409,12 +1427,23 @@
       const p2Select = document.getElementById('p2-session-select');
       const p3Select = document.getElementById('p3-session-select');
       const current = getCurrentSession();
+      const sessions = appData.sessions || [];
 
-      const optionsHtml = (appData.sessions || []).map(s => `
-        <option value="${s.id}" ${s.id === current.id ? 'selected' : ''}>
-          ${s.subject || 'Toán'} ${s.className || ''} - ${s.teacherName} (${s.period || ''})
+      let optionsHtml = '';
+      if (sessions.length > 0) {
+        optionsHtml += sessions.map(s => `
+          <option value="${s.id}" ${s.id === current.id ? 'selected' : ''}>
+            ${s.subject || 'Toán'} ${s.className || ''} - ${s.teacherName} (${s.period || ''})
+          </option>
+        `).join('');
+      }
+
+      // Tùy chọn Mẫu Phiếu Trống Chuẩn
+      optionsHtml += `
+        <option value="BLANK-SESSION" ${current.id === 'BLANK-SESSION' ? 'selected' : ''}>
+          ${sessions.length === 0 ? '📄 (Chưa có tiết dự giờ - Mẫu phiếu trống chuẩn)' : '📄 [Mẫu phiếu trống in tay / Không có tiết dự]'}
         </option>
-      `).join('');
+      `;
 
       if (p2Select) {
         p2Select.innerHTML = optionsHtml;
@@ -1428,18 +1457,18 @@
       // Banner text Phần 2
       const p2Teacher = document.getElementById('p2-selected-teacher-name');
       const p2Lesson = document.getElementById('p2-selected-lesson-name');
-      if (p2Teacher) p2Teacher.innerText = current.teacherName || '';
-      if (p2Lesson) p2Lesson.innerText = `${current.subject || 'Toán'} ${current.className || ''} (${current.period || ''})`;
+      if (p2Teacher) p2Teacher.innerText = current.isBlank ? '(Phiếu trống)' : (current.teacherName || '');
+      if (p2Lesson) p2Lesson.innerText = current.isBlank ? 'Mẫu phiếu dự giờ trống' : `${current.subject || 'Toán'} ${current.className || ''} (${current.period || ''})`;
 
       // Banner text Phần 3
       const p3Teacher = document.getElementById('p3-selected-teacher-name');
       const p3Lesson = document.getElementById('p3-selected-lesson-name');
-      if (p3Teacher) p3Teacher.innerText = current.teacherName || '';
-      if (p3Lesson) p3Lesson.innerText = `${current.subject || 'Toán'} ${current.className || ''} (${current.period || ''})`;
+      if (p3Teacher) p3Teacher.innerText = current.isBlank ? '(Phiếu trống)' : (current.teacherName || '');
+      if (p3Lesson) p3Lesson.innerText = current.isBlank ? 'Mẫu phiếu tổng hợp trống' : `${current.subject || 'Toán'} ${current.className || ''} (${current.period || ''})`;
 
       // Cập nhật thẻ hiển thị nhỏ trên thanh tiêu đề
       const badge = document.getElementById('badge-session-title');
-      if (badge) badge.innerText = `${current.subject || 'Toán'} ${current.className || ''} • ${current.period || ''}`;
+      if (badge) badge.innerText = current.isBlank ? 'Mẫu phiếu trống' : `${current.subject || 'Toán'} ${current.className || ''} • ${current.period || ''}`;
     }
 
     function p2SelectSession(sessionId) {
@@ -1675,6 +1704,24 @@
       const sessions = appData.sessions || [];
       if (countEl) countEl.innerText = sessions.length;
       if (!grid) return;
+
+      if (!sessions || sessions.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full bg-white rounded-xl p-8 border-2 border-dashed border-slate-300 text-center space-y-3">
+            <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mx-auto">
+              <i data-lucide="book-open" class="w-6 h-6"></i>
+            </div>
+            <div class="font-bold text-slate-800 text-sm">Chưa có tiết dạy nào được đăng ký trong Tổ</div>
+            <p class="text-xs text-slate-500 max-w-md mx-auto">Hiện tại chưa có tiết dự giờ nào. Các mục Phiếu dự giờ (Phần 2) và Phiếu tổng hợp của Tổ trưởng (Phần 3) đang ở trạng thái <strong>Phiếu trắng chuẩn</strong> sẵn sàng để in hoặc xem trước.</p>
+            <button onclick="p1OpenNewSessionForm()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-4 py-2 rounded-lg shadow-sm inline-flex items-center gap-1.5 transition">
+              <i data-lucide="plus-circle" class="w-4 h-4"></i>
+              <span>+ ĐĂNG KÝ TIẾT DẠY MỚI</span>
+            </button>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
 
       const current = getCurrentSession();
 
@@ -2229,26 +2276,9 @@
           });
         } catch (e) {}
 
-        // Nếu xóa hết sạch tiết dạy, khởi tạo lại 1 tiết dạy mặc định chuẩn
+        // Nếu xóa hết sạch tiết dạy, chuyển về trạng thái Phiếu trắng chuẩn
         if (appData.sessions.length === 0) {
-          const defaultSession = {
-            id: `SESSION-${Date.now()}`,
-            teacherName: (currentUser && currentUser.fullName) ? currentUser.fullName : 'Cô Nguyễn Thị Lan',
-            subject: 'Toán',
-            className: '8A1',
-            period: 'Tiết 1',
-            lessonTitle: 'Tiết dạy mới (Chưa đặt tên)',
-            teachingTime: new Date().toLocaleDateString('vi-VN') + ' - 08:00',
-            school: 'THCS Phan Văn Trị',
-            activities: [
-              { id: `act-1-${Date.now()}`, title: 'Hoạt động 1: Khởi động', time: '5 phút', content: 'Khởi động bài học' },
-              { id: `act-2-${Date.now()}`, title: 'Hoạt động 2: Hình thành kiến thức', time: '20 phút', content: 'Hình thành kiến thức mới' },
-              { id: `act-3-${Date.now()}`, title: 'Hoạt động 3: Luyện tập', time: '15 phút', content: 'Luyện tập củng cố' },
-              { id: `act-4-${Date.now()}`, title: 'Hoạt động 4: Vận dụng', time: '5 phút', content: 'Vận dụng mở rộng' }
-            ]
-          };
-          appData.sessions = [defaultSession];
-          currentSessionId = defaultSession.id;
+          currentSessionId = 'BLANK-SESSION';
         } else if (currentSessionId === sessionId) {
           currentSessionId = appData.sessions[0].id;
         }
@@ -2293,36 +2323,45 @@
       document.getElementById('p2-display-observer-name').innerText = myObserverName;
       document.getElementById('p2-signature-name').innerText = myObserverName;
 
-      document.getElementById('p2-sheet-lesson').innerText = s.lessonTitle || '';
-      document.getElementById('p2-sheet-subject').innerText = s.subject || 'Toán';
-      document.getElementById('p2-sheet-class').innerText = s.className || '';
-      document.getElementById('p2-sheet-period').innerText = s.period || '';
+      document.getElementById('p2-sheet-lesson').innerText = s.isBlank ? '................................................................................' : (s.lessonTitle || '');
+      document.getElementById('p2-sheet-subject').innerText = s.isBlank ? 'Toán' : (s.subject || 'Toán');
+      document.getElementById('p2-sheet-class').innerText = s.isBlank ? '................' : (s.className || '');
+      document.getElementById('p2-sheet-period').innerText = s.isBlank ? 'Tiết ........' : (s.period || '');
 
-      // Tự động kiểm tra bản nháp riêng biệt cho từng tiết dạy & từng người dự
-      const localDraftKey = `pvt_draft_${s.id}_${myObserverName.replace(/\s+/g, '_')}`;
-      const savedDraft = localStorage.getItem(localDraftKey);
-
-      if (savedDraft) {
-        try { p2Rows = JSON.parse(savedDraft); } catch (e) { p2Rows = []; }
+      if (s.isBlank) {
+        p2Rows = [
+          { activityTitle: "Hoạt động 1: Khởi động", behavior: '', solution: '' },
+          { activityTitle: "Hoạt động 2: Hình thành kiến thức", behavior: '', solution: '' },
+          { activityTitle: "Hoạt động 3: Luyện tập", behavior: '', solution: '' },
+          { activityTitle: "Hoạt động 4: Vận dụng", behavior: '', solution: '' }
+        ];
       } else {
-        // Tìm xem giáo viên này đã nộp phiếu cho tiết dạy này chưa
-        const existing = (appData.observations || []).find(o => (o.sessionId === s.id || (!o.sessionId && s.id === "TOAN8-T56-2025")) && o.observerName === myObserverName);
-        if (existing && existing.records && existing.records.length > 0) {
-          p2Rows = JSON.parse(JSON.stringify(existing.records));
-        } else if (s.activities && s.activities.length > 0) {
-          p2Rows = s.activities.map(a => ({
-            activityId: a.id,
-            activityTitle: a.title,
-            behavior: '',
-            solution: ''
-          }));
+        // Tự động kiểm tra bản nháp riêng biệt cho từng tiết dạy & từng người dự
+        const localDraftKey = `pvt_draft_${s.id}_${myObserverName.replace(/\s+/g, '_')}`;
+        const savedDraft = localStorage.getItem(localDraftKey);
+
+        if (savedDraft) {
+          try { p2Rows = JSON.parse(savedDraft); } catch (e) { p2Rows = []; }
         } else {
-          p2Rows = [
-            { activityTitle: "Hoạt động 1: Khởi động", behavior: '', solution: '' },
-            { activityTitle: "Hoạt động 2: Hình thành kiến thức", behavior: '', solution: '' },
-            { activityTitle: "Hoạt động 3: Luyện tập", behavior: '', solution: '' },
-            { activityTitle: "Hoạt động 4: Vận dụng", behavior: '', solution: '' }
-          ];
+          // Tìm xem giáo viên này đã nộp phiếu cho tiết dạy này chưa
+          const existing = (appData.observations || []).find(o => (o.sessionId === s.id || (!o.sessionId && s.id === "TOAN8-T56-2025")) && o.observerName === myObserverName);
+          if (existing && existing.records && existing.records.length > 0) {
+            p2Rows = JSON.parse(JSON.stringify(existing.records));
+          } else if (s.activities && s.activities.length > 0) {
+            p2Rows = s.activities.map(a => ({
+              activityId: a.id,
+              activityTitle: a.title,
+              behavior: '',
+              solution: ''
+            }));
+          } else {
+            p2Rows = [
+              { activityTitle: "Hoạt động 1: Khởi động", behavior: '', solution: '' },
+              { activityTitle: "Hoạt động 2: Hình thành kiến thức", behavior: '', solution: '' },
+              { activityTitle: "Hoạt động 3: Luyện tập", behavior: '', solution: '' },
+              { activityTitle: "Hoạt động 4: Vận dụng", behavior: '', solution: '' }
+            ];
+          }
         }
       }
 
@@ -2678,40 +2717,47 @@
       const s = getCurrentSession();
       if (!s) return;
 
+      const isBlankSession = !!s.isBlank;
       const allObs = appData.observations || [];
-      const obsList = allObs.filter(o => o.sessionId === s.id || (!o.sessionId && s.id === "TOAN8-T56-2025"));
+      const obsList = isBlankSession ? [] : allObs.filter(o => o.sessionId === s.id || (!o.sessionId && s.id === "TOAN8-T56-2025"));
 
       const navCount = document.getElementById('nav-obs-count');
       if (navCount) navCount.innerText = obsList.length;
       const subCount = document.getElementById('p3-sub-count');
       if (subCount) subCount.innerText = obsList.length;
 
-      document.getElementById('p3-doc-lesson').innerText = s.lessonTitle || '';
-      document.getElementById('p3-doc-teacher').innerText = s.teacherName || '';
-      document.getElementById('p3-doc-class').innerText = `${s.className || ''} • ${s.period || ''}`;
-      document.getElementById('p3-doc-time').innerText = s.teachingTime || '';
-      document.getElementById('p3-sig-teacher').innerText = s.teacherName || '';
+      document.getElementById('p3-doc-lesson').innerText = isBlankSession ? '................................................................................' : (s.lessonTitle || '');
+      document.getElementById('p3-doc-teacher').innerText = isBlankSession ? '....................................................' : (s.teacherName || '');
+      document.getElementById('p3-doc-class').innerText = isBlankSession ? 'Lớp: ............ • Tiết: ........' : `${s.className || ''} • ${s.period || ''}`;
+      document.getElementById('p3-doc-time').innerText = isBlankSession ? '....................................................' : (s.teachingTime || '');
+      document.getElementById('p3-sig-teacher').innerText = isBlankSession ? '....................................................' : (s.teacherName || '');
 
       const observersNames = obsList.map(o => o.observerName).filter(Boolean);
-      document.getElementById('p3-doc-observers').innerText = observersNames.join(', ') || 'Chưa có giáo viên nào nộp';
+      if (obsList.length === 0) {
+        document.getElementById('p3-doc-observers').innerHTML = `<span class="text-slate-400 font-normal italic select-none">....................................................................................................................</span>`;
+      } else {
+        document.getElementById('p3-doc-observers').innerText = observersNames.join(', ');
+      }
 
       const teachersContainer = document.getElementById('p3-teachers-tags');
-      if (obsList.length === 0) {
-        teachersContainer.innerHTML = `<span class="text-slate-400 italic">Chưa có giáo viên nào nộp phiếu cho tiết dạy này.</span>`;
-      } else {
-        teachersContainer.innerHTML = obsList.map(o => `
-          <span class="bg-indigo-50 border border-indigo-200 text-indigo-700 font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1.5 text-xs">
-            <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600"></i>
-            ${o.observerName} (${o.records ? o.records.length : 0} hoạt động - ${o.timestamp})
-          </span>
-        `).join('');
+      if (teachersContainer) {
+        if (obsList.length === 0) {
+          teachersContainer.innerHTML = `<span class="text-slate-400 italic text-xs">${isBlankSession ? 'Chưa có tiết dự giờ nào được chọn (Đang hiển thị mẫu phiếu trống chuẩn).' : 'Chưa có giáo viên nào nộp phiếu cho tiết dạy này (Phiếu tổng hợp đang ở dạng phiếu trống).'}</span>`;
+        } else {
+          teachersContainer.innerHTML = obsList.map(o => `
+            <span class="bg-indigo-50 border border-indigo-200 text-indigo-700 font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1.5 text-xs">
+              <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600"></i>
+              ${o.observerName} (${o.records ? o.records.length : 0} hoạt động - ${o.timestamp})
+            </span>
+          `).join('');
+        }
       }
 
       // Kết luận của Tổ chuyên môn cho từng tiết dạy riêng biệt
       const conclusionInput = document.getElementById('p3-conclusion-text');
       if (conclusionInput) {
         let sessConclusion = "";
-        if (appData.meetingMinutes && typeof appData.meetingMinutes === 'object') {
+        if (!isBlankSession && appData.meetingMinutes && typeof appData.meetingMinutes === 'object') {
           if (appData.meetingMinutes[s.id] && appData.meetingMinutes[s.id].conclusion) {
             sessConclusion = appData.meetingMinutes[s.id].conclusion;
           } else if (appData.meetingMinutes.conclusion && s.id === "TOAN8-T56-2025") {
@@ -2730,45 +2776,73 @@
     function p3SynthesizeResults() {
       const s = getCurrentSession();
       if (!s) return;
+      const isBlankSession = !!s.isBlank;
       const allObs = appData.observations || [];
-      const obsList = allObs.filter(o => o.sessionId === s.id || (!o.sessionId && s.id === "TOAN8-T56-2025"));
+      const obsList = isBlankSession ? [] : allObs.filter(o => o.sessionId === s.id || (!o.sessionId && s.id === "TOAN8-T56-2025"));
       const tbody = document.getElementById('p3-master-tbody');
 
-      if (!s.activities || s.activities.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="3" class="border p-4 text-center text-slate-400 italic">Chưa có hoạt động nào trong KHBD của tiết này</td></tr>`;
-        return;
-      }
+      const activities = (s.activities && s.activities.length > 0) ? s.activities : [
+        { id: 'act-1', title: 'Hoạt động 1: Khởi động', time: '..... phút', content: '' },
+        { id: 'act-2', title: 'Hoạt động 2: Hình thành kiến thức', time: '..... phút', content: '' },
+        { id: 'act-3', title: 'Hoạt động 3: Luyện tập', time: '..... phút', content: '' },
+        { id: 'act-4', title: 'Hoạt động 4: Vận dụng', time: '..... phút', content: '' }
+      ];
 
-      tbody.innerHTML = s.activities.map((act, actIdx) => {
+      tbody.innerHTML = activities.map((act, actIdx) => {
         let behaviorsHtml = [];
         let solutionsHtml = [];
 
-        obsList.forEach(obs => {
-          let rec = null;
-          if (obs.records && obs.records.length > 0) {
-            rec = obs.records.find(r => r.activityId === act.id);
-            if (!rec && obs.records[actIdx]) {
-              rec = obs.records[actIdx];
+        if (obsList.length > 0) {
+          obsList.forEach(obs => {
+            let rec = null;
+            if (obs.records && obs.records.length > 0) {
+              rec = obs.records.find(r => r.activityId === act.id);
+              if (!rec && obs.records[actIdx]) {
+                rec = obs.records[actIdx];
+              }
             }
-          }
-          if (rec) {
-            if (rec.behavior && rec.behavior.trim()) {
-              behaviorsHtml.push(`<div class="mb-2"><span class="font-bold text-indigo-900">[${obs.observerName}]:</span> ${rec.behavior}</div>`);
+            if (rec) {
+              if (rec.behavior && rec.behavior.trim()) {
+                behaviorsHtml.push(`<div class="mb-2"><span class="font-bold text-indigo-900">[${obs.observerName}]:</span> ${rec.behavior}</div>`);
+              }
+              if (rec.solution && rec.solution.trim()) {
+                solutionsHtml.push(`<div class="mb-2"><span class="font-bold text-indigo-900">[${obs.observerName}]:</span> ${rec.solution}</div>`);
+              }
             }
-            if (rec.solution && rec.solution.trim()) {
-              solutionsHtml.push(`<div class="mb-2"><span class="font-bold text-indigo-900">[${obs.observerName}]:</span> ${rec.solution}</div>`);
-            }
-          }
-        });
+          });
+        }
 
-        const bContent = behaviorsHtml.length > 0 ? behaviorsHtml.join('') : '<span class="text-slate-400 italic">Chưa có ghi nhận</span>';
-        const sContent = solutionsHtml.length > 0 ? solutionsHtml.join('') : '<span class="text-slate-400 italic">Chưa có đề xuất</span>';
+        let bContent = "";
+        let sContent = "";
+        if (obsList.length === 0 || behaviorsHtml.length === 0) {
+          bContent = `
+            <div class="py-2 space-y-3 min-h-[70px] select-none text-slate-300">
+              <div class="border-b border-dotted border-slate-300 h-3"></div>
+              <div class="border-b border-dotted border-slate-300 h-3"></div>
+              <div class="border-b border-dotted border-slate-300 h-3"></div>
+            </div>
+          `;
+        } else {
+          bContent = behaviorsHtml.join('');
+        }
+
+        if (obsList.length === 0 || solutionsHtml.length === 0) {
+          sContent = `
+            <div class="py-2 space-y-3 min-h-[70px] select-none text-slate-300">
+              <div class="border-b border-dotted border-slate-300 h-3"></div>
+              <div class="border-b border-dotted border-slate-300 h-3"></div>
+              <div class="border-b border-dotted border-slate-300 h-3"></div>
+            </div>
+          `;
+        } else {
+          sContent = solutionsHtml.join('');
+        }
 
         return `
           <tr class="align-top">
             <td class="border border-slate-800 p-2.5 font-bold text-slate-900 bg-slate-50/50">
               ${act.title}<br>
-              <span class="text-[11px] font-normal text-slate-500">${act.time} - ${act.content}</span>
+              <span class="text-[11px] font-normal text-slate-500">${act.time || ''} ${act.content ? ('- ' + act.content) : ''}</span>
             </td>
             <td class="border border-slate-800 p-2.5 text-slate-800 leading-relaxed">${bContent}</td>
             <td class="border border-slate-800 p-2.5 text-slate-800 leading-relaxed">${sContent}</td>
@@ -2815,32 +2889,52 @@
     function p3ExportMasterDoc() {
       p3SaveConclusion();
       const s = getCurrentSession();
+      const isBlankSession = !!s.isBlank;
       const allObs = appData.observations || [];
-      const obsList = allObs.filter(o => o.sessionId === s.id || (!o.sessionId && s.id === "TOAN8-T56-2025"));
-      const observersNames = obsList.map(o => o.observerName).filter(Boolean).join(', ') || 'Chưa có ghi nhận';
+      const obsList = isBlankSession ? [] : allObs.filter(o => o.sessionId === s.id || (!o.sessionId && s.id === "TOAN8-T56-2025"));
+      const observersNames = obsList.length > 0
+        ? obsList.map(o => o.observerName).filter(Boolean).join(', ')
+        : '............................................................................................................................';
       const conclusion = document.getElementById('p3-conclusion-text').value;
 
-      const rowsHtml = (s.activities || []).map((act, actIdx) => {
+      const activities = (s.activities && s.activities.length > 0) ? s.activities : [
+        { id: 'act-1', title: 'Hoạt động 1: Khởi động', time: '..... phút', content: '' },
+        { id: 'act-2', title: 'Hoạt động 2: Hình thành kiến thức', time: '..... phút', content: '' },
+        { id: 'act-3', title: 'Hoạt động 3: Luyện tập', time: '..... phút', content: '' },
+        { id: 'act-4', title: 'Hoạt động 4: Vận dụng', time: '..... phút', content: '' }
+      ];
+
+      const rowsHtml = activities.map((act, actIdx) => {
         let bList = [];
         let sList = [];
-        obsList.forEach(obs => {
-          let rec = null;
-          if (obs.records && obs.records.length > 0) {
-            rec = obs.records.find(r => r.activityId === act.id);
-            if (!rec && obs.records[actIdx]) {
-              rec = obs.records[actIdx];
+        if (obsList.length > 0) {
+          obsList.forEach(obs => {
+            let rec = null;
+            if (obs.records && obs.records.length > 0) {
+              rec = obs.records.find(r => r.activityId === act.id);
+              if (!rec && obs.records[actIdx]) {
+                rec = obs.records[actIdx];
+              }
             }
-          }
-          if (rec) {
-            if (rec.behavior && rec.behavior.trim()) bList.push(`<b>[${obs.observerName}]:</b> ${rec.behavior}`);
-            if (rec.solution && rec.solution.trim()) sList.push(`<b>[${obs.observerName}]:</b> ${rec.solution}`);
-          }
-        });
+            if (rec) {
+              if (rec.behavior && rec.behavior.trim()) bList.push(`<b>[${obs.observerName}]:</b> ${rec.behavior}`);
+              if (rec.solution && rec.solution.trim()) sList.push(`<b>[${obs.observerName}]:</b> ${rec.solution}`);
+            }
+          });
+        }
+
+        const bCell = (obsList.length > 0 && bList.length > 0)
+          ? bList.join('<br>')
+          : '<br>................................................................................................<br>................................................................................................<br>................................................................................................';
+        const sCell = (obsList.length > 0 && sList.length > 0)
+          ? sList.join('<br>')
+          : '<br>................................................................................................<br>................................................................................................<br>................................................................................................';
+
         return `
           <tr style="vertical-align: top;">
-            <td style="border: 1px solid black; padding: 6px; font-weight: bold;">${act.title}<br><span style="font-size: 10pt; font-weight: normal;">${act.content}</span></td>
-            <td style="border: 1px solid black; padding: 6px;">${bList.join('<br>') || 'Chưa có ghi nhận'}</td>
-            <td style="border: 1px solid black; padding: 6px;">${sList.join('<br>') || 'Chưa có đề xuất'}</td>
+            <td style="border: 1px solid black; padding: 6px; font-weight: bold;">${act.title}<br><span style="font-size: 10pt; font-weight: normal;">${act.content || ''}</span></td>
+            <td style="border: 1px solid black; padding: 6px;">${bCell}</td>
+            <td style="border: 1px solid black; padding: 6px;">${sCell}</td>
           </tr>
         `;
       }).join('');
@@ -2868,13 +2962,13 @@
           </table>
           <div style="margin-top: 15px;">
             <p><b>Ý KIẾN KẾT LUẬN & THỐNG NHẤT CỦA TỔ CHUYÊN MÔN:</b></p>
-            <p style="font-style: italic; background-color: #f9f9f9; padding: 10px; border: 1px solid #ccc;">${conclusion || 'Chưa ghi nhận'}</p>
+            <p style="font-style: italic; background-color: #f9f9f9; padding: 10px; border: 1px solid #ccc;">${conclusion || '<br>................................................................................................................................................................................................................................................................................................................................................................................................'}</p>
           </div>
           <table style="border: none; width: 100%; margin-top: 30px;">
             <tr>
               <td style="border: none; width: 50%; text-align: center;">
                 <b>Giáo viên giảng dạy (Ký số)</b><br><br><br><br>
-                <b>${s.teacherName}</b>
+                <b>${isBlankSession ? '....................................................' : s.teacherName}</b>
               </td>
               <td style="border: none; width: 50%; text-align: center;">
                 <i>TP. Hồ Chí Minh, ngày ...... tháng ...... năm 202...</i><br>
