@@ -24,15 +24,51 @@
       border-radius: 12px;
     }
 
+    /* Đảm bảo khung bảng trên màn hình luôn liền mạch, sắc nét */
+    #p2-observation-table, #p2-observation-table th, #p2-observation-table td,
+    #printable-area table, #printable-area table th, #printable-area table td {
+      border: 1px solid #1e293b;
+      border-collapse: collapse;
+    }
+
     .print-only-text {
       display: none;
     }
 
+    @page {
+      size: A4 portrait;
+      margin: 12mm 15mm 12mm 15mm;
+    }
+
     @media print {
-      body * { visibility: hidden; }
-      .print-target, .print-target * { visibility: visible !important; }
-      
-      /* Hỗ trợ khi người dùng bấm trực tiếp phím Ctrl+P: Tự động in bảng của mục đang mở */
+      /* Khắc phục triệt để lỗi đứt khung: Luồng in tĩnh chuẩn A4, loại bỏ position: absolute */
+      html, body {
+        background: #ffffff !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        height: auto !important;
+        overflow: visible !important;
+      }
+
+      /* Ẩn triệt để tất cả các thành phần UI ngoài tài liệu in */
+      #login-screen,
+      #main-nav,
+      header,
+      nav,
+      .no-print,
+      .role-section.hidden,
+      #section-part1,
+      #section-part4 {
+        display: none !important;
+      }
+
+      body * {
+        visibility: hidden;
+      }
+
+      .print-target,
+      .print-target *,
       #section-part2:not(.hidden) #p2-sheet-container,
       #section-part2:not(.hidden) #p2-sheet-container *,
       #section-part3:not(.hidden) #printable-area,
@@ -40,13 +76,58 @@
         visibility: visible !important;
       }
 
+      /* Dùng position: static để bảng tự động ngắt trang liền mạch, không bị đứt khung đáy */
       .print-target,
       #section-part2:not(.hidden) #p2-sheet-container,
       #section-part3:not(.hidden) #printable-area {
-        position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 1.2cm !important;
-        box-shadow: none !important; border: none !important;
+        position: static !important;
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+        float: none !important;
+        overflow: visible !important;
       }
-      .no-print { display: none !important; }
+
+      /* Khắc phục triệt để lỗi đứt khung bảng: Viền đen liền khối 100%, không bị hở mép */
+      table {
+        border-collapse: collapse !important;
+        border-spacing: 0 !important;
+        width: 100% !important;
+        margin-bottom: 24px !important;
+        page-break-inside: auto !important;
+        border: 1px solid #000000 !important;
+      }
+
+      thead {
+        display: table-header-group !important;
+      }
+
+      tfoot {
+        display: table-footer-group !important;
+      }
+
+      /* Chống rách dòng và đứt khung giữa các trang */
+      tr {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      th, td {
+        border: 1px solid #000000 !important;
+        border-color: #000000 !important;
+        padding: 6px 8px !important;
+        box-sizing: border-box !important;
+      }
+
+      /* Khối chữ ký cuối trang không bao giờ bị cắt đôi */
+      .grid-cols-2 {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
 
       /* Loại bỏ hoàn toàn thanh cuộn, tay cầm resize, và các dấu mũi tên lên xuống của textarea khi in / xuất PDF */
       .screen-only-input,
@@ -620,11 +701,11 @@
         <div class="space-y-2 text-sm md:text-base mb-6">
           <div class="flex items-center gap-2">
             <span class="font-bold whitespace-nowrap">Họ và tên giáo viên giảng dạy:</span>
-            <span id="p2-sheet-teacher" class="font-semibold text-slate-900 border-b border-dotted border-slate-600 flex-1 px-1">Cô Nguyễn Thị Lan</span>
+            <span id="p2-sheet-teacher" class="font-semibold text-slate-900 border-b border-slate-400 flex-1 px-1">Cô Nguyễn Thị Lan</span>
           </div>
           <div class="flex items-center gap-2">
             <span class="font-bold whitespace-nowrap">Tên bài dạy:</span>
-            <span id="p2-sheet-lesson" class="font-semibold border-b border-dotted border-slate-600 flex-1 px-1">Bài 1. Phép thử nghiệm – Sự kiện (Chương 9)</span>
+            <span id="p2-sheet-lesson" class="font-semibold border-b border-slate-400 flex-1 px-1">Bài 1. Phép thử nghiệm – Sự kiện (Chương 9)</span>
           </div>
           <div class="flex flex-wrap items-center gap-x-6 gap-y-1">
             <p><strong>Môn:</strong> <span id="p2-sheet-subject">Toán</span></p>
@@ -3271,9 +3352,9 @@
 
       const rowsHtml = p2Rows.map(r => `
         <tr style="vertical-align: top;">
-          <td style="border: 1px solid black; padding: 6px; font-weight: bold;">${r.activityTitle}</td>
-          <td style="border: 1px solid black; padding: 6px;">${r.behavior || ''}</td>
-          <td style="border: 1px solid black; padding: 6px;">${r.solution || ''}</td>
+          <td style="border: 1px solid black; padding: 6px; font-weight: bold; white-space: pre-wrap;">${(r.activityTitle || '').replace(/\n/g, '<br>')}</td>
+          <td style="border: 1px solid black; padding: 6px; white-space: pre-wrap;">${(r.behavior || '').replace(/\n/g, '<br>')}</td>
+          <td style="border: 1px solid black; padding: 6px; white-space: pre-wrap;">${(r.solution || '').replace(/\n/g, '<br>')}</td>
         </tr>
       `).join('');
 
