@@ -66,7 +66,7 @@
       </div>
     </div>
 
-    <!-- 3 MAIN ROLE TABS (Controlled by Role-Based Access Control) -->
+    <!-- 4 MAIN ROLE TABS (Controlled by Role-Based Access Control) -->
     <div id="header-nav-tabs" class="max-w-6xl mx-auto px-4 flex border-t border-indigo-600/60 overflow-x-auto text-xs md:text-sm">
       <button onclick="switchRole('part1')" id="nav-btn-part1" class="role-nav-btn py-2.5 px-4 font-semibold border-b-2 border-white text-white flex items-center gap-1.5 whitespace-nowrap transition">
         <span class="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center text-[10px]">1</span>
@@ -81,6 +81,12 @@
         <span class="w-4 h-4 rounded-full bg-amber-400 text-slate-900 flex items-center justify-center text-[10px] font-bold">👑 3</span>
         <span>Tổ Trưởng (Tổng Hợp & Họp SHCM)</span>
         <span id="nav-obs-count" class="bg-amber-400 text-slate-900 text-[10px] font-bold px-1.5 py-0.2 rounded-full ml-1">2</span>
+      </button>
+      <!-- Part 4: Quản lý tài khoản (Only visible to ADMIN - nằm bên phải mục Tổ trưởng) -->
+      <button onclick="switchRole('part4')" id="nav-btn-part4" class="role-nav-btn py-2.5 px-4 font-medium border-b-2 border-transparent text-indigo-200 hover:text-white flex items-center gap-1.5 whitespace-nowrap transition">
+        <span class="w-4 h-4 rounded-full bg-amber-400 text-slate-900 flex items-center justify-center text-[10px] font-bold">👥 4</span>
+        <span>Quản Lý Tài Khoản (Tổ Trưởng)</span>
+        <span id="nav-users-count" class="bg-amber-400 text-slate-900 text-[10px] font-bold px-1.5 py-0.2 rounded-full ml-1">5</span>
       </button>
     </div>
   </header>
@@ -421,63 +427,6 @@
         </div>
       </div>
 
-      <!-- Quản Lý & Tạo Tài Khoản Giáo Viên (Dành Riêng Cho Tổ Trưởng) -->
-      <div class="bg-white rounded-xl p-4 md:p-5 border border-indigo-200 shadow-sm space-y-4 no-print">
-        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
-          <div class="flex items-center gap-2.5">
-            <div class="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center shadow-sm border border-indigo-100">
-              <i data-lucide="user-plus" class="w-5 h-5"></i>
-            </div>
-            <div>
-              <h3 class="text-sm md:text-base font-bold text-slate-800 flex items-center gap-2">
-                <span>Quản Lý & Tạo Tài Khoản Giáo Viên</span>
-                <span class="bg-indigo-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full"><span id="p3-users-count">5</span> tài khoản</span>
-              </h3>
-              <p class="text-xs text-slate-500">Tổ trưởng tạo thêm tài khoản cho giáo viên trong tổ; bấm "Tạo & Cập nhật" là giáo viên có thể đăng nhập được ngay.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Form tạo tài khoản giáo viên mới -->
-        <form onsubmit="p3AddNewTeacher(event)" class="bg-indigo-50/60 border border-indigo-100 rounded-xl p-3.5 space-y-2">
-          <div class="text-xs font-bold text-indigo-900 flex items-center gap-1.5">
-            <i data-lucide="plus-circle" class="w-3.5 h-3.5 text-indigo-600"></i>
-            <span>Thêm tài khoản giáo viên mới:</span>
-          </div>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div>
-              <label class="block text-[11px] font-semibold text-slate-700 mb-1">Họ và tên giáo viên:</label>
-              <input type="text" id="new-teacher-name" oninput="p3AutoSuggestUsername()" placeholder="VD: Thầy Nguyễn Văn A" class="w-full text-xs p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none bg-white font-medium" required>
-            </div>
-            <div>
-              <label class="block text-[11px] font-semibold text-slate-700 mb-1">Tên đăng nhập (viết thường, không dấu):</label>
-              <input type="text" id="new-teacher-username" placeholder="VD: gv_a" class="w-full text-xs p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none bg-white font-mono" required>
-            </div>
-            <div>
-              <label class="block text-[11px] font-semibold text-slate-700 mb-1">Mật khẩu khởi tạo:</label>
-              <div class="flex gap-2">
-                <input type="text" id="new-teacher-password" value="123" placeholder="Mật khẩu..." class="w-full text-xs p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none bg-white font-mono" required>
-                <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-2.5 rounded-lg shadow-sm whitespace-nowrap transition flex items-center gap-1.5 active:scale-95">
-                  <i data-lucide="check" class="w-4 h-4"></i>
-                  <span>TẠO & CẬP NHẬT</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </form>
-
-        <!-- Danh sách tài khoản hiện tại trong tổ -->
-        <div>
-          <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-            <i data-lucide="users" class="w-3.5 h-3.5 text-indigo-600"></i>
-            <span>Danh sách tài khoản trong Tổ Toán:</span>
-          </div>
-          <div id="p3-users-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5">
-            <!-- Rendered by renderUserAccountsUI() -->
-          </div>
-        </div>
-      </div>
-
       <!-- Submitted Teachers Status -->
       <div class="bg-white rounded-xl p-3.5 border border-slate-200 shadow-sm">
         <div class="flex items-center justify-between mb-2">
@@ -563,6 +512,80 @@
           </div>
         </div>
 
+      </div>
+
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- PHẦN 4: DÀNH CHO TỔ TRƯỞNG - QUẢN LÝ TÀI KHOẢN GIÁO VIÊN       -->
+    <!-- (NẰM BÊN PHẢI MỤC TỔ TRƯỞNG TRÊN THANH ĐIỀU HƯỚNG)            -->
+    <!-- ============================================================== -->
+    <div id="section-part4" class="role-section hidden space-y-5">
+      
+      <!-- Top Action Bar for Part 4 -->
+      <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <span class="bg-amber-50 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded-md uppercase border border-amber-200">Phần 4: Quản Trị Tổ Chuyên Môn</span>
+          <h2 class="text-base md:text-lg font-bold text-slate-800 mt-0.5">Quản Lý & Tạo Tài Khoản Giáo Viên</h2>
+          <p class="text-xs text-slate-500">Phân hệ dành riêng cho Tổ trưởng chuyên môn: Cấp tài khoản mới cho giáo viên dự giờ, quản lý mật khẩu và phân quyền.</p>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <span class="bg-indigo-50 text-indigo-700 text-xs font-bold px-3 py-1.5 rounded-lg border border-indigo-200 flex items-center gap-1.5 shadow-2xs">
+            <i data-lucide="users" class="w-4 h-4"></i>
+            <span>Tổng cộng: <strong id="p4-users-count" class="text-indigo-900 font-extrabold text-sm">5</strong> tài khoản</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Card Tạo tài khoản giáo viên mới -->
+      <div class="bg-white rounded-xl p-5 border border-indigo-200 shadow-sm space-y-4">
+        <div class="flex items-center gap-2.5 border-b border-slate-100 pb-3">
+          <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center shadow-inner border border-indigo-100">
+            <i data-lucide="user-plus" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-sm md:text-base font-bold text-slate-800">Cấp Tài Khoản Mới Cho Giáo Viên</h3>
+            <p class="text-xs text-slate-500">Nhập họ tên giáo viên (hệ thống tự tạo tên đăng nhập), đặt mật khẩu rồi bấm nút để kích hoạt.</p>
+          </div>
+        </div>
+
+        <form onsubmit="p3AddNewTeacher(event)" class="bg-indigo-50/60 border border-indigo-100 rounded-xl p-4 space-y-3">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Họ và tên giáo viên:</label>
+              <input type="text" id="new-teacher-name" oninput="p3AutoSuggestUsername()" placeholder="VD: Thầy Nguyễn Văn A" class="w-full text-xs p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none bg-white font-medium" required>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Tên đăng nhập (viết thường, không dấu):</label>
+              <input type="text" id="new-teacher-username" placeholder="VD: gv_a" class="w-full text-xs p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none bg-white font-mono" required>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Mật khẩu khởi tạo:</label>
+              <div class="flex gap-2">
+                <input type="text" id="new-teacher-password" value="123" placeholder="Mật khẩu..." class="w-full text-xs p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none bg-white font-mono" required>
+                <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2.5 rounded-lg shadow-sm whitespace-nowrap transition flex items-center gap-1.5 active:scale-95">
+                  <i data-lucide="check" class="w-4 h-4"></i>
+                  <span>TẠO & CẬP NHẬT</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Danh sách tài khoản hiện tại -->
+      <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm space-y-3">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+          <h3 class="text-xs md:text-sm font-bold text-slate-800 uppercase flex items-center gap-2">
+            <i data-lucide="shield-check" class="w-4 h-4 text-indigo-600"></i>
+            <span>Danh sách tất cả tài khoản trong Tổ Toán</span>
+          </h3>
+          <span class="text-[11px] text-slate-400">Giáo viên dùng tên đăng nhập & mật khẩu bên dưới để đăng nhập</span>
+        </div>
+        <div id="p4-users-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          <!-- Rendered by renderUserAccountsUI() -->
+        </div>
       </div>
 
     </div>
@@ -875,25 +898,27 @@
       }
     }
 
-    // Render danh sách tài khoản trong Phần 3
+    // Render danh sách tài khoản trong Phân hệ Quản lý tài khoản
     function renderUserAccountsUI() {
-      const container = document.getElementById('p3-users-list');
+      const container = document.getElementById('p4-users-list') || document.getElementById('p3-users-list');
       if (!container) return;
 
       const keys = Object.keys(USERS_DB);
-      const countEl = document.getElementById('p3-users-count');
+      const countEl = document.getElementById('p4-users-count') || document.getElementById('p3-users-count');
       if (countEl) countEl.innerText = keys.length;
+      const navCount = document.getElementById('nav-users-count');
+      if (navCount) navCount.innerText = keys.length;
 
       container.innerHTML = keys.map(k => {
         const u = USERS_DB[k];
         const isAdmin = u.role === 'ADMIN';
         return `
-          <div class="flex items-center justify-between p-3 rounded-xl border ${isAdmin ? 'bg-amber-50/70 border-amber-300' : 'bg-slate-50 border-slate-200'} text-xs transition shadow-2xs">
+          <div class="flex items-center justify-between p-3.5 rounded-xl border ${isAdmin ? 'bg-amber-50/70 border-amber-300' : 'bg-slate-50 border-slate-200'} text-xs transition shadow-2xs hover:shadow-sm">
             <div class="flex items-center gap-2.5 min-w-0">
-              <span class="text-base">${isAdmin ? '👑' : '👩‍🏫'}</span>
+              <span class="text-xl">${isAdmin ? '👑' : '👩‍🏫'}</span>
               <div class="min-w-0">
                 <div class="font-bold text-slate-800 flex items-center gap-1.5 truncate">
-                  <span class="truncate">${u.fullName}</span>
+                  <span class="truncate text-xs md:text-sm">${u.fullName}</span>
                   <span class="${isAdmin ? 'bg-amber-400 text-slate-900 font-extrabold' : 'bg-indigo-100 text-indigo-700 font-semibold'} text-[9px] px-1.5 py-0.2 rounded shrink-0 uppercase">
                     ${isAdmin ? 'Tổ Trưởng' : 'Giáo Viên'}
                   </span>
@@ -908,11 +933,11 @@
             
             <div class="flex items-center gap-1 shrink-0 ml-2">
               ${!isAdmin ? `
-                <button type="button" onclick="p3DeleteTeacher('${u.username}')" class="text-slate-400 hover:text-rose-600 p-1.5 rounded hover:bg-white transition" title="Xóa tài khoản này">
-                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                <button type="button" onclick="p3DeleteTeacher('${u.username}')" class="text-slate-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-white border border-transparent hover:border-rose-200 transition" title="Xóa tài khoản này">
+                  <i data-lucide="trash-2" class="w-4 h-4"></i>
                 </button>
               ` : `
-                <span class="text-[9px] text-amber-700 font-bold px-1.5 py-0.5 bg-amber-100 rounded">Cố định</span>
+                <span class="text-[10px] text-amber-800 font-bold px-2 py-0.5 bg-amber-200/70 rounded-md">Cố định</span>
               `}
             </div>
           </div>
@@ -936,6 +961,7 @@
       const navTabs = document.getElementById('header-nav-tabs');
       const userBadge = document.getElementById('header-user-badge');
       const btnPart3 = document.getElementById('nav-btn-part3');
+      const btnPart4 = document.getElementById('nav-btn-part4');
       const roleBadge = document.getElementById('label-user-role-badge');
       const userName = document.getElementById('label-user-name');
 
@@ -957,19 +983,21 @@
       if (userName) userName.textContent = user.fullName;
 
       if (user.role === 'ADMIN') {
-        // TỔ TRƯỞNG: Thấy được CẢ 3 MỤC (1, 2, 3)
+        // TỔ TRƯỞNG: Thấy được CẢ 4 MỤC (1, 2, 3, 4)
         if (roleBadge) {
           roleBadge.textContent = 'Tổ Trưởng (Admin)';
           roleBadge.className = 'bg-amber-400 text-slate-900 font-extrabold text-[9px] px-1.5 py-0.5 rounded uppercase';
         }
         if (btnPart3) btnPart3.classList.remove('hidden');
+        if (btnPart4) btnPart4.classList.remove('hidden');
       } else {
-        // GIÁO VIÊN: CHỈ THẤY ĐƯỢC MỤC 1 VÀ 2 (ẨN HOÀN TOÀN MỤC 3)
+        // GIÁO VIÊN: CHỈ THẤY ĐƯỢC MỤC 1 VÀ 2 (ẨN HOÀN TOÀN MỤC 3 VÀ MỤC 4)
         if (roleBadge) {
           roleBadge.textContent = 'Giáo Viên';
           roleBadge.className = 'bg-indigo-700 text-indigo-100 border border-indigo-400 font-bold text-[9px] px-1.5 py-0.5 rounded uppercase';
         }
         if (btnPart3) btnPart3.classList.add('hidden');
+        if (btnPart4) btnPart4.classList.add('hidden');
 
         // Khóa định danh người dự giờ theo tài khoản giáo viên đã đăng nhập
         myObserverName = user.fullName;
@@ -1102,6 +1130,12 @@
           } else {
             switchRole('part2');
           }
+        } else if (roleParam === 'part4') {
+          if (currentUser.role === 'ADMIN') {
+            switchRole('part4');
+          } else {
+            switchRole('part2');
+          }
         } else {
           if (currentUser.role === 'ADMIN') {
             switchRole('part3');
@@ -1193,9 +1227,9 @@
     }
 
     function switchRole(roleId) {
-      // Phân quyền bảo mật: Giáo viên tuyệt đối không thể truy cập Phần 3
-      if (roleId === 'part3' && currentUser && currentUser.role !== 'ADMIN') {
-        alert("Quyền truy cập bị từ chối: Mục 3 chỉ dành riêng cho Tổ Trưởng Chuyên Môn (Admin).\nGiáo viên chỉ có quyền thao tác tại Mục 1 và Mục 2.");
+      // Phân quyền bảo mật: Giáo viên tuyệt đối không thể truy cập Phần 3 và Phần 4
+      if ((roleId === 'part3' || roleId === 'part4') && currentUser && currentUser.role !== 'ADMIN') {
+        alert("Quyền truy cập bị từ chối: Mục này chỉ dành riêng cho Tổ Trưởng Chuyên Môn (Admin).\nGiáo viên chỉ có quyền thao tác tại Mục 1 và Mục 2.");
         roleId = 'part2';
       }
 
@@ -1216,6 +1250,7 @@
       if (roleId === 'part1') generateQRCode();
       if (roleId === 'part2') renderPart2UI();
       if (roleId === 'part3') renderPart3UI();
+      if (roleId === 'part4') renderUserAccountsUI();
 
       lucide.createIcons();
     }
