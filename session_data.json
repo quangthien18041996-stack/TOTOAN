@@ -1,139 +1,165 @@
 {
-  "session": {
-    "id": "TOAN8-T56-2025",
-    "teacherName": "Nguyễn Thị Lan",
-    "subject": "Toán",
-    "className": "8A1",
-    "period": "Tiết 56 (Tuần 28)",
-    "teachingTime": "27/03/2025 - 08:00",
-    "lessonTitle": "Bài 1. Phép thử nghiệm – Sự kiện (Chương 9)",
-    "school": "THCS Phan Văn Trị",
-    "district": "Phòng Giáo Dục Và Đào Tạo Gò Vấp",
-    "activities": [
-      {
-        "id": "act-1",
-        "title": "Hoạt động 1: Khởi động (Trò chơi xúc xắc & bốc thăm)",
-        "time": "5 phút",
-        "content": "Giáo viên tổ chức trò chơi dự đoán số chấm xúc xắc nhằm kích thích sự tò mò của học sinh về kết quả không thể đoán trước."
-      },
-      {
-        "id": "act-2",
-        "title": "Hoạt động 2: Hình thành kiến thức (Thực nghiệm 4 nhóm)",
-        "time": "20 phút",
-        "content": "Chia 4 nhóm: Nhóm 1 (Gieo xúc xắc), Nhóm 2 (Tung đồng xu), Nhóm 3 (Bốc thăm 1..3), Nhóm 4 (Rút bi màu). Rút ra khái niệm phép thử nghiệm và tập hợp kết quả X."
-      },
-      {
-        "id": "act-3",
-        "title": "Hoạt động 3: Luyện tập (Bài 1, Bài 2 SGK trang 107)",
-        "time": "12 phút",
-        "content": "Học sinh làm việc cá nhân xác định không gian kết quả của bút bi/bút chì, chọn ngày học bơi, và vòng quay số 0-9."
-      },
-      {
-        "id": "act-4",
-        "title": "Hoạt động 4: Vận dụng & Hướng dẫn tự học về nhà",
-        "time": "5 phút",
-        "content": "Hệ thống lại lý thuyết, dặn dò bài tập 3 trang 102 và chuẩn bị Tiết 2."
-      }
-    ],
-    "isRegistered": true
-  },
-  "observations": [
-    {
-      "id": "sub-1",
-      "observerName": "Trần Minh Tuấn",
-      "timestamp": "22:30",
-      "records": [
-        {
-          "activityId": "act-1",
-          "activityTitle": "Hoạt động 1: Khởi động",
-          "behavior": "Học sinh hào hứng, theo dõi chăm chú video khởi động, nhiều em giơ tay dự đoán.",
-          "solution": "Vì tình huống thực tế và vui vẻ. Phát huy việc dùng trò chơi mở đầu."
-        },
-        {
-          "activityId": "act-2",
-          "activityTitle": "Hoạt động 2: Hình thành kiến thức",
-          "behavior": "Nhóm 1 và Nhóm 2 thực hành rất nhanh nhẹn, ghi chép đúng X={1..6}. Nhóm 4 rút bi còn lúng túng khi viết kí hiệu tập hợp.",
-          "solution": "Vì các em quên cách dùng dấu ngoặc nhọn {}. Giáo viên nên nhắc lại cách viết tập hợp trên bảng trước."
-        },
-        {
-          "activityId": "act-3",
-          "activityTitle": "Hoạt động 3: Luyện tập",
-          "behavior": "Đa số hoàn thành tốt bài 1. Ở bài 2 vòng quay, 3 em bỏ sót số 0.",
-          "solution": "Vì thói quen đếm từ 1. Giáo viên cần nhấn mạnh chữ số 0 khi chữa bài."
-        }
-      ]
-    },
-    {
-      "id": "sub-2",
-      "observerName": "Lê Thị Mai",
-      "timestamp": "22:35",
-      "records": [
-        {
-          "activityId": "act-1",
-          "activityTitle": "Hoạt động 1: Khởi động",
-          "behavior": "Cả lớp sôi nổi, không khí học tập tích cực ngay từ phút đầu.",
-          "solution": "Cách vào bài tự nhiên, tạo tâm lý thoải mái cho học sinh."
-        },
-        {
-          "activityId": "act-2",
-          "activityTitle": "Hoạt động 2: Hình thành kiến thức",
-          "behavior": "Đại diện Nhóm 3 (bốc thăm) tự tin đứng lên báo cáo kết quả, nói to, rõ ràng.",
-          "solution": "Học sinh được tự tay bốc thăm nên rất hào hứng và nhớ lâu."
-        },
-        {
-          "activityId": "act-3",
-          "activityTitle": "Hoạt động 3: Luyện tập",
-          "behavior": "Học sinh tự giác làm bài tập cá nhân, một vài em bàn cuối còn nhìn bài bạn.",
-          "solution": "Giáo viên nên bao quát và di chuyển xuống cuối lớp nhiều hơn."
-        }
-      ]
-    },
-    {
-      "id": "SUB-1794880091291",
-      "sessionId": "TOAN9-T45-2025",
-      "sessionTitle": "Toán 9A1 - Góc ở tâm. Số đo cung (Hình học 9)",
-      "observerName": "Cô Hoàng Thị Hương",
-      "timestamp": "08:48 AM",
-      "records": [
-        {
-          "activityId": "act-huong-1",
-          "activityTitle": "Hoạt động 1: Khởi động (Quan sát kim đồng hồ tròn)",
-          "behavior": "Học sinh rất hào hứng, sôi nổi tham gia thao tác",
-          "solution": ""
-        },
-        {
-          "activityId": "act-huong-2",
-          "activityTitle": "Hoạt động 2: Hình thành kiến thức (Định nghĩa góc ở tâm)",
-          "behavior": "",
-          "solution": ""
-        },
-        {
-          "activityId": "act-huong-3",
-          "activityTitle": "Hoạt động 3: Luyện tập (Tính số đo cung lớn, cung nhỏ)",
-          "behavior": "",
-          "solution": ""
-        },
-        {
-          "activityId": "act-huong-4",
-          "activityTitle": "Hoạt động 4: Giao nhiệm vụ tự học",
-          "behavior": "",
-          "solution": ""
-        }
-      ]
-    }
-  ],
-  "meetingMinutes": {
-    "sessionId": "TOAN8-T56-2025",
-    "conclusion": "Tiết dạy thành công, giáo viên chuẩn bị bài chu đáo, học sinh được thực hành trải nghiệm trực quan. Các nhóm hoạt động sôi nổi. Cần lưu ý nhắc học sinh quy cách viết tập hợp đầy đủ các phần tử gồm cả số 0.",
-    "evaluatedBy": "Tổ Trưởng: Thiều Thị Thúy Thanh"
-  },
   "sessions": [
+    {
+      "id": "TOAN6-HK1-2025",
+      "teacherName": "Cô Hoàng Thị Hương",
+      "subject": "Toán",
+      "className": "6A1",
+      "semester": "HK1",
+      "schoolYear": "2025 - 2026",
+      "period": "Tiết 18 (Tuần 9 - HK1)",
+      "teachingTime": "20/10/2025 - 08:00",
+      "lessonTitle": "Tập hợp các số tự nhiên. Ghi số tự nhiên",
+      "school": "THCS Phan Văn Trị",
+      "activities": [
+        {
+          "id": "act-hk1-6-1",
+          "title": "Hoạt động 1: Khởi động (Trò chơi đếm và phân loại hạt)",
+          "time": "5 phút",
+          "content": "Học sinh đếm số lượng đồ dùng học tập để hình thành khái niệm tập hợp."
+        },
+        {
+          "id": "act-hk1-6-2",
+          "title": "Hoạt động 2: Hình thành kiến thức (Tập hợp N và N*)",
+          "time": "20 phút",
+          "content": "Phân biệt tập hợp N và N*, biểu diễn các số tự nhiên trên tia số."
+        },
+        {
+          "id": "act-hk1-6-3",
+          "title": "Hoạt động 3: Luyện tập (Viết tập hợp bằng hai cách)",
+          "time": "15 phút",
+          "content": "Luyện tập liệt kê phần tử và chỉ ra tính chất đặc trưng."
+        },
+        {
+          "id": "act-hk1-6-4",
+          "title": "Hoạt động 4: Vận dụng thực tế",
+          "time": "5 phút",
+          "content": "Viết tập hợp các chữ số trong năm sinh của các thành viên gia đình."
+        }
+      ]
+    },
+    {
+      "id": "TOAN7-HK1-2025",
+      "teacherName": "Thầy Trần Minh Tuấn",
+      "subject": "Toán",
+      "className": "7A2",
+      "semester": "HK1",
+      "schoolYear": "2025 - 2026",
+      "period": "Tiết 20 (Tuần 10 - HK1)",
+      "teachingTime": "05/11/2025 - 08:50",
+      "lessonTitle": "Số hữu tỉ và các phép tính cộng, trừ số hữu tỉ",
+      "school": "THCS Phan Văn Trị",
+      "activities": [
+        {
+          "id": "act-hk1-7-1",
+          "title": "Hoạt động 1: Khởi động (Trắc nghiệm nhanh về phân số)",
+          "time": "6 phút",
+          "content": "Học sinh nhắc lại cách quy đồng mẫu hai phân số."
+        },
+        {
+          "id": "act-hk1-7-2",
+          "title": "Hoạt động 2: Hình thành kiến thức (Cộng trừ số hữu tỉ)",
+          "time": "18 phút",
+          "content": "Quy tắc cộng trừ hai số hữu tỉ bằng cách đưa về phân số cùng mẫu dương."
+        },
+        {
+          "id": "act-hk1-7-3",
+          "title": "Hoạt động 3: Luyện tập (Quy tắc chuyển vế)",
+          "time": "16 phút",
+          "content": "Vận dụng tính chất kết hợp và quy tắc bỏ dấu ngoặc trong tính toán."
+        },
+        {
+          "id": "act-hk1-7-4",
+          "title": "Hoạt động 4: Vận dụng",
+          "time": "5 phút",
+          "content": "Bài toán thực tế tính nhiệt độ trung bình tại các vùng miền."
+        }
+      ]
+    },
+    {
+      "id": "TOAN8-HK1-2025",
+      "teacherName": "Cô Lê Thị Mai",
+      "subject": "Toán",
+      "className": "8A3",
+      "semester": "HK1",
+      "schoolYear": "2025 - 2026",
+      "period": "Tiết 22 (Tuần 11 - HK1)",
+      "teachingTime": "18/11/2025 - 09:50",
+      "lessonTitle": "Những hằng đẳng thức đáng nhớ (Bình phương một tổng)",
+      "school": "THCS Phan Văn Trị",
+      "activities": [
+        {
+          "id": "act-hk1-8-1",
+          "title": "Hoạt động 1: Khởi động (Ghép hình vuông diện tích (a+b)²)",
+          "time": "6 phút",
+          "content": "Trải nghiệm trực quan hình học ghép 4 mảnh hình vuông và chữ nhật."
+        },
+        {
+          "id": "act-hk1-8-2",
+          "title": "Hoạt động 2: Hình thành kiến thức ((a+b)² = a² + 2ab + b²)",
+          "time": "19 phút",
+          "content": "Phát biểu công thức hằng đẳng thức bằng lời và bằng biểu thức đại số."
+        },
+        {
+          "id": "act-hk1-8-3",
+          "title": "Hoạt động 3: Luyện tập (Khai triển hằng đẳng thức)",
+          "time": "15 phút",
+          "content": "Bài tập khai triển (x+1)², (2x+3y)² và tính nhẩm nhanh 101²."
+        },
+        {
+          "id": "act-hk1-8-4",
+          "title": "Hoạt động 4: Vận dụng sáng tạo",
+          "time": "5 phút",
+          "content": "Tính diện tích mảnh đất mở rộng hình vuông."
+        }
+      ]
+    },
+    {
+      "id": "TOAN9-HK1-2025",
+      "teacherName": "Cô Nguyễn Thị Lan",
+      "subject": "Toán",
+      "className": "9A2",
+      "semester": "HK1",
+      "schoolYear": "2025 - 2026",
+      "period": "Tiết 24 (Tuần 12 - HK1)",
+      "teachingTime": "02/12/2025 - 13:30",
+      "lessonTitle": "Căn bậc hai và căn thức bậc hai",
+      "school": "THCS Phan Văn Trị",
+      "activities": [
+        {
+          "id": "act-hk1-9-1",
+          "title": "Hoạt động 1: Khởi động (Tìm cạnh hình vuông có diện tích a)",
+          "time": "5 phút",
+          "content": "Nhắc lại kiến thức căn bậc hai số học từ lớp 7."
+        },
+        {
+          "id": "act-hk1-9-2",
+          "title": "Hoạt động 2: Hình thành kiến thức (Điều kiện xác định của √A)",
+          "time": "20 phút",
+          "content": "Tìm điều kiện của x để căn thức có nghĩa và rút ra định lý √A² = |A|."
+        },
+        {
+          "id": "act-hk1-9-3",
+          "title": "Hoạt động 3: Luyện tập rút gọn biểu thức",
+          "time": "15 phút",
+          "content": "Rút gọn các biểu thức chứa căn bậc hai với điều kiện cho trước."
+        },
+        {
+          "id": "act-hk1-9-4",
+          "title": "Hoạt động 4: Vận dụng",
+          "time": "5 phút",
+          "content": "Ứng dụng tính độ dài đường chéo màn hình tivi và hình chữ nhật."
+        }
+      ]
+    },
     {
       "id": "TOAN8-T56-2025",
       "teacherName": "Cô Nguyễn Thị Lan",
       "subject": "Toán",
       "className": "8A1",
-      "period": "Tiết 56 (Tuần 28)",
+      "semester": "HK2",
+      "schoolYear": "2025 - 2026",
+      "period": "Tiết 56 (Tuần 28 - HK2)",
       "teachingTime": "27/03/2025 - 08:00",
       "lessonTitle": "Bài 1. Phép thử nghiệm – Sự kiện (Chương 9)",
       "school": "THCS Phan Văn Trị",
@@ -169,7 +195,9 @@
       "teacherName": "Thầy Trần Minh Tuấn",
       "subject": "Toán",
       "className": "8A2",
-      "period": "Tiết 57 (Tuần 28)",
+      "semester": "HK2",
+      "schoolYear": "2025 - 2026",
+      "period": "Tiết 57 (Tuần 28 - HK2)",
       "teachingTime": "27/03/2025 - 08:50",
       "lessonTitle": "Bài 2. Xác suất thực nghiệm của biến cố trong trò chơi",
       "school": "THCS Phan Văn Trị",
@@ -205,7 +233,9 @@
       "teacherName": "Cô Hoàng Thị Hương",
       "subject": "Toán",
       "className": "9A1",
-      "period": "Tiết 45 (Tuần 28)",
+      "semester": "HK2",
+      "schoolYear": "2025 - 2026",
+      "period": "Tiết 45 (Tuần 28 - HK2)",
       "teachingTime": "27/03/2025 - 09:50",
       "lessonTitle": "Góc ở tâm. Số đo cung (Hình học 9)",
       "school": "THCS Phan Văn Trị",
@@ -241,7 +271,9 @@
       "teacherName": "Cô Lê Thị Mai",
       "subject": "Toán",
       "className": "7A3",
-      "period": "Tiết 52 (Tuần 28)",
+      "semester": "HK2",
+      "schoolYear": "2025 - 2026",
+      "period": "Tiết 52 (Tuần 28 - HK2)",
       "teachingTime": "27/03/2025 - 13:30",
       "lessonTitle": "Tam giác bằng nhau (Trường hợp Cạnh - Cạnh - Cạnh)",
       "school": "THCS Phan Văn Trị",
@@ -277,7 +309,9 @@
       "teacherName": "Thầy Phạm Hải Nam",
       "subject": "Toán",
       "className": "6A2",
-      "period": "Tiết 60 (Tuần 28)",
+      "semester": "HK2",
+      "schoolYear": "2025 - 2026",
+      "period": "Tiết 60 (Tuần 28 - HK2)",
       "teachingTime": "27/03/2025 - 14:20",
       "lessonTitle": "Hình có trục đối xứng trong thực tiễn",
       "school": "THCS Phan Văn Trị",
@@ -308,5 +342,303 @@
         }
       ]
     }
-  ]
+  ],
+  "session": {
+    "id": "TOAN8-T56-2025",
+    "teacherName": "Cô Nguyễn Thị Lan",
+    "subject": "Toán",
+    "className": "8A1",
+    "semester": "HK2",
+    "schoolYear": "2025 - 2026",
+    "period": "Tiết 56 (Tuần 28 - HK2)",
+    "teachingTime": "27/03/2025 - 08:00",
+    "lessonTitle": "Bài 1. Phép thử nghiệm – Sự kiện (Chương 9)",
+    "school": "THCS Phan Văn Trị",
+    "activities": [
+      {
+        "id": "act-lan-1",
+        "title": "Hoạt động 1: Khởi động (Trò chơi xúc xắc & bốc thăm)",
+        "time": "5 phút",
+        "content": "Giáo viên tổ chức trò chơi dự đoán số chấm xúc xắc nhằm kích thích sự tò mò của học sinh về kết quả không thể đoán trước."
+      },
+      {
+        "id": "act-lan-2",
+        "title": "Hoạt động 2: Hình thành kiến thức (Thực nghiệm 4 nhóm)",
+        "time": "20 phút",
+        "content": "Chia 4 nhóm: Nhóm 1 (Gieo xúc xắc), Nhóm 2 (Tung đồng xu), Nhóm 3 (Bốc thăm 1..3), Nhóm 4 (Rút bi màu). Rút ra khái niệm phép thử nghiệm và tập hợp kết quả X."
+      },
+      {
+        "id": "act-lan-3",
+        "title": "Hoạt động 3: Luyện tập (Bài 1, Bài 2 SGK trang 107)",
+        "time": "12 phút",
+        "content": "Học sinh làm việc cá nhân xác định không gian kết quả của bút bi/bút chì, chọn ngày học bơi, và vòng quay số 0-9."
+      },
+      {
+        "id": "act-lan-4",
+        "title": "Hoạt động 4: Vận dụng & Hướng dẫn tự học về nhà",
+        "time": "5 phút",
+        "content": "Hệ thống lại lý thuyết, dặn dò bài tập 3 trang 102 và chuẩn bị Tiết 2."
+      }
+    ]
+  },
+  "observations": [
+    {
+      "id": "sub-hk1-1",
+      "sessionId": "TOAN6-HK1-2025",
+      "observerName": "Cô Nguyễn Thị Lan",
+      "timestamp": "08:45",
+      "records": [
+        {
+          "activityId": "act-hk1-6-1",
+          "activityTitle": "Hoạt động 1: Khởi động",
+          "behavior": "Học sinh hào hứng chơi trò chơi đếm đồ vật, nhớ nhanh kí hiệu tập hợp.",
+          "solution": "Phát huy hình thức trực quan."
+        },
+        {
+          "activityId": "act-hk1-6-2",
+          "activityTitle": "Hoạt động 2: Hình thành kiến thức",
+          "behavior": "Đa số phân biệt tốt tập N và N*, một vài em quên số 0.",
+          "solution": "Giáo viên nhấn mạnh số 0 trên tia số."
+        }
+      ]
+    },
+    {
+      "id": "sub-hk1-2",
+      "sessionId": "TOAN7-HK1-2025",
+      "observerName": "Cô Hoàng Thị Hương",
+      "timestamp": "09:35",
+      "records": [
+        {
+          "activityId": "act-hk1-7-1",
+          "activityTitle": "Hoạt động 1: Khởi động",
+          "behavior": "Học sinh tích cực trả lời câu hỏi quy đồng mẫu phân số.",
+          "solution": "Khởi động nhanh gọn, đúng trọng tâm."
+        },
+        {
+          "activityId": "act-hk1-7-2",
+          "activityTitle": "Hoạt động 2: Hình thành kiến thức",
+          "behavior": "Học sinh áp dụng thành thạo quy tắc cộng trừ số hữu tỉ.",
+          "solution": "Các bước hướng dẫn trên bảng mẫu mực."
+        }
+      ]
+    },
+    {
+      "id": "sub-hk1-3",
+      "sessionId": "TOAN8-HK1-2025",
+      "observerName": "Thầy Trần Minh Tuấn",
+      "timestamp": "10:35",
+      "records": [
+        {
+          "activityId": "act-hk1-8-1",
+          "activityTitle": "Hoạt động 1: Khởi động",
+          "behavior": "Học sinh hào hứng ghép 4 mảnh hình vuông, trực quan nhận ra (a+b)².",
+          "solution": "Dạy học qua mô hình rất sáng tạo."
+        },
+        {
+          "activityId": "act-hk1-8-2",
+          "activityTitle": "Hoạt động 2: Hình thành kiến thức",
+          "behavior": "Học sinh đọc thuộc hằng đẳng thức và giải thích được các hạng tử.",
+          "solution": "Khen ngợi học sinh kịp thời."
+        }
+      ]
+    },
+    {
+      "id": "sub-hk1-4",
+      "sessionId": "TOAN9-HK1-2025",
+      "observerName": "Cô Lê Thị Mai",
+      "timestamp": "14:15",
+      "records": [
+        {
+          "activityId": "act-hk1-9-1",
+          "activityTitle": "Hoạt động 1: Khởi động",
+          "behavior": "Cả lớp sôi nổi ôn lại định nghĩa căn bậc hai số học.",
+          "solution": "Tạo tâm lý tự tin cho học sinh."
+        },
+        {
+          "activityId": "act-hk1-9-2",
+          "activityTitle": "Hoạt động 2: Hình thành kiến thức",
+          "behavior": "Học sinh xác định đúng điều kiện căn thức có nghĩa.",
+          "solution": "Giáo viên sửa kỹ các lỗi đặt điều kiện âm."
+        }
+      ]
+    },
+    {
+      "id": "sub-hk1-5",
+      "sessionId": "TOAN9-HK1-2025",
+      "observerName": "Thiều Thị Thúy Thanh",
+      "timestamp": "14:20",
+      "records": [
+        {
+          "activityId": "act-hk1-9-1",
+          "activityTitle": "Hoạt động 1: Khởi động",
+          "behavior": "Tiết dạy có sự chuẩn bị chu đáo, học sinh tập trung ngay từ đầu.",
+          "solution": "Phát huy tác phong sư phạm chuẩn mực."
+        },
+        {
+          "activityId": "act-hk1-9-2",
+          "activityTitle": "Hoạt động 2: Hình thành kiến thức",
+          "behavior": "Học sinh nắm vững hằng đẳng thức căn A bình phương.",
+          "solution": "Cho thêm ví dụ đa dạng hơn."
+        }
+      ]
+    },
+    {
+      "id": "sub-1",
+      "sessionId": "TOAN8-T56-2025",
+      "observerName": "Thầy Trần Minh Tuấn",
+      "timestamp": "22:30",
+      "records": [
+        {
+          "activityId": "act-lan-1",
+          "activityTitle": "Hoạt động 1: Khởi động (Trò chơi xúc xắc & bốc thăm)",
+          "behavior": "Học sinh hào hứng, theo dõi chăm chú video khởi động, nhiều em giơ tay dự đoán.",
+          "solution": "Vì tình huống thực tế và vui vẻ. Phát huy việc dùng trò chơi mở đầu."
+        },
+        {
+          "activityId": "act-lan-2",
+          "activityTitle": "Hoạt động 2: Hình thành kiến thức (Thực nghiệm 4 nhóm)",
+          "behavior": "Nhóm 1 và Nhóm 2 thực hành rất nhanh nhẹn, ghi chép đúng X={1..6}. Nhóm 4 rút bi còn lúng túng khi viết kí hiệu tập hợp.",
+          "solution": "Vì các em quên cách dùng dấu ngoặc nhọn {}. Giáo viên nên nhắc lại cách viết tập hợp trên bảng trước."
+        },
+        {
+          "activityId": "act-lan-3",
+          "activityTitle": "Hoạt động 3: Luyện tập (Bài 1, Bài 2 SGK trang 107)",
+          "behavior": "Đa số hoàn thành tốt bài 1. Ở bài 2 vòng quay, 3 em bỏ sót số 0.",
+          "solution": "Vì thói quen đếm từ 1. Giáo viên cần nhấn mạnh chữ số 0 khi chữa bài."
+        }
+      ]
+    },
+    {
+      "id": "sub-2",
+      "sessionId": "TOAN8-T56-2025",
+      "observerName": "Cô Lê Thị Mai",
+      "timestamp": "22:35",
+      "records": [
+        {
+          "activityId": "act-lan-1",
+          "activityTitle": "Hoạt động 1: Khởi động (Trò chơi xúc xắc & bốc thăm)",
+          "behavior": "Cả lớp sôi nổi, không khí học tập tích cực ngay từ phút đầu.",
+          "solution": "Cách vào bài tự nhiên, tạo tâm lý thoải mái cho học sinh."
+        },
+        {
+          "activityId": "act-lan-2",
+          "activityTitle": "Hoạt động 2: Hình thành kiến thức (Thực nghiệm 4 nhóm)",
+          "behavior": "Đại diện Nhóm 3 (bốc thăm) tự tin đứng lên báo cáo kết quả, nói to, rõ ràng.",
+          "solution": "Học sinh được tự tay bốc thăm nên rất hào hứng và nhớ lâu."
+        },
+        {
+          "activityId": "act-lan-3",
+          "activityTitle": "Hoạt động 3: Luyện tập (Bài 1, Bài 2 SGK trang 107)",
+          "behavior": "Học sinh tự giác làm bài tập cá nhân, một vài em bàn cuối còn nhìn bài bạn.",
+          "solution": "Giáo viên nên bao quát và di chuyển xuống cuối lớp nhiều hơn."
+        }
+      ]
+    },
+    {
+      "id": "sub-3",
+      "sessionId": "TOAN9-T45-2025",
+      "observerName": "Cô Nguyễn Thị Lan",
+      "timestamp": "09:15",
+      "records": [
+        {
+          "activityId": "act-huong-1",
+          "activityTitle": "Hoạt động 1: Khởi động (Mở đầu với đồng hồ treo tường)",
+          "behavior": "Học sinh hào hứng nhận biết góc tạo bởi hai kim đồng hồ, trả lời nhanh các câu hỏi gợi mở.",
+          "solution": "Hình ảnh trực quan gần gũi giúp học sinh liên hệ thực tế tốt."
+        },
+        {
+          "activityId": "act-huong-2",
+          "activityTitle": "Hoạt động 2: Hình thành kiến thức (Góc ở tâm & Cung bị chắn)",
+          "behavior": "Đa số học sinh phân biệt tốt cung lớn và cung nhỏ. Một vài em còn nhầm lẫn số đo cung với độ dài cung.",
+          "solution": "Giáo viên đã kịp thời chỉ rõ trên mô hình đường tròn để học sinh hiểu sâu bản chất."
+        }
+      ]
+    },
+    {
+      "id": "sub-4",
+      "sessionId": "TOAN7-T52-2025",
+      "observerName": "Cô Hoàng Thị Hương",
+      "timestamp": "14:10",
+      "records": [
+        {
+          "activityId": "act-mai-1",
+          "activityTitle": "Hoạt động 1: Khởi động (Ghép tam giác bằng que tính)",
+          "behavior": "Các nhóm làm việc tích cực, hào hứng so sánh các tam giác sau khi ghép.",
+          "solution": "Phương pháp học qua thực hành giúp học sinh hứng thú."
+        },
+        {
+          "activityId": "act-mai-2",
+          "activityTitle": "Hoạt động 2: Hình thành kiến thức (Trường hợp c.c.c)",
+          "behavior": "Học sinh tiếp thu nhanh quy ước viết thứ tự đỉnh tương ứng của hai tam giác bằng nhau.",
+          "solution": "Giáo viên dùng phấn màu đánh dấu đỉnh tương ứng rất trực quan."
+        }
+      ]
+    },
+    {
+      "id": "sub-5",
+      "sessionId": "TOAN6-T60-2025",
+      "observerName": "Thầy Trần Minh Tuấn",
+      "timestamp": "15:05",
+      "records": [
+        {
+          "activityId": "act-nam-1",
+          "activityTitle": "Hoạt động 1: Khởi động (Gấp giấy cắt hình trái tim)",
+          "behavior": "Học sinh cực kỳ hào hứng, 100% học sinh hoàn thành sản phẩm gấp cắt đúng thời gian.",
+          "solution": "Tạo sự kích thích tò mò về trục đối xứng trước khi vào bài."
+        },
+        {
+          "activityId": "act-nam-2",
+          "activityTitle": "Hoạt động 2: Hình thành kiến thức (Trục đối xứng)",
+          "behavior": "Các em thảo luận sôi nổi và tìm được nhiều trục đối xứng của logo, biển báo giao thông.",
+          "solution": "Phát huy việc liên hệ các đồ vật và biểu tượng quen thuộc trong đời sống."
+        }
+      ]
+    },
+    {
+      "id": "sub-6",
+      "sessionId": "TOAN6-T60-2025",
+      "observerName": "Thiều Thị Thúy Thanh",
+      "timestamp": "15:10",
+      "records": [
+        {
+          "activityId": "act-nam-1",
+          "activityTitle": "Hoạt động 1: Khởi động",
+          "behavior": "Hoạt động cắt dán trái tim lôi cuốn học sinh, tạo hứng khởi học tập.",
+          "solution": "Biện pháp sư phạm rất sinh động."
+        },
+        {
+          "activityId": "act-nam-2",
+          "activityTitle": "Hoạt động 2: Hình thành kiến thức",
+          "behavior": "Học sinh phát hiện tốt trục đối xứng trong thực tế.",
+          "solution": "Khuyến khích học sinh trình bày nhiều hơn."
+        }
+      ]
+    }
+  ],
+  "meetingMinutes": {
+    "TOAN6-HK1-2025": {
+      "conclusion": "Học sinh hiểu rõ tập hợp N và N*. Hoạt động nhóm hiệu quả, giáo viên sửa lỗi dùng ngoặc nhọn kịp thời."
+    },
+    "TOAN7-HK1-2025": {
+      "conclusion": "Tiết dạy sôi nổi, các em nắm vững quy tắc cộng trừ số hữu tỉ và quy đồng mẫu số."
+    },
+    "TOAN8-HK1-2025": {
+      "conclusion": "Học sinh vận dụng tốt hằng đẳng thức bình phương một tổng vào tính nhẩm nhanh."
+    },
+    "TOAN9-HK1-2025": {
+      "conclusion": "Khái niệm căn bậc hai số học được truyền tải mạch lạc, học sinh tự tin trình bày bài giải trước lớp."
+    },
+    "TOAN8-T56-2025": {
+      "conclusion": "Tiết dạy thành công, giáo viên chuẩn bị bài chu đáo, học sinh được thực hành trải nghiệm trực quan. Các nhóm hoạt động sôi nổi. Cần lưu ý nhắc học sinh quy cách viết tập hợp đầy đủ các phần tử gồm cả số 0."
+    },
+    "TOAN9-T45-2025": {
+      "conclusion": "Học sinh nắm vững định nghĩa góc ở tâm và mối liên hệ cung bị chắn. Đồ dùng dạy học trực quan sinh động. Khuyến khích giáo viên phát huy phương pháp vấn đáp gợi mở."
+    },
+    "TOAN7-T52-2025": {
+      "conclusion": "Học sinh thực hành đo và cắt ghép tam giác tích cực. Cách dẫn dắt định lý trường hợp c-c-c rõ ràng, mạch lạc. Cần rèn thêm cho học sinh cách lập luận hình học có căn cứ."
+    },
+    "TOAN6-T60-2025": {
+      "conclusion": "Tiết học khởi đầu hào hứng với trò chơi gấp giấy tìm trục đối xứng. Học sinh liên hệ thực tế tốt. Giáo viên phân chia thời gian hợp lý giữa các hoạt động."
+    }
+  }
 }
