@@ -1734,14 +1734,14 @@
         if (btnPart4) btnPart4.classList.remove('hidden');
         if (btnPart5) btnPart5.classList.remove('hidden');
       } else {
-        // GIÁO VIÊN: Thấy Mục 1, 2 và Mục 5 (Ẩn Mục 3 và Mục 4)
+        // GIÁO VIÊN: Chỉ thấy Mục 1 và Mục 2 (Ẩn Mục 3, Mục 4 và Mục 5)
         if (roleBadge) {
           roleBadge.textContent = 'Giáo Viên';
           roleBadge.className = 'bg-indigo-700 text-indigo-100 border border-indigo-400 font-bold text-[9px] px-1.5 py-0.5 rounded uppercase';
         }
         if (btnPart3) btnPart3.classList.add('hidden');
         if (btnPart4) btnPart4.classList.add('hidden');
-        if (btnPart5) btnPart5.classList.remove('hidden');
+        if (btnPart5) btnPart5.classList.add('hidden');
       }
 
       // Luôn cập nhật định danh người dùng theo tài khoản đang đăng nhập
@@ -1762,7 +1762,8 @@
         if (currentUser.role === 'ADMIN') {
           switchRole(roleParam || 'part3');
         } else {
-          switchRole(roleParam === 'part3' ? 'part2' : (roleParam || 'part2'));
+          const allowed = (roleParam === 'part1' || roleParam === 'part2') ? roleParam : 'part1';
+          switchRole(allowed);
         }
       }
     }
@@ -1854,7 +1855,8 @@
       if (currentUser.role === 'ADMIN') {
         switchRole(roleParam || 'part3');
       } else {
-        switchRole(roleParam === 'part3' ? 'part2' : (roleParam || 'part2'));
+        const allowed = (roleParam === 'part1' || roleParam === 'part2') ? roleParam : 'part1';
+        switchRole(allowed);
       }
     }
 
@@ -2627,26 +2629,11 @@ ${kbData.concept.quote}
       if (currentUser) {
         const urlParams = new URLSearchParams(window.location.search);
         const roleParam = urlParams.get('role');
-        if (roleParam === 'part2') {
-          switchRole('part2');
-        } else if (roleParam === 'part3') {
-          if (currentUser.role === 'ADMIN') {
-            switchRole('part3');
-          } else {
-            switchRole('part2');
-          }
-        } else if (roleParam === 'part4') {
-          if (currentUser.role === 'ADMIN') {
-            switchRole('part4');
-          } else {
-            switchRole('part2');
-          }
+        if (currentUser.role === 'ADMIN') {
+          switchRole(roleParam || 'part3');
         } else {
-          if (currentUser.role === 'ADMIN') {
-            switchRole('part3');
-          } else {
-            switchRole('part1');
-          }
+          const allowed = (roleParam === 'part1' || roleParam === 'part2') ? roleParam : 'part1';
+          switchRole(allowed);
         }
       }
     });
@@ -2764,10 +2751,10 @@ ${kbData.concept.quote}
     }
 
     function switchRole(roleId) {
-      // Phân quyền bảo mật: Giáo viên tuyệt đối không thể truy cập Phần 3 và Phần 4
-      if ((roleId === 'part3' || roleId === 'part4') && currentUser && currentUser.role !== 'ADMIN') {
-        alert("Quyền truy cập bị từ chối: Mục này chỉ dành riêng cho Tổ Trưởng Chuyên Môn (Admin).\nGiáo viên chỉ có quyền thao tác tại Mục 1 và Mục 2.");
-        roleId = 'part2';
+      // Phân quyền bảo mật: Giáo viên chỉ có quyền thao tác tại Phần 1 và Phần 2 (Chặn tuyệt đối Phần 3, 4, 5)
+      if ((roleId === 'part3' || roleId === 'part4' || roleId === 'part5') && currentUser && currentUser.role !== 'ADMIN') {
+        alert("Quyền truy cập bị từ chối: Mục này chỉ dành riêng cho Tổ Trưởng Chuyên Môn (Admin).\nGiáo viên chỉ có quyền thao tác tại Mục 1 (GV Giảng Dạy) và Mục 2 (GV Dự Giờ).");
+        roleId = 'part1';
       }
 
       document.querySelectorAll('.role-section').forEach(el => el.classList.add('hidden'));
