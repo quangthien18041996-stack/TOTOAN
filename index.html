@@ -465,6 +465,10 @@
           <p class="text-xs text-slate-500">Mỗi giáo viên khi giảng dạy sẽ đăng ký tiết dạy và tiến trình KHBD tại đây. Giáo viên dự giờ sẽ chọn đúng tiết dạy này để quan sát.</p>
         </div>
         <div class="flex items-center gap-2">
+          <button type="button" onclick="p1ClearAllSessions()" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-300 text-xs font-bold px-3 py-2.5 rounded-lg shadow-sm transition flex items-center gap-1.5 active:scale-95 cursor-pointer" title="Xóa sạch toàn bộ các tiết dạy để bắt đầu mới">
+            <i data-lucide="trash-2" class="w-4 h-4 text-rose-600"></i>
+            <span>XÓA SẠCH TIẾT DẠY</span>
+          </button>
           <button onclick="p1OpenNewSessionForm()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-lg shadow-sm transition flex items-center gap-1.5 active:scale-95">
             <i data-lucide="plus-circle" class="w-4 h-4"></i>
             <span>+ ĐĂNG KÝ TIẾT DẠY MỚI</span>
@@ -1423,7 +1427,7 @@
     }
 
     // Phiên bản ứng dụng: Tự động làm sạch cache dữ liệu mẫu khi người dùng truy cập
-    const APP_DATA_VERSION = '2026_EMPTY_PROD_V1';
+    const APP_DATA_VERSION = '2026_EMPTY_PROD_V4';
     (function checkCacheVersion() {
       try {
         if (localStorage.getItem('pvt_data_version') !== APP_DATA_VERSION) {
@@ -1462,7 +1466,7 @@
     })();
 
     // Realtime Cloud Sync via ntfy.sh (No config needed, works between phone & PC)
-    const CLOUD_SYNC_TOPIC = "totoan_phanvantri_toan8_t56";
+    const CLOUD_SYNC_TOPIC = "totoan_phanvantri_clean_2026";
 
     // ==============================================================
     // HỆ THỐNG XÁC THỰC VÀ PHÂN QUYỀN (RBAC AUTHENTICATION)
@@ -3498,6 +3502,40 @@ ${kbData.concept.quote}
       if (editId) {
         p1DeleteSession(editId);
       }
+    }
+
+    function p1ClearAllSessions() {
+      if (!confirm("Thầy/Cô có chắc chắn muốn xóa sạch toàn bộ danh sách tiết dạy để bắt đầu mới hoàn toàn?")) {
+        return;
+      }
+      appData.sessions = [];
+      appData.observations = [];
+      appData.meetingMinutes = {};
+      currentSessionId = "BLANK-SESSION";
+      localStorage.setItem('pvt_master_data', JSON.stringify(appData));
+      localStorage.removeItem('pvt_selected_session_id');
+      Object.keys(localStorage).forEach(k => {
+        if (k.startsWith('pvt_draft_')) localStorage.removeItem(k);
+      });
+      try {
+        fetch(`https://ntfy.sh/${CLOUD_SYNC_TOPIC}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'SYNC_SESSIONS', payload: [] })
+        }).catch(() => {});
+        // Also send empty array to old topic just in case
+        fetch(`https://ntfy.sh/totoan_phanvantri_toan8_t56`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'SYNC_SESSIONS', payload: [] })
+        }).catch(() => {});
+        fetch('/api/reset-data', { method: 'POST' }).catch(() => {});
+      } catch(e) {}
+      renderSessionsDropdowns();
+      renderPart1UI();
+      renderPart2UI();
+      renderPart3UI();
+      alert("✓ Đã xóa sạch toàn bộ tiết dạy! Giao diện đã trở về trạng thái trống sẵn sàng.");
     }
 
     // ==============================================================
