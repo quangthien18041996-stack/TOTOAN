@@ -2342,16 +2342,33 @@
     function formatAIMarkdown(text) {
       if (!text) return '';
       let escaped = escapeHtml(text);
+      // Headings: ### Title
+      escaped = escaped.replace(/^###\s+(.*)$/gm, '<h4 class="font-bold text-indigo-900 text-xs mt-2 mb-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-indigo-600"></span>$1</h4>');
+      escaped = escaped.replace(/^##\s+(.*)$/gm, '<h3 class="font-bold text-indigo-950 text-sm mt-2.5 mb-1">$1</h3>');
+      // Horizontal dividers: ---
+      escaped = escaped.replace(/^---$/gm, '<hr class="border-t border-slate-200 my-2">');
       // Bold: **text**
       escaped = escaped.replace(/\*\*(.*?)\*\*/g, '<strong class="text-indigo-950 font-bold">$1</strong>');
       // Italic: *text*
       escaped = escaped.replace(/(?<!\*)\*(?!\*)(.*?)(?<!\*)\*(?!\*)/g, '<em class="text-slate-600">$1</em>');
-      // Bullets
+      // Numbered lists: 1. text
+      escaped = escaped.replace(/^\d+\.\s+(.*)$/gm, '<div class="ml-2 pl-2 border-l-2 border-indigo-200 text-slate-700 my-0.5">$1</div>');
+      // Bullets: • - *
       escaped = escaped.replace(/^[•\-\*]\s+(.*)$/gm, '<li class="ml-4 list-disc text-slate-700 my-0.5">$1</li>');
+      // Math fractions \frac{a}{b} -> a/b
+      escaped = escaped.replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '($1/$2)');
+      // Math sqrt \sqrt{a} -> √a
+      escaped = escaped.replace(/\\sqrt\{([^}]+)\}/g, '√$1');
+      escaped = escaped.replace(/\\sqrt\s*([0-9a-zA-Z]+)/g, '√$1');
+      // Math symbols \pi, \neq, \in, \pm
+      escaped = escaped.replace(/\\pi/g, 'π');
+      escaped = escaped.replace(/\\neq/g, '≠');
+      escaped = escaped.replace(/\\in/g, '∈');
+      escaped = escaped.replace(/\\pm/g, '±');
       // Math inline highlighting: $math$
       escaped = escaped.replace(/\$([^\$]+)\$/g, '<code class="bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded font-mono text-[11px] font-semibold border border-indigo-200/60">$1</code>');
       // Linebreaks: double newline to paragraph gap, single newline to <br>
-      escaped = escaped.replace(/\n\n/g, '<div class="h-2"></div>');
+      escaped = escaped.replace(/\n\n/g, '<div class="h-1.5"></div>');
       escaped = escaped.replace(/\n/g, '<br>');
       return escaped;
     }
