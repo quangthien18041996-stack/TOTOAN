@@ -1709,11 +1709,16 @@
         if (navTabs) navTabs.classList.add('hidden');
         if (userBadge) userBadge.classList.add('hidden');
         
-        // Không để sẵn tên đăng nhập và mật khẩu
+        // Không để sẵn tên đăng nhập và mật khẩu, đặt lại trạng thái bảo mật
         const elU = document.getElementById('login-username');
         const elP = document.getElementById('login-password');
+        const eyeIcon = document.getElementById('login-eye-icon');
         if (elU) elU.value = '';
-        if (elP) elP.value = '';
+        if (elP) {
+          elP.value = '';
+          elP.type = 'password';
+        }
+        if (eyeIcon) eyeIcon.setAttribute('data-lucide', 'eye');
         
         // Đặt lại các nút chọn nhanh về trạng thái trung tính chưa chọn
         const btnTT = document.getElementById('btn-quick-totruong');
