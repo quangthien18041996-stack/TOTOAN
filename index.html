@@ -270,8 +270,8 @@
           <span class="hidden sm:inline font-bold">MÃ QR</span>
         </button>
 
-        <!-- Nút Trợ lý AI trên Header (Mở được từ bất kỳ màn hình nào) -->
-        <button type="button" onclick="p2OpenAIAssistant()" class="bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500 hover:from-purple-600 hover:to-indigo-600 text-white text-xs font-bold px-2.5 py-1.5 rounded-xl shadow-sm flex items-center gap-1.5 transition active:scale-95 border border-purple-300/40 cursor-pointer" title="Mở Trợ lý Cố vấn Sư phạm Toán AI (Chuẩn bộ SGK Kết Nối Tri Thức)">
+        <!-- Nút Trợ lý AI trên Header (Chỉ hiện khi đã đăng nhập vào hệ thống) -->
+        <button type="button" id="header-btn-ai" onclick="p2OpenAIAssistant()" class="hidden bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500 hover:from-purple-600 hover:to-indigo-600 text-white text-xs font-bold px-2.5 py-1.5 rounded-xl shadow-sm flex items-center gap-1.5 transition active:scale-95 border border-purple-300/40 cursor-pointer" title="Mở Trợ lý Cố vấn Sư phạm Toán AI (Chuẩn bộ SGK Kết Nối Tri Thức)">
           <i data-lucide="bot" class="w-4 h-4 text-amber-300 animate-pulse"></i>
           <span class="hidden sm:inline font-extrabold tracking-wide">TRỢ LÝ AI (SGK)</span>
           <span class="sm:hidden font-bold">AI</span>
@@ -1819,6 +1819,7 @@
       const appMain = document.getElementById('app-main');
       const navTabs = document.getElementById('header-nav-tabs');
       const userBadge = document.getElementById('header-user-badge');
+      const btnHeaderAi = document.getElementById('header-btn-ai');
       const btnPart3 = document.getElementById('nav-btn-part3');
       const btnPart4 = document.getElementById('nav-btn-part4');
       const btnPart5 = document.getElementById('nav-btn-part5');
@@ -1826,11 +1827,12 @@
       const userName = document.getElementById('label-user-name');
 
       if (!user) {
-        // Chưa đăng nhập -> Hiện cổng đăng nhập, ẩn toàn bộ hệ thống
+        // Chưa đăng nhập -> Hiện cổng đăng nhập, ẩn toàn bộ hệ thống & ẩn Trợ lý AI trên header
         if (viewLogin) viewLogin.classList.remove('hidden');
         if (appMain) appMain.classList.add('hidden');
         if (navTabs) navTabs.classList.add('hidden');
         if (userBadge) userBadge.classList.add('hidden');
+        if (btnHeaderAi) btnHeaderAi.classList.add('hidden');
         
         // Không để sẵn tên đăng nhập và mật khẩu, đặt lại trạng thái bảo mật
         const elU = document.getElementById('login-username');
@@ -1851,11 +1853,12 @@
         return;
       }
 
-      // Đã đăng nhập -> Ẩn cổng đăng nhập, hiện hệ thống chính
+      // Đã đăng nhập -> Ẩn cổng đăng nhập, hiện hệ thống chính & hiện Trợ lý AI trên header
       if (viewLogin) viewLogin.classList.add('hidden');
       if (appMain) appMain.classList.remove('hidden');
       if (navTabs) navTabs.classList.remove('hidden');
       if (userBadge) userBadge.classList.remove('hidden');
+      if (btnHeaderAi) btnHeaderAi.classList.remove('hidden');
 
       if (user.username === 'totruong' || user.role === 'ADMIN') {
         user.fullName = 'Thiều Thị Thúy Thanh';
