@@ -2584,17 +2584,22 @@ Yêu cầu bắt buộc đối với câu trả lời:
 2. Khi giáo viên hỏi bất kỳ khái niệm, bài tập, câu hỏi hoặc phương pháp sư phạm nào, hãy giải thích chuẩn mực, rõ ràng, có ví dụ cụ thể, chỉ ra các lỗi học sinh thường hay mắc phải và lời khuyên quan sát sư phạm cho giáo viên dự giờ (kể cả giáo viên trái môn).
 3. Sử dụng định dạng markdown rõ nét: in đậm **khái niệm**, dùng gạch đầu dòng, công thức toán inline $công thức$.`;
 
-          const sessionContext = (session && session.lessonTitle && !session.isBlank) ? `
-Tiết dạy tham chiếu trên hệ thống:
-- Môn: ${session.subject || 'Toán'} ${session.className || ''}
-- Tên bài dạy: ${session.lessonTitle || ''}
-- Tiến trình 4 hoạt động KHBD: ${JSON.stringify(session.activities || [])}
-` : 'Giáo viên đang tra cứu tự do trong kho học liệu Toán THCS (SGK Kết Nối Tri Thức).';
+          let promptUser = '';
+          if (type === 'custom') {
+            promptUser = `Câu hỏi tra cứu của giáo viên: "${userQuestion}".
 
-          const promptUser = `${sessionContext}
+YÊU CẦU BẮT BUỘC:
+1. Hãy trả lời trực diện, chi tiết và chuẩn xác 100% đúng trọng tâm câu hỏi trên theo sách giáo khoa môn Toán (Lớp 6, 7, 8, 9) bộ Kết Nối Tri Thức Với Cuộc Sống (NXB Giáo Dục Việt Nam).
+2. TUYỆT ĐỐI KHÔNG lấy kế hoạch bài dạy của tiết khác để trả lời thay thế. Tập trung giải thích định nghĩa/khái niệm toán học được hỏi, công thức, ví dụ số cụ thể, và lỗi học sinh hay mắc.`;
+          } else {
+            promptUser = `Tiết dạy hiện tại:
+- Môn: ${session ? session.subject || 'Toán' : 'Toán'} ${session ? session.className || '' : ''}
+- Tên bài dạy: ${session ? session.lessonTitle || '' : ''}
+- Tiến trình hoạt động: ${JSON.stringify(session ? session.activities || [] : [])}
 
-Câu hỏi của giáo viên: "${userQuestion}".
-Hãy trả lời đầy đủ, mạch lạc, chuẩn xác theo bộ sách Kết Nối Tri Thức Với Cuộc Sống để giáo viên nắm vững kiến thức và phương pháp sư phạm.`;
+Yêu cầu tư vấn: "${userQuestion}".
+Hãy trả lời súc tích, chuẩn mực theo bộ SGK Kết Nối Tri Thức Với Cuộc Sống để giáo viên nắm vững phương pháp sư phạm.`;
+          }
 
           const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
             method: 'POST',
@@ -2720,10 +2725,73 @@ ${kbData.concept.quote}
         }
       }
 
-      // 3. Dynamic Knowledge Synthesizer for arbitrary custom sessions
-      const lTitle = session.lessonTitle || '';
-      const cName = session.className || '';
-      const acts = session.activities || [];
+      // 3. Xử lý câu hỏi tự do (Custom Query) khi chế độ Live tạm thời gián đoạn
+      if (type === 'custom') {
+        const qLower = (userQuestion || '').toLowerCase();
+        let matched = null;
+
+        if (qLower.includes('hữu tỉ') || qLower.includes('huu ti')) {
+          matched = {
+            title: "Khái niệm Số Hữu Tỉ (Toán 7 - KNTT)",
+            text: `• <strong>Định nghĩa SGK:</strong> Số hữu tỉ là số viết được dưới dạng phân số $a/b$, với $a, b \\in \\mathbb{Z}$ và $b \\neq 0$.<br>
+• <strong>Tập hợp:</strong> Kí hiệu là $\\mathbb{Q}$. Tập số nguyên $\\mathbb{Z}$ là tập con của $\\mathbb{Q}$ ($a = a/1$).<br>
+• <strong>Ví dụ:</strong> $1/2$; $-3/4$; $0 = 0/1$; $-5 = -5/1$; $0{,}25 = 1/4$.<br>
+• <strong>Lỗi học sinh hay mắc:</strong> Quên rằng số nguyên, số 0 và số thập phân hữu hạn/vô hạn tuần hoàn cũng là số hữu tỉ.`
+          };
+        } else if (qLower.includes('vô tỉ') || qLower.includes('vo ti')) {
+          matched = {
+            title: "Khái niệm Số Vô Tỉ (Toán 7 - KNTT)",
+            text: `• <strong>Định nghĩa SGK:</strong> Số vô tỉ là số viết được dưới dạng số thập phân vô hạn không tuần hoàn.<br>
+• <strong>Tập hợp:</strong> Kí hiệu là $\\mathbb{I}$. Tập số thực $\\mathbb{R}$ gồm cả số hữu tỉ và số vô tỉ.<br>
+• <strong>Ví dụ:</strong> $\\sqrt{2} = 1{,}41421356...$; $\\pi = 3{,}14159265...$.<br>
+• <strong>Lỗi học sinh hay mắc:</strong> Nhầm lẫn số thập phân vô hạn tuần hoàn (thuộc $\\mathbb{Q}$) với số vô tỉ.`
+          };
+        } else if (qLower.includes('tam giác bằng nhau') || qLower.includes('tam giac bang nhau')) {
+          matched = {
+            title: "Hai Tam Giác Bằng Nhau (Toán 7 - KNTT)",
+            text: `• <strong>Định nghĩa SGK:</strong> Hai tam giác bằng nhau là hai tam giác có các cạnh tương ứng bằng nhau và các góc tương ứng bằng nhau.<br>
+• <strong>3 trường hợp bằng nhau:</strong> Cạnh - cạnh - cạnh (c-c-c); Cạnh - góc - cạnh (c-g-c); Góc - cạnh - góc (g-c-g).<br>
+• <strong>Lỗi học sinh hay mắc:</strong> Chọn góc không xen giữa hai cạnh trong trường hợp c-g-c hoặc viết sai thứ tự đỉnh tương ứng.`
+          };
+        } else if (qLower.includes('căn bậc hai') || qLower.includes('can bac hai')) {
+          matched = {
+            title: "Căn Bậc Hai Số Học (Toán 7 & 9 - KNTT)",
+            text: `• <strong>Định nghĩa SGK:</strong> Căn bậc hai số học của số không âm $a$ là số không âm $x$ sao cho $x^2 = a$ (kí hiệu: $\\sqrt{a}$).<br>
+• <strong>Ví dụ:</strong> $\\sqrt{9} = 3$ (chỉ lấy giá trị dương $3$, không lấy $-3$).<br>
+• <strong>Lỗi học sinh hay mắc:</strong> Nhầm căn bậc hai (có hai giá trị $\\pm 3$) với căn bậc hai số học (luôn không âm).`
+          };
+        }
+
+        if (matched) {
+          return `
+            <div class="flex items-center justify-between border-b border-indigo-100 pb-2 mb-2">
+              <span class="font-bold text-indigo-900 flex items-center gap-1.5 text-xs">
+                <i data-lucide="book-open" class="w-4 h-4 text-indigo-600"></i>
+                ${matched.title}
+              </span>
+              <span class="bg-indigo-100 text-indigo-800 text-[10px] font-bold px-2 py-0.5 rounded">SGK KNTT</span>
+            </div>
+            <div class="text-slate-800 leading-relaxed text-xs space-y-1.5">
+              ${matched.text}
+            </div>
+          `;
+        }
+
+        return `
+          <div class="flex items-center gap-1.5 text-indigo-700 font-bold border-b border-indigo-100 pb-2 mb-2 text-xs">
+            <i data-lucide="sparkles" class="w-4 h-4 text-amber-500"></i>
+            <span>Trả lời câu hỏi: "${escapeHtml(userQuestion)}"</span>
+          </div>
+          <p class="text-xs text-slate-700 leading-relaxed">
+            Hệ thống đang đối chiếu trực tiếp với toàn bộ 8 tập SGK Toán 6, 7, 8, 9 (Bộ Kết Nối Tri Thức Với Cuộc Sống). Thầy/Cô vui lòng tải lại trang (Ctrl + F5) để nhận câu trả lời đầy đủ từ mô hình trực tuyến.
+          </p>
+        `;
+      }
+
+      // 4. Dynamic Knowledge Synthesizer khi giáo viên yêu cầu tư vấn theo tiến trình tiết dạy
+      const lTitle = session ? session.lessonTitle || '' : '';
+      const cName = session ? session.className || '' : '';
+      const acts = session ? session.activities || [] : [];
 
       return `
         <div class="flex items-center justify-between border-b border-indigo-100 pb-1.5">
