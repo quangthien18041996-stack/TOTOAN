@@ -254,8 +254,15 @@
         </div>
       </div>
       
-      <!-- User Auth Bar -->
+      <!-- User Auth Bar & Quick Tools -->
       <div class="flex items-center gap-2">
+        <!-- Nút Trợ lý AI trên Header (Mở được từ bất kỳ màn hình nào) -->
+        <button type="button" onclick="p2OpenAIAssistant()" class="bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500 hover:from-purple-600 hover:to-indigo-600 text-white text-xs font-bold px-2.5 py-1.5 rounded-xl shadow-sm flex items-center gap-1.5 transition active:scale-95 border border-purple-300/40 cursor-pointer" title="Mở Trợ lý Cố vấn Sư phạm Toán AI (Chuẩn bộ SGK Kết Nối Tri Thức)">
+          <i data-lucide="bot" class="w-4 h-4 text-amber-300 animate-pulse"></i>
+          <span class="hidden sm:inline font-extrabold tracking-wide">TRỢ LÝ AI (SGK)</span>
+          <span class="sm:hidden font-bold">AI</span>
+        </button>
+
         <!-- Logged In User Card -->
         <div id="header-user-badge" class="flex items-center gap-1.5 bg-indigo-800/90 border border-indigo-400/80 px-2.5 py-1 rounded-xl text-xs">
           <span id="label-user-role-badge" class="bg-amber-400 text-slate-900 font-extrabold text-[9px] px-1.5 py-0.2 rounded uppercase">Tổ Trưởng</span>
