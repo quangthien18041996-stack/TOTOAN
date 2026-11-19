@@ -101,7 +101,9 @@
       #section-part3:not(.hidden) #printable-area,
       #section-part3:not(.hidden) #printable-area *,
       #section-part5:not(.hidden) #p5-master-book-container,
-      #section-part5:not(.hidden) #p5-master-book-container * {
+      #section-part5:not(.hidden) #p5-master-book-container *,
+      #print-qr-container.print-target,
+      #print-qr-container.print-target * {
         visibility: visible !important;
       }
 
@@ -109,7 +111,8 @@
       .print-target,
       #section-part2:not(.hidden) #p2-sheet-container,
       #section-part3:not(.hidden) #printable-area,
-      #section-part5:not(.hidden) #p5-master-book-container {
+      #section-part5:not(.hidden) #p5-master-book-container,
+      #print-qr-container.print-target {
         position: static !important;
         display: block !important;
         width: 100% !important;
@@ -261,6 +264,12 @@
       
       <!-- User Auth Bar & Quick Tools -->
       <div class="flex items-center gap-2">
+        <!-- Nút Mã QR Web -->
+        <button type="button" onclick="openWebQRModal()" class="bg-indigo-600/90 hover:bg-indigo-500 text-white text-xs font-bold px-2.5 py-1.5 rounded-xl shadow-sm flex items-center gap-1.5 transition active:scale-95 border border-indigo-400/40 cursor-pointer" title="Lấy mã QR để quét bằng điện thoại hoặc in ra giấy cho giáo viên">
+          <i data-lucide="qr-code" class="w-4 h-4 text-emerald-300"></i>
+          <span class="hidden sm:inline font-bold">MÃ QR</span>
+        </button>
+
         <!-- Nút Trợ lý AI trên Header (Mở được từ bất kỳ màn hình nào) -->
         <button type="button" onclick="p2OpenAIAssistant()" class="bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500 hover:from-purple-600 hover:to-indigo-600 text-white text-xs font-bold px-2.5 py-1.5 rounded-xl shadow-sm flex items-center gap-1.5 transition active:scale-95 border border-purple-300/40 cursor-pointer" title="Mở Trợ lý Cố vấn Sư phạm Toán AI (Chuẩn bộ SGK Kết Nối Tri Thức)">
           <i data-lucide="bot" class="w-4 h-4 text-amber-300 animate-pulse"></i>
@@ -446,12 +455,18 @@
             </button>
           </form>
 
-          <!-- Chân trang thẻ đăng nhập -->
-          <div class="pt-2 border-t border-slate-100 text-center">
-            <p class="text-[11px] text-slate-400 flex items-center justify-center gap-1">
-              <i data-lucide="lock" class="w-3 h-3 text-emerald-500"></i>
-              Bảo mật nội bộ • Năm học 2026 - 2027
-            </p>
+          <!-- Chân trang thẻ đăng nhập & Nút Quét QR -->
+          <div class="pt-2.5 border-t border-slate-100 space-y-2">
+            <button type="button" onclick="openWebQRModal()" class="w-full bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 text-indigo-800 text-xs font-semibold py-2 px-3 rounded-xl flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer">
+              <i data-lucide="qr-code" class="w-4 h-4 text-emerald-600"></i>
+              <span>📱 Quét mã QR để mở trên điện thoại / in ra giấy</span>
+            </button>
+            <div class="text-center">
+              <p class="text-[11px] text-slate-400 flex items-center justify-center gap-1">
+                <i data-lucide="lock" class="w-3 h-3 text-emerald-500"></i>
+                Bảo mật nội bộ • Năm học 2026 - 2027
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -475,6 +490,10 @@
           <p class="text-xs text-slate-500">Mỗi giáo viên khi giảng dạy sẽ đăng ký tiết dạy và tiến trình KHBD tại đây. Giáo viên dự giờ sẽ chọn đúng tiết dạy này để quan sát.</p>
         </div>
         <div class="flex items-center gap-2">
+          <button type="button" onclick="openWebQRModal()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-semibold px-3 py-2.5 rounded-lg shadow-2xs transition flex items-center gap-1.5 active:scale-95 cursor-pointer" title="Lấy mã QR chia sẻ hoặc in cho giáo viên quét vào dự giờ">
+            <i data-lucide="qr-code" class="w-4 h-4 text-emerald-600"></i>
+            <span>Mã QR Dự Giờ</span>
+          </button>
           <button id="p1-btn-clear-all" type="button" onclick="p1ClearAllSessions()" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-300 text-xs font-bold px-3 py-2.5 rounded-lg shadow-sm transition flex items-center gap-1.5 active:scale-95 cursor-pointer" title="Xóa sạch toàn bộ các tiết dạy để bắt đầu mới (Dành cho Tổ trưởng)">
             <i data-lucide="trash-2" class="w-4 h-4 text-rose-600"></i>
             <span>XÓA SẠCH TIẾT DẠY</span>
@@ -809,6 +828,10 @@
         </div>
 
         <div class="flex flex-wrap items-center gap-2">
+          <button type="button" onclick="openWebQRModal()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-semibold px-3 py-2 rounded-lg shadow-2xs transition flex items-center gap-1.5 active:scale-95 cursor-pointer" title="Mở mã QR truy cập hoặc in bản dán phòng Tổ Toán">
+            <i data-lucide="qr-code" class="w-4 h-4 text-emerald-600"></i>
+            <span>Mã QR Tổ Toán</span>
+          </button>
           <button onclick="p3SynthesizeResults()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3.5 py-2 rounded-lg shadow-sm transition flex items-center gap-1.5">
             <i data-lucide="merge" class="w-4 h-4"></i>
             <span>TỔNG HỢP KẾT QUẢ DỰ GIỜ</span>
@@ -1390,6 +1413,120 @@
         </form>
       </div>
 
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL: MÃ QR TRUY CẬP HỆ THỐNG & IN ẤN DÀNH CHO GIÁO VIÊN      -->
+  <!-- ============================================================== -->
+  <div id="modal-web-qr" class="fixed inset-0 bg-slate-900/65 backdrop-blur-sm z-50 flex items-center justify-center p-3 md:p-4 hidden">
+    <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-indigo-100 overflow-hidden">
+      <!-- Modal Header -->
+      <div class="bg-gradient-to-r from-indigo-900 via-indigo-800 to-purple-900 text-white p-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <img src="logo.jpg" alt="Logo THCS Phan Văn Trị" class="w-9 h-9 rounded-full object-contain bg-white p-0.5 shadow-sm border border-white/40 shrink-0">
+          <div>
+            <h3 class="font-extrabold text-sm md:text-base tracking-wide flex items-center gap-1.5">
+              <span>MÃ QR TRUY CẬP HỆ THỐNG</span>
+            </h3>
+            <p class="text-[11px] text-indigo-200">
+              Trường THCS Phan Văn Trị • Tổ Toán
+            </p>
+          </div>
+        </div>
+        <button type="button" onclick="closeWebQRModal()" class="text-indigo-200 hover:text-white p-1 rounded-lg hover:bg-white/10 transition cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-5 text-center space-y-4">
+        <p class="text-xs text-slate-600 leading-relaxed">
+          Thầy/Cô mở ứng dụng <strong>Zalo</strong> hoặc <strong>Camera điện thoại</strong> quét mã bên dưới để truy cập tức thì hệ thống dự giờ trên thiết bị di động:
+        </p>
+
+        <!-- QR Display Box -->
+        <div class="inline-flex flex-col items-center justify-center p-4 bg-gradient-to-b from-indigo-50/70 to-white rounded-2xl border-2 border-indigo-200 shadow-inner">
+          <div id="web-qrcode-canvas" class="flex items-center justify-center bg-white p-2.5 rounded-xl shadow-xs"></div>
+          <div class="mt-2 text-[11px] font-bold text-indigo-700 flex items-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>https://quangthien18041996-stack.github.io/TOTOAN/</span>
+          </div>
+        </div>
+
+        <!-- Copy Link Row -->
+        <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl p-1.5 pl-3">
+          <input type="text" id="web-qr-copy-url" readonly value="https://quangthien18041996-stack.github.io/TOTOAN/" class="bg-transparent text-xs text-slate-700 flex-1 outline-none font-mono select-all">
+          <button type="button" onclick="copyWebQRLink()" id="btn-copy-web-url" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow-xs flex items-center gap-1 transition active:scale-95 cursor-pointer">
+            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+            <span id="text-copy-web-url">Sao chép</span>
+          </button>
+        </div>
+
+        <!-- 2 Action Buttons: Tải ảnh & In trang A4 -->
+        <div class="grid grid-cols-2 gap-2.5 pt-1">
+          <button type="button" onclick="downloadQRCodePNG()" class="bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold py-2.5 px-3 rounded-xl border border-slate-300 flex items-center justify-center gap-1.5 transition active:scale-95 cursor-pointer">
+            <i data-lucide="download" class="w-4 h-4 text-indigo-600"></i>
+            <span>Tải ảnh QR (PNG)</span>
+          </button>
+          <button type="button" onclick="printQRCodeSheet()" class="bg-indigo-700 hover:bg-indigo-800 text-white text-xs font-semibold py-2.5 px-3 rounded-xl shadow-sm flex items-center justify-center gap-1.5 transition active:scale-95 cursor-pointer">
+            <i data-lucide="printer" class="w-4 h-4 text-amber-300"></i>
+            <span>In bản dán phòng A4</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- KHUNG IN MÃ QR A4 DÁN TỔ TOÁN / PHÒNG HỌC (CHỈ HIỂN THỊ KHI IN)-->
+  <!-- ============================================================== -->
+  <div id="print-qr-container" class="hidden font-times text-slate-900 bg-white p-8">
+    <table style="width: 100%; border: none; margin-bottom: 25px;">
+      <tr>
+        <td style="width: 55%; text-align: center; vertical-align: top; border: none; font-size: 13pt;">
+          PHÒNG GIÁO DỤC VÀ ĐÀO TẠO GÒ VẤP<br>
+          <strong>TRƯỜNG THCS PHAN VĂN TRỊ</strong><br>
+          <span style="border-bottom: 1px solid #333; display: inline-block; width: 120px; padding-bottom: 3px;">TỔ TOÁN</span>
+        </td>
+        <td style="width: 45%; text-align: center; vertical-align: top; border: none; font-size: 13pt;">
+          <strong>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</strong><br>
+          <strong>Độc lập – Tự do – Hạnh phúc</strong><br>
+          <span style="border-bottom: 1px solid #333; display: inline-block; width: 140px; padding-bottom: 3px;">***</span>
+        </td>
+      </tr>
+    </table>
+
+    <div style="text-align: center; margin-bottom: 30px;">
+      <h1 style="font-size: 20pt; font-weight: bold; text-transform: uppercase; margin-bottom: 8px; color: #1e1b4b;">
+        MÃ QR TRUY CẬP HỆ THỐNG DỰ GIỜ SỐ HÓA
+      </h1>
+      <p style="font-size: 14pt; font-style: italic; color: #4338ca;">
+        (Sinh hoạt chuyên môn theo Nghiên cứu bài học – Tổ Toán)
+      </p>
+    </div>
+
+    <!-- QR Code Center Box -->
+    <div style="text-align: center; margin: 30px 0;">
+      <div style="display: inline-block; padding: 18px; border: 3px solid #1e1b4b; border-radius: 16px; background: #fff;">
+        <img id="print-qr-img" src="" style="width: 260px; height: 260px; display: block; margin: 0 auto;" alt="QR Code">
+      </div>
+    </div>
+
+    <!-- Instructions -->
+    <div style="max-width: 550px; margin: 0 auto; font-size: 13pt; line-height: 1.8;">
+      <h3 style="font-size: 14pt; font-weight: bold; margin-bottom: 10px; color: #1e1b4b;">
+        📌 HƯỚNG DẪN QUÉT MÃ DÀNH CHO GIÁO VIÊN:
+      </h3>
+      <ol style="margin-left: 25px; padding-left: 5px;">
+        <li>Mở ứng dụng <strong>Zalo</strong> hoặc <strong>Camera chụp ảnh</strong> trên điện thoại thông minh.</li>
+        <li>Hướng ống kính về phía mã QR ở trên để nhận diện liên kết.</li>
+        <li>Chạm vào thông báo xuất hiện để truy cập ngay Hệ thống Dự giờ.</li>
+      </ol>
+      <div style="margin-top: 20px; padding: 12px; border: 1px dashed #6366f1; border-radius: 8px; background: #f8fafc; font-size: 12pt; text-align: center;">
+        🌐 <strong>Đường dẫn truy cập trực tiếp:</strong><br>
+        <span style="font-family: monospace; font-size: 13pt; font-weight: bold; color: #4338ca;" id="print-qr-url-text">https://quangthien18041996-stack.github.io/TOTOAN/</span>
+      </div>
     </div>
   </div>
 
@@ -2427,6 +2564,141 @@
           container.innerHTML = html;
         }
       });
+    }
+
+    // ==============================================================
+    // QUẢN LÝ MÃ QR TRUY CẬP HỆ THỐNG & IN ẤN DÀNH CHO GIÁO VIÊN
+    // ==============================================================
+    let webQrInstance = null;
+
+    function getOfficialWebURL() {
+      if (window.location.hostname.includes('github.io')) {
+        return window.location.href.split('#')[0].split('?')[0];
+      }
+      return "https://quangthien18041996-stack.github.io/TOTOAN/";
+    }
+
+    function openWebQRModal() {
+      const modal = document.getElementById('modal-web-qr');
+      if (!modal) return;
+      modal.classList.remove('hidden');
+
+      const targetUrl = getOfficialWebURL();
+      const input = document.getElementById('web-qr-copy-url');
+      if (input) input.value = targetUrl;
+      const printUrlText = document.getElementById('print-qr-url-text');
+      if (printUrlText) printUrlText.innerText = targetUrl;
+
+      const container = document.getElementById('web-qrcode-canvas');
+      if (container && !webQrInstance) {
+        container.innerHTML = '';
+        try {
+          webQrInstance = new QRCode(container, {
+            text: targetUrl,
+            width: 190,
+            height: 190,
+            colorDark: "#1e1b4b",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+          });
+        } catch(e) {
+          console.warn("Lỗi khởi tạo QRCode:", e);
+        }
+      }
+      lucide.createIcons();
+    }
+
+    function closeWebQRModal() {
+      const modal = document.getElementById('modal-web-qr');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function copyWebQRLink() {
+      const urlInput = document.getElementById('web-qr-copy-url');
+      const textSpan = document.getElementById('text-copy-web-url');
+      const url = urlInput ? urlInput.value : getOfficialWebURL();
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(() => {
+          if (textSpan) textSpan.innerText = "Đã chép!";
+          setTimeout(() => { if (textSpan) textSpan.innerText = "Sao chép"; }, 2000);
+        }).catch(() => {
+          fallbackCopy(urlInput, textSpan);
+        });
+      } else {
+        fallbackCopy(urlInput, textSpan);
+      }
+    }
+
+    function fallbackCopy(input, textSpan) {
+      if (!input) return;
+      input.select();
+      input.setSelectionRange(0, 99999);
+      try {
+        document.execCommand('copy');
+        if (textSpan) textSpan.innerText = "Đã chép!";
+        setTimeout(() => { if (textSpan) textSpan.innerText = "Sao chép"; }, 2000);
+      } catch(e) {}
+    }
+
+    function downloadQRCodePNG() {
+      const container = document.getElementById('web-qrcode-canvas');
+      if (!container) return;
+      const img = container.querySelector('img');
+      const canvas = container.querySelector('canvas');
+      let dataUrl = '';
+      if (canvas) {
+        dataUrl = canvas.toDataURL('image/png');
+      } else if (img && img.src) {
+        dataUrl = img.src;
+      }
+      if (!dataUrl) {
+        alert("Đang khởi tạo mã QR, Thầy/Cô vui lòng thử lại sau 1 giây!");
+        return;
+      }
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = 'QR-Du-Gio-THCS-Phan-Van-Tri.png';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    function printQRCodeSheet() {
+      const container = document.getElementById('web-qrcode-canvas');
+      const printImg = document.getElementById('print-qr-img');
+      const printArea = document.getElementById('print-qr-container');
+      if (!container || !printImg || !printArea) return;
+
+      const img = container.querySelector('img');
+      const canvas = container.querySelector('canvas');
+      let dataUrl = '';
+      if (canvas) {
+        dataUrl = canvas.toDataURL('image/png');
+      } else if (img && img.src) {
+        dataUrl = img.src;
+      }
+      if (!dataUrl) {
+        alert("Đang khởi tạo mã QR, Thầy/Cô vui lòng thử lại sau 1 giây!");
+        return;
+      }
+
+      printImg.src = dataUrl;
+      closeWebQRModal();
+
+      printArea.classList.remove('hidden');
+      printArea.classList.add('print-target');
+
+      document.querySelectorAll('#p2-sheet-container, #printable-area, #p5-master-book-container').forEach(el => {
+        el.classList.remove('print-target');
+      });
+
+      window.print();
+
+      setTimeout(() => {
+        printArea.classList.remove('print-target');
+        printArea.classList.add('hidden');
+      }, 1000);
     }
 
     function p2OpenAIAssistant(promptType) {
