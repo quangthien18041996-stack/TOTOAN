@@ -1450,13 +1450,13 @@
           <div id="web-qrcode-canvas" class="flex items-center justify-center bg-white p-2.5 rounded-xl shadow-xs"></div>
           <div class="mt-2 text-[11px] font-bold text-indigo-700 flex items-center gap-1">
             <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span>https://quangthien18041996-stack.github.io/TOTOAN/</span>
+            <span id="web-qr-display-url">https://totoanthcsphanvantri.vercel.app/</span>
           </div>
         </div>
 
         <!-- Copy Link Row -->
         <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl p-1.5 pl-3">
-          <input type="text" id="web-qr-copy-url" readonly value="https://quangthien18041996-stack.github.io/TOTOAN/" class="bg-transparent text-xs text-slate-700 flex-1 outline-none font-mono select-all">
+          <input type="text" id="web-qr-copy-url" readonly value="https://totoanthcsphanvantri.vercel.app/" class="bg-transparent text-xs text-slate-700 flex-1 outline-none font-mono select-all">
           <button type="button" onclick="copyWebQRLink()" id="btn-copy-web-url" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow-xs flex items-center gap-1 transition active:scale-95 cursor-pointer">
             <i data-lucide="copy" class="w-3.5 h-3.5"></i>
             <span id="text-copy-web-url">Sao chép</span>
@@ -1525,7 +1525,7 @@
       </ol>
       <div style="margin-top: 20px; padding: 12px; border: 1px dashed #6366f1; border-radius: 8px; background: #f8fafc; font-size: 12pt; text-align: center;">
         🌐 <strong>Đường dẫn truy cập trực tiếp:</strong><br>
-        <span style="font-family: monospace; font-size: 13pt; font-weight: bold; color: #4338ca;" id="print-qr-url-text">https://quangthien18041996-stack.github.io/TOTOAN/</span>
+        <span style="font-family: monospace; font-size: 13pt; font-weight: bold; color: #4338ca;" id="print-qr-url-text">https://totoanthcsphanvantri.vercel.app/</span>
       </div>
     </div>
   </div>
@@ -2572,10 +2572,7 @@
     let webQrInstance = null;
 
     function getOfficialWebURL() {
-      if (window.location.hostname.includes('github.io')) {
-        return window.location.href.split('#')[0].split('?')[0];
-      }
-      return "https://quangthien18041996-stack.github.io/TOTOAN/";
+      return "https://totoanthcsphanvantri.vercel.app/";
     }
 
     function openWebQRModal() {
@@ -2588,9 +2585,11 @@
       if (input) input.value = targetUrl;
       const printUrlText = document.getElementById('print-qr-url-text');
       if (printUrlText) printUrlText.innerText = targetUrl;
+      const displayUrl = document.getElementById('web-qr-display-url');
+      if (displayUrl) displayUrl.innerText = targetUrl;
 
       const container = document.getElementById('web-qrcode-canvas');
-      if (container && !webQrInstance) {
+      if (container) {
         container.innerHTML = '';
         try {
           webQrInstance = new QRCode(container, {
